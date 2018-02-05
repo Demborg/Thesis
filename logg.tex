@@ -1,0 +1,288 @@
+% Created 2018-01-26 fre 11:52
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage[colorlinks=true]{hyperref}
+\author{Axel Demborg}
+\date{\today}
+\title{Thesis log Efficient object segmentation on mobile phones}
+\hypersetup{
+ pdfauthor={Axel Demborg},
+ pdftitle={Thesis log Efficient object segmentation on mobile phones},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.0.10)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+
+
+\section{Thesis proposal}
+\label{sec:org10e7fd2}
+\href{proposal.org}{Proposal}
+
+\section{Concepts}
+\label{sec:org199023c}
+\begin{description}
+\item[{Semantic segmentation}] Take an image and return the class of every pixel in it, don't differentiate between say different cars. Fixed number of classes!
+\item[{Object detection}] Take and image and find all the objects and the classes of those, don't do pixel level segmentation but find bounding boxes of the objects. Number of entities is not fixed we have to do stuff like region proposals and classify each region etc.
+\item[{Object segmentation}] We want to label each pixel with class and what object it belongs to this is really quite hard..
+\item[{Dialated convolution}] The key application the dilated convolution authors have in mind is dense prediction: vision applications where the predicted object that has similar size and structure to the input image. For example, semantic segmentation with one label per pixel; image super-resolution, denoising, demosaicing, bottom-up saliency, keypoint detection, etc. \url{https://arxiv.org/pdf/1511.07122.pdf} related to kronecker product \url{https://arxiv.org/pdf/1512.09194.pdf}.
+\end{description}
+
+\section{Literature}
+\label{sec:org91ae19f}
+
+\subsection{ImageNet Classification with Deep Convolutional Neural Networks}
+\label{sec:orge943263}
+\url{http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf}
+hell
+\begin{itemize}
+\item 5 conv layers 3 fully connected, only about 1\% of weights in each of the conv layers but removing one of them lowers performance significantly. Interesting that so "little" of the network actually is conv.
+\item Largest possible model that could fit on two gtx 580, over 60 million params, 1.2 million training examples, 50000 validation and 150000 test. Subset of ImageNet with about 1000 samples from each of 1000 categories.
+\item ImageNet is of variable dim but all images were down-sampled to 256 by 256px.
+\item Unique approaches in design:
+\begin{itemize}
+\item ReLU activations. Was one of the first to do this, speeds up training significantly and makes it possible to experiment a bit with models of this size, something that should take far to long using "normal" activations like sigmoid or tanh.
+\item Multiple GPUs to hold a model larger than what could fit on a single 3Gb GPU. GPUs only share memory in some selected layers to reduce the time taken for reading memory between them, compare to \emph{columnar CNN}
+\item Local Response normalization is a technique for local normalization that is said to help with generalization
+\item Let the pooling layers overlap, makes the network slightly harder to overfit
+\end{itemize}
+\item Combating overfiting, the dataset has 1.2 million images and we have 60 million params in the model making overfiting quite likely. Hence some thought had to be put into reducing overfit.
+\begin{itemize}
+\item Data augmentation was done to artificially enlarge the training set. Transformed images are calculated on the CPU while the previous batch is run on the GPU and thus this is practically free computationally. Two different label preserving approaches were used. 
+\begin{itemize}
+\item translations and horizontal reflections where random 224 by 224 patches were extracted from the 256 by 256 images, along with their reflections. The resulting samples are highly correlated but this is really easy to do and reduces overfiting significantly
+\item Altering intensities of RGB values, this tries to capture the effect that a object is the same object independent of the intensity or color of the illumination.
+\end{itemize}
+\item Dropout was performed on the first two fully connected layers with prob 50\% and this reduced overfiting a lot. This however doubles the iterations to convergence (approximately).
+\end{itemize}
+\item Training was performed using SGD with a minibatch size of 128. The momentum was set to 0.9 and a weight decay was introduced and set to 0.0005. All weights were initialized from a zero mean, 0.01 std Gaussian and some layers got weights initialized to 1 which helps the ReLU:s and the rest were initialized to 0. Learning rate was initialized to 0.01 and reduced three times during training.
+\end{itemize}
+
+\subsection{Very Deep Convolutional Networks for Large-Scale Image Recognition.}
+\label{sec:orgc314fc4}
+\url{https://arxiv.org/pdf/1409.1556/}
+\begin{itemize}
+\item Small filters (3x3) and lots of layers are better than big filters
+\item 224x224 images with RGB
+\item Fixed to 3x3 filters (smallest that can capture direction) with stride 1. Some experiments with 1x1 filters (a linear transformation of the image with a added non linearity.), padding done as to preserve dimensions after transformation.
+\item 5 max pooling layers with 2x2 windows and stride 2
+\item 3 fully connected layers at the end 4096, 4096 and 1000 neurons.
+\item No normalization was used in the tested architectures and when tested it didn't seem to improve performance but increases memory usage and computational complexity.
+\item ReLU on all hidden layers.
+\item Three layers of 3x3 convolution has an effective receptive field of 7x7. The benefit of having multiple layers though is that we have 3 non linearities making for a more discriminative decision function and we also have fewer parameters.
+\item Batch size 256 and momentum 0.9.
+\item Weight decay 0.0005 was used for the entire network and dropout was applied with 50\% to the first two fully connected layers to perform regularization.
+\item Learning rate started at 0.01 and was divided by 10 three times during training.
+\item Deep networks can't be trained with poor initialization. To get around this a shallow network was trained using random initialization and the first and last layers from this shallow network were used as initialization and the middle layers randomized. \emph{cool}
+\item At test time the FC layers are converted to conv layers (7x7, 1x1, 1x1) and the resulting fully convoluted network can be run on any size image and gives a class score map (Sermanet et al. 2014). The score map is then sum-pooled into a single class.
+\item Four titan blacks = 2-3 weeks of computation\ldots{} crap
+\end{itemize}
+
+
+\subsection{Rich feature hierarchies for accurate object detection and semantic segmentation \url{https://www.cv-foundation.org/openaccess/content\_cvpr\_2014/papers/Girshick\_Rich\_Feature\_Hierarchies\_2014\_CVPR\_paper.pdf}}
+\label{sec:orgab851d7}
+\begin{itemize}
+\item Generate proposal regions, reshape regions to same format, feed reshaped regions into CNN and get features, class specific SVM classifiers then return the class.
+\item Insight: \emph{Transfer learning} when data is scarce we can train supervised on an other dataset in this case ILSVRC and then do domain specific fine tuning with the data ẃe have.
+\item \emph{We “lobotomized” the CNN and found that a surprisingly large proportion, 94\%, of its parameters can be removed with only a moderate drop in detection accuracy.} Hmmmm, very interesting
+\item Region proposal through selective search, fast mode (gives \textasciitilde{}2000 props)
+\item Feature extraction by running each region through a CNN with five conv layers and three fc layers. Regions are warped to fit in a 227x227 input to the CNN
+\item Given all the scored regions we do  a greedy non-maximum suppression (for each class independently) that rejects a region if it has an intersection-over-union (IoU) overlap with a higher scoring selected region larger than a learned threshold.
+\item This is fast since all the heavy operations (the CNN) are shared between all classes and the only class specific operations are the ones associated with the SVM.
+\item For fine tuning the 1000 way classification layer is replaced with a 21 way one, 20 classes + bg. The minibatches are created by randomly sampling 32 positive windows and 96 bg windows. This bias towards positive windows is important since they are so rare. Training rate is started at 0.001 (1/10 of pre-training rate). Samples with IoU (Intersect over Union) of 50\% or more are considered positive.
+\item Nice tool for error visualization
+\item Some experiments with semantic segmentation, this is done with three approaches
+\begin{description}
+\item[{full}] Calculate for the rectangular bounding box of the mask
+\item[{fg}] Calculate only for the masked pixels and replace the other pixels with the image mean so that they become zero after mean subtraction.
+\item[{full + fg}] concatenates the features form the two. This works the best.
+\end{description}
+\item Results were achieved by letting classical tools from CV and CNN:s instead of treating them as opposing lines of scientific inquiry.
+\end{itemize}
+
+
+\subsubsection{Fast R-CNN \url{https://www.cv-foundation.org/openaccess/content\_iccv\_2015/papers/Girshick\_Fast\_R-CNN\_ICCV\_2015\_paper.pdf}}
+\label{sec:orge2e7028}
+\url{https://github.com/rbgirshick/fast-rcnn}
+
+\begin{itemize}
+\item R-CNN is cool but has some drawbacks:
+\begin{itemize}
+\item Training is multistage
+\item Training is expensive in space and time
+\item Object detection is \emph{slow} 47s/image on GPU.
+\end{itemize}
+\item R-CNN is slow since the CNN forward pass has to be performed once for each proposal in the image (\textasciitilde{}2000) and computations are not shared between these. SPPnet is an attempt to mitigate this but has some drawbacks of its own like like fixed convolutional layers.
+\item Proposes new training algorithm \emph{Fast R-CNN} that solves issues above.
+\begin{itemize}
+\item Input is the entire image along with region proposals
+\item The entire image is run through a bunch of conv layers to produce a feature map.
+\item For each object proposal region of interest (RoI) pooling is performed to produce a fixed length feature vector.
+\item Feature vectors are then feed into a sequence of fc layers that branch into two output output layers. One for softmax class probs and one with four values that code for the bounding box of the region.
+\item Smooth L\(_{\text{1}}\) loss is less sensitive than L\(_{\text{2}}\) loss when using unbounded targets
+\item A momentum of 0.9 and parameter decay of 0.0005 (on weights and biases) are used.
+\end{itemize}
+\end{itemize}
+
+
+\subsubsection{Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks \url{http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf}}
+\label{sec:org3148983}
+\url{https://github.com/rbgirshick/py-faster-rcnn}
+\begin{itemize}
+\item Previous improvements in object detection have focused on what we do after we have some object proposals from older methods, this has lead to object proposals now being the bottleneck. In this article a approach is presented where a fully convolutional models replaces the previous regions proposals with a region proposal network (RPN) that has the improvement that it can share features with the object classifier, thus enabling almost cost free region proposals.
+\item We can use the feature map from Fast R-CNN and do region proposals from those.
+\item Training alternates between fine tuning for region proposals and object detection.
+\item Achieves 5 fps.
+\item RPN takes an image of any size and outputs a set of object rectangular proposals with associated objectness score.
+\item To generate region props a small fc network is slided over the conv feature map of the last shared layer. Typically this looks at 3x3 pixels (since the network above is large this corresponds to a large receptive field) and outputs a lower dimensional vector (256-d or 512-d) this signature vector is then feed into two sibling fc networks that outputs the candidate box and the objectness score. This is implemented as a CNN with 3x3 receptive field and 256 output dims followed by two different 1x1 CNN layers.
+\item At each sliding window location we predict k regions props so the reg layer has 4k outputs encoding the corners of the k regions and the cls network has 2k outputs coding the probability of each region being bg or object
+\item The k proposals are parametrized relative to k reference boxes called anchors. Each anchor is centered at the sliding window in question and is associated with a scale and a aspect ratio (Whaat??). The article uses 3 scales and 3 aspect ratios.
+\item Trained using a pragmatic four step approach
+\begin{enumerate}
+\item Simply train a RPN for its own
+\item Train a separate network for Fast R-CNN using props generated from 1)
+\item Now use 2) to intitialize training for a new RPN but fix the conv layers and only train layers unique to RPN.
+\item Finally use 3) to fintune the layers unique to Fast R-CNN
+\end{enumerate}
+\end{itemize}
+\subsubsection{Mask R-CNN}
+\label{sec:org109ba40}
+\url{https://arxiv.org/pdf/1703.06870.pdf}
+
+\begin{itemize}
+\item Extends Faster R-CNN by adding a branch for predicting an object mask.
+\item Mask is created by a FCN model
+\item RoIPool from R-CNN is replaced with RoIAllign which doesn't loose much spatial information and allows for pixel alignment on the masks.
+\item[{Human pose estimation}] One hot binary mask is used for each key point. Minimize cross-entropy loss over m\(^{\text{2}}\)-way softmax which encourages a single point being predicted.
+\end{itemize}
+
+\subsection{Learning to Segment Object Candidates}
+\label{sec:org9f96b8f}
+\url{http://papers.nips.cc/paper/5852-learning-to-segment-object-candidates.pdf}
+\begin{itemize}
+\item Not so fun? feels a bit off?
+\end{itemize}
+
+\subsubsection{Learning to Refine Object Segments}
+\label{sec:org799383e}
+\url{https://arxiv.org/pdf/1603.08695.pdf}
+\begin{itemize}
+\item Output a course mask in a feed forward pass then refine it using features from successfully deeper layers.
+\end{itemize}
+
+\subsection{SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation}
+\label{sec:org5ac9bbd}
+\url{https://arxiv.org/pdf/1511.00561.pdf}
+
+\begin{itemize}
+\item Fully convolutional, encoder-decoder. Encoder topologically the 13 conv layers from the VGG16 network. This is then decoded through usage of the pooling indices and some convolutions to produce a new feature map of input size in which we can do pixel-wise classification.
+\item Designed to be efficient in memory and computation during inference.
+\item Very detailed literature review 2016
+\item Uses batch norm
+\item Storing the indices from pooling uses way less memory than storing the entire feature maps would, 2 bits vs 4 floats per max pool.
+\item Stuff like meadian frequency balancing for classes that are not as common?
+\end{itemize}
+
+\subsection{ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation}
+\label{sec:org19d3d9e}
+\url{https://arxiv.org/pdf/1606.02147.pdf}
+
+\begin{itemize}
+\item Optimized for mobile performance!
+\item Batch norm and PReLU (leaky ReLU)
+\item No biases used in the projections
+\item Strong downsampling makes for large receptive fields which is useful for context, however it makes for a loss in resolution that hurts when we want to do pixel-level segmentation in the input image. \emph{dilated convolutions} might help?
+\item It's heavy to work with large images, hence we want to do downsampling early and reduce the amount of data we have to process. Early downsampling layers shouldn't contribute to classification but instead act as powerful feature extractors.
+\item In SegNet encoder/decoder are symmetrical, this might not be necessary here a way smaller decoder is used since its task should be simpler, only upsample.
+\item Convolutional filters can be \emph{factorized} a nxn filter can be replaced with a 1xn followed by a nx1 which is lighter to compute and in many cases just as good.
+\item Dilated convolutions?! \href{http://www.inference.vc/dilated-convolutions-and-kronecker-factorisation/}{some blogg}
+\item Regularization using Spatial Dropout
+\item Heyo, finally someone uses ADAM
+\end{itemize}
+
+\subsection{Exploiting Local Structures with the Kronecker Layer in Convolutional Networks}
+\label{sec:orgf5c8090}
+\url{https://arxiv.org/pdf/1512.09194.pdf}
+
+\begin{itemize}
+\item Approximating weight mx with kronecker product of two other mx:es
+\end{itemize}
+
+\subsection{Dialated Convolutions}
+\label{sec:org515f02e}
+\url{https://arxiv.org/pdf/1511.07122.pdf}
+
+\begin{itemize}
+\item Traditional convolutions are designed for problems like image classification, problems that require \emph{dense estimation} however need good spatial accuracy and a wide receptive fields. Dialated convolution tries to fill this gap.
+\item The dilated conv operator can apply the same filter at multiple scales using different dilation factors!
+\item Random initialization works poorly, instead do some sort of identity initialization.
+\item We still have to train the models for image classification in the start meaning networks with such proprieties will stay popular.
+\end{itemize}
+
+\subsection{{\bfseries\sffamily TODO} Predicting parameters in deep learning}
+\label{sec:orgdad2c23}
+\url{http://papers.nips.cc/paper/5025-predicting-parameters-in-deep-learning.pdf}
+
+\subsection{{\bfseries\sffamily TODO} Compressing Deep Neural Convolutional Networks using Vector Quantization}
+\label{sec:org67f0d35}
+\url{https://arxiv.org/pdf/1412.6115.pdf}
+
+\begin{itemize}
+\item Simply applying k-means clustering on the weights or conducting product quantization can lead to a very good balance between model size and accuracy. 16-24 times reduction in size with a 1\% loss in accuracy.
+\item Models typicaly in the range of 200M but almost nobody downloads apps over 20M, compression required for feasability.
+\item Models are hevily over parametrized? \href{http://papers.nips.cc/paper/5025-predicting-parameters-in-deep-learning.pdf}{(Denil et al., 2013)} layers within one layer can be predicted from a subset of 5\% of the weights.
+\item In general we have 90\% of weights in FC layers and 90\% of running time in CNN layers (Zeiler \& Fergus, 2013). This means that we speed up networks up working on the convolutional layers and make them smaler by working on the fully connected layers.
+\item Scalar quantization from k-means and structred quantization from prroduct quantization or residual quantization.
+\item Two paths for compressing parameters:
+\begin{description}
+\item[{Matrix factorisation}] SVD on parameter matrix. Has sucessfully been applied to speeding up CNN:s
+\item[{Vector Quantization}] Has a few variants
+\begin{description}
+\item[{Binarization}] Relly aggresive technique \[ \hat{W_{ij}} = 1 ~ \textit{if} ~ W_{ij} \geq 0 ~ \textit{else} -1 \] This will compress data by a factor 32 since every float32 is represented as a single bit.
+\item[{k-means}] 
+\end{description}
+\end{description}
+\end{itemize}
+
+\subsection{{\bfseries\sffamily TODO} Compressing Neural Networks with the Hashing Trick}
+\label{sec:org0f90d51}
+\url{http://proceedings.mlr.press/v37/chenc15.pdf}
+
+\subsection{Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding}
+\label{sec:orgdb095f1}
+\url{https://arxiv.org/pdf/1510.00149.pdf}
+
+\begin{itemize}
+\item DNN:s are computationally and memory intense, bad for mobile devices
+\item Compression in a three stage process
+\begin{description}
+\item[{Pruning}] learn only important connections
+\item[{Quantize weights}] Enforces weight sharing
+\item[{Apply Huffman coding}] Takes advantage of biased distribution of weights
+\end{description}
+\item Pruning is performed by first training the network in a normal way then pruning away all the small-weight connections. The network is then retrained to learn the final values for the kept weights. weights are then stored as a sparse mx
+\item Weights are clustered and and the weights within each cluster are set to be the same (mean of the real weights). a final round of training is then performed to make these centroid weights find their correct values.
+\end{itemize}
+
+\subsection{{\bfseries\sffamily TODO} Learning both Weights and Connections for Efficient Neural Networks}
+\label{sec:orgf5f5968}
+\url{http://papers.nips.cc/paper/5784-learning-both-weights-and-connections-for-efficient-neural-network.pdf}
+\end{document}
