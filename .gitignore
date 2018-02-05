@@ -5,3 +5,11 @@ auto
 *.toc
 *.pdf
 code/testing/kerasSaved
+*.bbl
+*.bcf
+*.fbd_latexmk
+*.fls
+*.xml
+*.gz
+Report/example*
+Report/exempel*

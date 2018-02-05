@@ -1,0 +1,16 @@
+#+TITLE: Related Work
+#+AUTHOR: Axel Demborg \texttt{demborg@kth.se}
+#+LATEX_HEADER: \newcommand{\bibentry}[1]{\cite{#1}}
+#+OPTIONS: toc:nil
+
+Since their introduction Convolutional Neural Networks[[bibentry:lecun1998gradient]] have driven the state of the art for computer vision systems. 
+# blal bla grejer om previous work på object segmentation
+
+# Nått om reduced bit representation
+
+It was shown in[[bibentry:denil2013predicting]] that neural networks typically contain a lot of redundant parameters and that up to 95% of parameters could be predicted from the remaining 5% without any drop in accuracy. Since then there have been several attempts to try and remove this redundancy. 
+
+# prata om 2) clustering parameters and pruning. 3) Student-teacher 4) Aproximations of convolution
+
+[[bibliography:bibliography.bib]] 
+[[bibliographystyle:plain]]

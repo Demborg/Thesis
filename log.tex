@@ -1,9 +1,8 @@
-% Created 2018-01-26 fre 11:52
+% Created 2018-02-05 mån 10:00
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{fixltx2e}
 \usepackage{graphicx}
 \usepackage{grffile}
 \usepackage{longtable}
@@ -14,7 +13,7 @@
 \usepackage{textcomp}
 \usepackage{amssymb}
 \usepackage{capt-of}
-\usepackage[colorlinks=true]{hyperref}
+\usepackage{hyperref}
 \author{Axel Demborg}
 \date{\today}
 \title{Thesis log Efficient object segmentation on mobile phones}
@@ -23,7 +22,7 @@
  pdftitle={Thesis log Efficient object segmentation on mobile phones},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 25.3.1 (Org mode 9.0.10)}, 
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1.6)}, 
  pdflang={English}}
 \begin{document}
 
@@ -34,11 +33,11 @@
 
 
 \section{Thesis proposal}
-\label{sec:org10e7fd2}
+\label{sec:org927801d}
 \href{proposal.org}{Proposal}
 
 \section{Concepts}
-\label{sec:org199023c}
+\label{sec:orgf973fb7}
 \begin{description}
 \item[{Semantic segmentation}] Take an image and return the class of every pixel in it, don't differentiate between say different cars. Fixed number of classes!
 \item[{Object detection}] Take and image and find all the objects and the classes of those, don't do pixel level segmentation but find bounding boxes of the objects. Number of entities is not fixed we have to do stuff like region proposals and classify each region etc.
@@ -47,10 +46,10 @@
 \end{description}
 
 \section{Literature}
-\label{sec:org91ae19f}
+\label{sec:org2b672d0}
 
 \subsection{ImageNet Classification with Deep Convolutional Neural Networks}
-\label{sec:orge943263}
+\label{sec:orgcf0c940}
 \url{http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf}
 hell
 \begin{itemize}
@@ -77,7 +76,7 @@ hell
 \end{itemize}
 
 \subsection{Very Deep Convolutional Networks for Large-Scale Image Recognition.}
-\label{sec:orgc314fc4}
+\label{sec:org876282a}
 \url{https://arxiv.org/pdf/1409.1556/}
 \begin{itemize}
 \item Small filters (3x3) and lots of layers are better than big filters
@@ -96,9 +95,9 @@ hell
 \item Four titan blacks = 2-3 weeks of computation\ldots{} crap
 \end{itemize}
 
-
-\subsection{Rich feature hierarchies for accurate object detection and semantic segmentation \url{https://www.cv-foundation.org/openaccess/content\_cvpr\_2014/papers/Girshick\_Rich\_Feature\_Hierarchies\_2014\_CVPR\_paper.pdf}}
-\label{sec:orgab851d7}
+\subsection{Rich feature hierarchies for accurate object detection and semantic segmentation}
+\label{sec:org65ec8a0}
+\url{https://www.cv-foundation.org/openaccess/content\_cvpr\_2014/papers/Girshick\_Rich\_Feature\_Hierarchies\_2014\_CVPR\_paper.pdf}
 \begin{itemize}
 \item Generate proposal regions, reshape regions to same format, feed reshaped regions into CNN and get features, class specific SVM classifiers then return the class.
 \item Insight: \emph{Transfer learning} when data is scarce we can train supervised on an other dataset in this case ILSVRC and then do domain specific fine tuning with the data ẃe have.
@@ -119,8 +118,9 @@ hell
 \end{itemize}
 
 
-\subsubsection{Fast R-CNN \url{https://www.cv-foundation.org/openaccess/content\_iccv\_2015/papers/Girshick\_Fast\_R-CNN\_ICCV\_2015\_paper.pdf}}
-\label{sec:orge2e7028}
+\subsubsection{Fast R-CNN}
+\label{sec:org1f08276}
+\url{https://www.cv-foundation.org/openaccess/content\_iccv\_2015/papers/Girshick\_Fast\_R-CNN\_ICCV\_2015\_paper.pdf}
 \url{https://github.com/rbgirshick/fast-rcnn}
 
 \begin{itemize}
@@ -144,7 +144,7 @@ hell
 
 
 \subsubsection{Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks \url{http://papers.nips.cc/paper/5638-faster-r-cnn-towards-real-time-object-detection-with-region-proposal-networks.pdf}}
-\label{sec:org3148983}
+\label{sec:org41bafea}
 \url{https://github.com/rbgirshick/py-faster-rcnn}
 \begin{itemize}
 \item Previous improvements in object detection have focused on what we do after we have some object proposals from older methods, this has lead to object proposals now being the bottleneck. In this article a approach is presented where a fully convolutional models replaces the previous regions proposals with a region proposal network (RPN) that has the improvement that it can share features with the object classifier, thus enabling almost cost free region proposals.
@@ -164,7 +164,7 @@ hell
 \end{enumerate}
 \end{itemize}
 \subsubsection{Mask R-CNN}
-\label{sec:org109ba40}
+\label{sec:orgb42fcd8}
 \url{https://arxiv.org/pdf/1703.06870.pdf}
 
 \begin{itemize}
@@ -175,21 +175,21 @@ hell
 \end{itemize}
 
 \subsection{Learning to Segment Object Candidates}
-\label{sec:org9f96b8f}
+\label{sec:orga8c1807}
 \url{http://papers.nips.cc/paper/5852-learning-to-segment-object-candidates.pdf}
 \begin{itemize}
 \item Not so fun? feels a bit off?
 \end{itemize}
 
 \subsubsection{Learning to Refine Object Segments}
-\label{sec:org799383e}
+\label{sec:orgaf3ebc9}
 \url{https://arxiv.org/pdf/1603.08695.pdf}
 \begin{itemize}
 \item Output a course mask in a feed forward pass then refine it using features from successfully deeper layers.
 \end{itemize}
 
 \subsection{SegNet: A Deep Convolutional Encoder-Decoder Architecture for Image Segmentation}
-\label{sec:org5ac9bbd}
+\label{sec:org16d36bf}
 \url{https://arxiv.org/pdf/1511.00561.pdf}
 
 \begin{itemize}
@@ -202,7 +202,7 @@ hell
 \end{itemize}
 
 \subsection{ENet: A Deep Neural Network Architecture for Real-Time Semantic Segmentation}
-\label{sec:org19d3d9e}
+\label{sec:org5f477db}
 \url{https://arxiv.org/pdf/1606.02147.pdf}
 
 \begin{itemize}
@@ -218,8 +218,24 @@ hell
 \item Heyo, finally someone uses ADAM
 \end{itemize}
 
+\subsection{The One Hundred Layers Tiramisu: FC DenseNets for Semantic Segmentation}
+\label{sec:org3e9162b}
+\url{https://arxiv.org/pdf/1611.09326.pdf}
+\url{https://github.com/SimJeg/FC-DenseNet}
+
+\begin{itemize}
+\item \href{https://arxiv.org/pdf/1608.06993.pdf}{DensNets}, every layer is directly connected to every other in a feed-forward fashion.
+\item State of the art CNN:s heavily reduce dimensionality by pooling layers which is good if we want to predict a single label. Not good for dense prediction
+\item FCN:s or Fully Convolutional Networks work with downsampling and upsammpling, adding skip connections between layers to keep fine-grained information.
+\item DensNet architecture is extended to be fully convolutional, mitigating feature map explosion.
+\item Models were trained from scratch!
+\item weight decay 1e-4 and dropout 0.2
+\item Feature maps are concatenated after all layers, not in upsampling though.
+\item Very deep networks \textasciitilde{}103 layers and quite few parameters, 10 fold reduction compared to state of the art.
+\end{itemize}
+
 \subsection{Exploiting Local Structures with the Kronecker Layer in Convolutional Networks}
-\label{sec:orgf5c8090}
+\label{sec:org304983c}
 \url{https://arxiv.org/pdf/1512.09194.pdf}
 
 \begin{itemize}
@@ -227,7 +243,7 @@ hell
 \end{itemize}
 
 \subsection{Dialated Convolutions}
-\label{sec:org515f02e}
+\label{sec:org55a1cb5}
 \url{https://arxiv.org/pdf/1511.07122.pdf}
 
 \begin{itemize}
@@ -237,12 +253,27 @@ hell
 \item We still have to train the models for image classification in the start meaning networks with such proprieties will stay popular.
 \end{itemize}
 
-\subsection{{\bfseries\sffamily TODO} Predicting parameters in deep learning}
-\label{sec:orgdad2c23}
+\subsection{Maxout networks\hfill{}\textsc{Interesting}}
+\label{sec:orgfcfad91}
+\url{https://arxiv.org/pdf/1302.4389.pdf}
+
+\begin{itemize}
+\item Architecture directly dessigned for dropout
+\end{itemize}
+\subsection{Predicting parameters in deep learning}
+\label{sec:org32da8aa}
 \url{http://papers.nips.cc/paper/5025-predicting-parameters-in-deep-learning.pdf}
 
-\subsection{{\bfseries\sffamily TODO} Compressing Deep Neural Convolutional Networks using Vector Quantization}
-\label{sec:org67f0d35}
+\begin{itemize}
+\item Weights in neural networks tend to be structured, this can be used.
+\item It is highly likely that a pixel in an image is the weighted average of it's neighbors. If we use this fact we don't have to store weights for every input.
+\item One way of representing a weight matrix in a sparse way is in a factorized format \(W = UV\) however there is redundancy in that \(W = UV = (UQ)(Q^{-1}V)\) so one way of making the hproblem well defined is by selecting U and only learn V, but how?
+\item U becomes a dictionary of basis functions, what is a good choice? We can use previous knowledge to build U, either as a selection of Fourier wavelets that encode a notion of smoothness or as some kernel function.
+\item In the best case we are able to predict more than 95\% of the weights of a network without any drop in accuracy.
+\end{itemize}
+
+\subsection{Compressing Deep Neural Convolutional Networks using Vector Quantization}
+\label{sec:orgf100e6f}
 \url{https://arxiv.org/pdf/1412.6115.pdf}
 
 \begin{itemize}
@@ -257,17 +288,50 @@ hell
 \item[{Vector Quantization}] Has a few variants
 \begin{description}
 \item[{Binarization}] Relly aggresive technique \[ \hat{W_{ij}} = 1 ~ \textit{if} ~ W_{ij} \geq 0 ~ \textit{else} -1 \] This will compress data by a factor 32 since every float32 is represented as a single bit.
-\item[{k-means}] 
+\item[{k-means}] Do k-means on the values in each weight mx, store a code book plus the index of each weight. Compression factor is \(32 / \log_2(k)\) assuming the size of the code book is negligible. Surprisingly good results for such a simple model.
+\item[{product quantization}] From \href{https://lear.inrialpes.fr/pubs/2011/JDS11/jegou\_searching\_with\_quantization.pdf}{(Jegou et al., 2011)}
+\item[{residual quantization}] From \href{http://www.mdpi.com/1424-8220/10/12/11259/htm}{(Chen et al., 2010)}
 \end{description}
 \end{description}
 \end{itemize}
 
-\subsection{{\bfseries\sffamily TODO} Compressing Neural Networks with the Hashing Trick}
-\label{sec:org0f90d51}
-\url{http://proceedings.mlr.press/v37/chenc15.pdf}
+\subsection{Do Deep Nets Really Need to be Deep?}
+\label{sec:orgfdfbdf7}
+\url{http://papers.nips.cc/paper/5484-do-deep-nets-really-need-to-be-deep.pdf}
 
-\subsection{Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding}
-\label{sec:orgdb095f1}
+\begin{itemize}
+\item \emph{Why} do deep convolutional networks work better than shallow fully connected ones? Well they aren't really
+\item We can build mimic models that train on the soft output from larger networks instead of the actual targets. This can give smaller networks with the same performance even tough we could not have trained that smaller network from scratch. This means that the function is \emph{learnable} by a small network but that current training algorithms can't find the right settings!
+\item We train on the logits values before soft max. Easier to learn for the student model if we skip the information loss that passing logits to prob space introduces.
+\item Normalizing targets improves L2 loss slightly.
+\item A linear bottleneck layer added between input and hidden layer, this works as a factorisation of the weight mx and both reduces training time and memory consumption.
+\item model compression works best when the unlabeled set is very large, and when the unlabeled samples do not fall on train points where the teacher model is likely to have overfit.
+\item Why does this work?! Well, erroneous lables may be filtered away by the teacher and the soft lables contain more information than the one-hot alternatives. These mechanisms work like regularization, preventing the student from overfiting.
+\item Important to note that unlabeled data can be used for transfer learning from teacher to student.
+\item The shallow models train faster and more importantly can execute way better in parallel at inference time than the deep models when we can't batch process.
+\end{itemize}
+\subsection{Distilling the Knowledge in a Neural Network}
+\label{sec:org72d8131}
+\url{https://arxiv.org/pdf/1503.02531.pdf}
+\begin{itemize}
+\item Train a large cumbersome model to understand that data and then distill it for deployment.
+\item It is blocking to view the knowledge in the network as the weights learned. If we instead think of it as a mapping from input to output vectors it is easier to see how this could be distilled.
+\item Instead of training on logits the temperature of the softmax is raised until the output is sufficiently smooth.
+\item A combination of soft (output from teacher) and hard (actual) lables can be used with some gain.
+\item Experiments were done by only using 7 and 8 in the transfer set. This gives a huge error of 47.3\% on the test set. Most of this is due to incorrect biases though which is demonstrated by reducing the biases of 7 and 8 by 7.6 (optimizing test performance) and getting 13.2\% errors! This is extraordinary! By never having seen most of the digits and just being told which 7 and 8 look like other digits and how mush the student learns quite well how a 3 looks, whaat?!
+\end{itemize}
+
+\subsection{Compressing Neural Networks with the Hashing Trick}
+\label{sec:org2799262}
+\url{http://proceedings.mlr.press/v37/chenc15.pdf}
+\begin{itemize}
+\item The trend in deep learning is to build bigger and bigger models absorbing ever growing datasets but we want to run stuff on mobile devices with limited memory etc, how do we handle this? HashedNets exploit the inherent redundancy in neural networks and randomly groups connection weights into buckets. All weights in one bucket share one parameter value.
+\item Large models don't fit in the memory of mobile phones and we either have to transfer the data and do testing in the cloud (requires good internet, might share sensitive data, takes time) or train smaller models for mobile devices (bad performance, customers angry). We want to \emph{Compress neural networks}
+\item Get better performance by training on soft targets from bigger NN
+\end{itemize}
+
+\subsection{Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding\hfill{}\textsc{Cool}}
+\label{sec:org810dd3a}
 \url{https://arxiv.org/pdf/1510.00149.pdf}
 
 \begin{itemize}
@@ -282,7 +346,96 @@ hell
 \item Weights are clustered and and the weights within each cluster are set to be the same (mean of the real weights). a final round of training is then performed to make these centroid weights find their correct values.
 \end{itemize}
 
-\subsection{{\bfseries\sffamily TODO} Learning both Weights and Connections for Efficient Neural Networks}
-\label{sec:orgf5f5968}
+\subsection{Learning both Weights and Connections for Efficient Neural Networks}
+\label{sec:org21d3f5d}
 \url{http://papers.nips.cc/paper/5784-learning-both-weights-and-connections-for-efficient-neural-network.pdf}
+
+\begin{itemize}
+\item Neural network are heavy and slow, yeah, we know.
+\item Prohibative for mobile, especially if we look at energy cost. Energy consumption is mainly form memory access and if we cant fit on the on chip SRAM (5 pJ/access) we have to go to off chip DRAM (640 pJ/access). So if we can fit our models on SRAM we can save a factor 100 on power for some applications.
+\item Pruning of unimportant weights and retraining. Some biological similarity in the first months of a childs development.
+\item Prune weights below a threshold, retrain after pruning.
+\item L1 gives better performance before retraining since some wieghts are already forced to 0, however the quality of kept weights are poorer and after retraining we get better results from L2
+\item Dropout rate has to be reduced for retraining proposed equation for this provided.
+\item Iterative pruning finally gives optimal results.
+\item Pruning threshold is taken as a quality parameter multiplied by the std of the layers weights.
+\item retrain with 1/10 learning rate.
+\end{itemize}
+
+\subsection{FitNets: Hints for Thin Deep Nets\hfill{}\textsc{Cool}}
+\label{sec:orgb8253d6}
+\url{https://arxiv.org/abs/1412.6550}
+
+\begin{itemize}
+\item Students are thin and deep networks, fewer parameters and faster execution
+\item Other approches flatten the networks or keep the same depth but deepth is very expressive, why not go deeper?
+\item Supervission at intermidiate layers has proven to be helpful (Chen-Yu et al., 2014; Szegedy et al., 2014; Gulcehre \& Bengio, 2013)
+\item Student is thiner and deeper than teacher, also gets intermediate-level hints to learn good representations.
+\item Trains like destilation with relaxed softmax, not directly on logits and loss is sum over true and soft labels
+\item Can't train deeper students directly
+\begin{itemize}
+\item Hints solve this problem by making a intermediate layer in the student network model a intermediate layer in the teacher. This is a form of regularization and the deeper the layer we link is the stiffer the student becomes. In the paper the middle layers of student and teacher are linked.
+\item The teacher layer might be bigger than the student one so a regressor is added to make the layers comparable.
+\item The FitNet is then trained up untill the guided layer by minimizing L2 error between teachers hint layer and students guided layer with added regressor.
+\item A conv regressor is used.
+\end{itemize}
+\item Trained stage-wise, first train hints then train the entire network to minimize destilation loss.
+\item Relation to curricilum learning
+\begin{itemize}
+\item The weight of the teachers error \(\lambda\) is annealed linearly during training allowing for examples on which the teacher is unsure have a litle impact early on and get more and more impactful as it decays. This means that easy samples are weighted heavily in the start making for a solid foundation and then hard samples get their place and the network keeps improving.
+\item Uses maxout layers \url{https://arxiv.org/pdf/1302.4389.pdf}
+\item Given a computational budget deeper networks are better than shallow ones
+\end{itemize}
+\end{itemize}
+\subsection{DO DEEP CONVOLUTIONAL NETS REALLY NEED TO BE DEEP AND CONVOLUTIONAL?}
+\label{sec:org354974a}
+\url{https://arxiv.org/pdf/1603.05691.pdf}
+
+\begin{itemize}
+\item Yes they do! oh, crap we can't just flatten out everything :(
+\item Ba and Cuna (Do deep nets really..) demonstrate good results on TMIT that is not that dependant on convolution however they have a harder time working on CIFAR10
+\item Bayesian optimization to explore architecture and hyper param space implementation \href{https://github.com/JasperSnoek/spearmint}{Spearmint}
+\item Checkout \emph{FitNets (romero et al 2015)}
+\item Teacher ensamble gets 93.8\% on CIFAR10
+\item No weight decay or dropout for students, has proven to just hinder performance
+\item Huge gap between students with and without convolutions, they appear to be crucial. The gains from soft labels also decreese with student models more similar to the teacher.
+\item Although the shallow models are not as accurate as the deep ones they are still the best trained in their respective categories.
+\item Dropout gave consitantly worse results when training the students and indicates that soft lables work as a powerful regualizer
+\end{itemize}
+\subsection{MobileNets: Effincient Convolutional Neural Networks for Mobile Vision Applications\hfill{}\textsc{Cool}}
+\label{sec:orgde04d1b}
+\url{https://arxiv.org/pdf/1704.04861.pdf}
+Some keras code \url{https://github.com/keras-team/keras/blob/master/keras/applications/mobilenet.py}
+\begin{itemize}
+\item Focus on speed but also yeilds small networks
+\item \emph{Depthwise serparable convolutions}
+\item Litle regularization and data augmentation used since small models don't suffer that badly from overfitting
+\item width multiplier \(\alpha\) is used to define a new uniformly thined network, has to be retrained from scratch
+\item resolution multiplier \(\rho\) usually set implicilty by scaling input images
+\item Also used with destilation and works great!
+\end{itemize}
+\section{Meetings}
+\label{sec:org9d50474}
+\subsection{{\bfseries\sffamily DONE} Meeting 1}
+\label{sec:orgb57d439}
+\begin{itemize}
+\item segmentation, few classes like four
+\item lots of variation in data
+\item good data set of forgorund, rgb feet images from scanners --> synthetic dataset
+\item Testing image segmentation state of the art
+\item Realtime segmentation = realtime feedback
+\item One possible output is running on the scanners
+\item Fine to but images in repport, same for numbers if anything we want to brag about it
+\item For specification more detail and do time plan
+\item Formalize for specification, what is good?
+\item This is a bit open ended what we can expect
+\item Ensamble as teacher might expect better than individuals for
+\item hintsnet
+\item Checkpoints
+\begin{itemize}
+\item Do specification mention options
+\item Do related work
+\item Halfway seminar
+\end{itemize}
+\end{itemize}
 \end{document}
