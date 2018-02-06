@@ -1,4 +1,4 @@
-% Created 2018-02-02 fre 17:06
+% Created 2018-02-06 tis 10:06
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -14,12 +14,13 @@
 \usepackage{amssymb}
 \usepackage{capt-of}
 \usepackage{hyperref}
-\author{Axel Demborg \texttt{demborg@kth.se}}
+\newcommand{\bibentry}[1]{\cite{#1}}
+\author{Axel Demborg \texttt{demborg@kth}}
 \date{\today}
 \title{Specification: Thesis project}
 \hypersetup{
- pdfauthor={Axel Demborg},
- pdftitle={},
+ pdfauthor={Axel Demborg \texttt{demborg@kth}},
+ pdftitle={Specification: Thesis project},
  pdfkeywords={},
  pdfsubject={},
  pdfcreator={Emacs 25.3.1 (Org mode 9.1.6)}, 
@@ -29,110 +30,124 @@
 \maketitle
 
 \section{Formalities}
-\label{sec:orgc0aa9f1}
+\label{sec:org09328ac}
 \begin{description}
 \item[{Preliminary title}] Efficient object segmentation on mobile phones
 \item[{Supervisor at CSS}] Hossein Azizpour
 \item[{Company}] Volumental
 \item[{Supervisor at company}] Alper Aydemir
-%% \item[{Date}] \textit{<2018-02-02 fre> }
 \end{description}
 
 \section{Background and objective}
-\label{sec:org4331d32}
+\label{sec:orge90c554}
 This project will be carried out at Volumental a Stockholm-based computer vision company from RPL, KTH active in 3D body scanning and product recommendation based on 3D measurements in footwear.
 
-For 3D scanning of human bodies specialized hardware has traditionally been used. However with the recent developments in convolutional neural networks (CNN) where high quality object segmentation\footnote{\href{https://blog.athelas.com/a-brief-history-of-cnns-in-image-segmentation-from-r-cnn-to-mask-r-cnn-34ea83205de4}{A brief history of CNNS in image segmentation}} and pose estimation\footnote{\url{https://arxiv.org/pdf/1703.06870.pdf}} have been performed from RGB images it should be possible to do segmentation of human bodies using the commodity cameras in smartphones. An issue for mobile deployments of these networks however is their shear size meaning that they can't fit in the on-chip SRAM and instead have to reside in the power hungry of-chip DRAM making the application up to 100 times more power consuming\footnote{\url{http://papers.nips.cc/paper/5784-learning-both-weights-and-connections-for-efficient-neural-network.pdf}}. An other issue concerns the computational load of the models and means that the networks can't run in real-time on the relatively scarce processing power of a smartphone.
+For 3D scanning of human bodies specialized hardware has traditionally been used. However with the recent developments in convolutional neural networks (CNN) where high quality object segmentation\bibentry{BriefHistory} and pose estimation\bibentry{he2017mask} have been performed from RGB images it should be possible to do segmentation of human bodies using the commodity cameras in smartphones. An issue for mobile deployments of these networks however is their shear size meaning that they can't fit in the on-chip SRAM and instead have to reside in the power hungry of-chip DRAM making the application up to 100 times more power consuming\bibentry{han2015learning}. An other issue concerns the computational load of the models and means that the networks can't run in real-time on the relatively scarce processing power of a smartphone.
 
 Several approaches for compressing and speeding up neural networks have been proposed though where some of most prominent are: 
 \begin{description}
-\item[{Distillation}] Using a big \emph{teacher} network that is good at the task to help train a smaller \emph{student} network, yielding superior performance to training the student network on its own\footnote{\url{https://arxiv.org/abs/1412.6550}\label{org07d7f6b}}.
-\item[{Approximating convolutions}] There have been several approaches to approximate the convolutional layers so that they require less parameters and processing time, a notable example of this is \emph{depthwise separable convolutions}\footnote{\url{https://arxiv.org/pdf/1704.04861.pdf}\label{org6f50c41}}.
-\item[{Pruning and quantizing weight matrices}] There has proven to be a large amount of redundancy in neural networks meaning that a big amount of weights can be pruned away and weight sharing performed without loss in accuracy\footnote{\url{https://arxiv.org/pdf/1510.00149.pdf}\label{org306cf5e}}
+\item[{Distillation}] Using a big \emph{teacher} network that is good at the task to help train a smaller \emph{student} network, yielding superior performance to training the student network on its own\bibentry{bucilua2006model}.
+\item[{Approximating convolutions}] There have been several approaches to approximate the convolutional layers so that they require less parameters and processing time, a notable example of this is \emph{depthwise separable convolutions}\bibentry{howard2017mobilenets}.
+\item[{Pruning and quantizing weight matrices}] There has proven to be a large amount of redundancy in neural networks meaning that a big amount of weights can be pruned away and weight sharing performed without loss in accuracy\bibentry{denil2013predicting}.
 \end{description}
 
-The objective of the project is to evaluate if state of the art neural networks for object segmentation can be compressed to run in real-time on modern smartphone without significant losses in accuracy. Such networks could then be used to speedup the scanning process in the companies dedicated scanners or be part of the foundation for a mobile application for at home body scanning currently in the works at the company.
+The objective of the project is to evaluate if state of the art neural networks for object segmentation can be compressed to run in real-time on modern smartphones without significant losses in accuracy. Such networks could then be used to speedup the scanning process in the companies dedicated scanners or be part of the foundation for a mobile application for at home body scanning currently in the works at the company.
 
 
 \section{Research question and method}
-\label{sec:orgd6c4238}
+\label{sec:org2517464}
 \subsection{Research question}
-\label{sec:org6bd8a0c}
+\label{sec:orgd145f35}
 Can modern neural networks for object segmentation be compressed so that they run in real-time on modern smartphone hardware without significant reduction in performance?
+
+\subsection{Specified problem definition}
+\label{sec:org0db647c}
+The assignment entails compressing neural networks, both in the regards of their memory footprint and computational load so that they can fit on mobile devices. Since the aim of the project is to perform this compression with little or no reduction in performance the challenges lie in finding redundancy in storage and computation of the models and removing this.
+
+\subsection{Examination method}
+\label{sec:orge44549d}
+The methods that will be evaluated initially are the ones listed in the background section above. 
+
+\subsection{Expected scientific results}
+\label{sec:org1854033}
+It is expected that the compressed models will achieve very similar results to the large parent models. This is due to the fact that there has been proven to exist a large amount of redundancy in neural networks that can potentially be removed without any loss in accuracy. Further, ensembles of multiple parent models could be used as teachers for the new networks allowing them to learn more powerful representations than any of the single parent models.
 \section{Evaluation and news value}
-\label{sec:org2f519ba}
+\label{sec:orgcdf6fa6}
 \subsection{Evaluation}
-\label{sec:org163472d}
-The method will preliminary be evaluated by calculating the \emph{Intersect over Union} (IoU) between the segmentation produced by the compressed network and comparing that to the same metric on the uncompressed network. The object of project has been fulfilled if the compressed network can run in real-time on modern smartphone hardware while at the same time achieving results on the same level as the uncompressed network or only slightly behind.
+\label{sec:orgbf2fa7a}
+The method will preliminary be evaluated by calculating the \emph{Intersect over Union} (IoU) between the segmentation produced by the compressed network and comparing that to the same metric on the uncompressed network. The object of project has been fulfilled if the compressed network can rufeh --bg-scale \$HOME/Pictures/backgrounds/koltrast.jpgn in real-time on modern smartphone hardware while at the same time achieving results on the same level as the uncompressed network or only slightly behind.
 
 \subsection{News value}
-\label{sec:orgb8732a2}
+\label{sec:org1e17d79}
 The ability to run powerful neural networks on mobile devices is something of interest in many domains, from being able to run speech recognition and translation offline and to applications more like the one where this project is to be applied in computer vision. As such the work will be of interest to anyone working on getting neural networks to work better on mobile devices.
 
 \section{Pre-study}
-\label{sec:orgb0c87a4}
-The pre-study first focuses on getting a solid understanding for the problem of object segmentation, some notable papers here are \emph{Fast R-CNN}\footnote{\url{https://www.cv-foundation.org/openaccess/content\_iccv\_2015/papers/Girshick\_Fast\_R-CNN\_ICCV\_2015\_paper.pdf}}, \emph{Mask R-CNN}\footnote{\url{https://arxiv.org/pdf/1703.06870.pdf}} and \emph{SegNet\footnote{\url{https://arxiv.org/pdf/1511.00561.pdf}}}.
-There is then a focus on different approaches for model compression where some notable papers are \emph{Deep Compression}\textsuperscript{\ref{org306cf5e}}, \emph{FitNets}\textsuperscript{\ref{org07d7f6b}} and \emph{MobileNets}\textsuperscript{\ref{org6f50c41}}. 
+\label{sec:orgb928101}
+The pre-study first focuses on getting a solid understanding for the problem of object segmentation, some notable papers here are \emph{Fast R-CNN}\bibentry{girshick2015fast}, \emph{Mask R-CNN}\bibentry{he2017mask} and \emph{SegNet}\bibentry{badrinarayanan2015segnet}.
+There is then a focus on different approaches for model compression where some notable papers are \emph{Deep Compression}\bibentry{han2015deep}, \emph{FitNets}\bibentry{romero2014fitnets} and \emph{MobileNets}\bibentry{howard2017mobilenets}. 
 
 \section{Conditions}
-\label{sec:org1fa6ef1}
+\label{sec:org7706971}
 \subsection{Required resources}
-\label{sec:orgc5305fa}
+\label{sec:org86c51dc}
 \begin{itemize}
 \item A pretrained model for object segmentation that is to be compressed.
 \item A dataset of images that can be used for transferring knowledge from the pretrained network to the compressed network and to fine-tune the compressed network.
 \item Computational resources for training the networks.
 \end{itemize}
 \subsection{What is to be done}
-\label{sec:org3e8e548}
+\label{sec:org7f53bfd}
 The project aims to take pretrained models for object segmentation and compress them so that they can run smoothly on modern smartphones.
 \subsection{Collaboration with external supervisor}
-\label{sec:org3491e39}
+\label{sec:org1c53199}
 The external supervisor will be the one designing the big networks that are to be compressed and will be available for discussion and support on an ongoing basis.
 \section{Schedule}
-\label{sec:orgef13e6a}
+\label{sec:org3204097}
 
 \subsection{Pre study}
-\label{sec:org6ce9b01}
-\textbf{Weeks: 3 and 5-7}
+\label{sec:orgc7d6ae1}
+\emph{Weeks: 3 and 5-7}
 
 \subsubsection{Goals}
-\label{sec:orgc0419cd}
+\label{sec:orgcc295ac}
 \begin{itemize}
-\item Get a thurough understanding for the field and its challanges have been acquired.
 \item A solid plan for what methods will be used and how they will be applied has been formulated.
-\item A first draft for the related works section of the report has been written.
+\item The related works section of the report has been written.
+\item A presentation of the literature study is performed.
 \end{itemize}
 
 \subsection{Experiments}
-\label{sec:org155cb24}
-\textbf{Weeks: 8-12}
+\label{sec:orgd9c4182}
+\emph{Weeks: 8-12}
 
 
 \subsubsection{Goals}
-\label{sec:org957b936}
+\label{sec:orgd25bd37}
 \begin{itemize}
 \item A \emph{halfway seminar} with a presentation about the work done thus far is given to the supervisors.
 \item The methods that will be used have been selected.
 \end{itemize}
 \subsection{Implementation}
-\label{sec:org959df57}
-\textbf{Weeks: 13-17}
+\label{sec:orgb1cd075}
+\emph{Weeks: 13-17}
 
 \subsubsection{Goals}
-\label{sec:orge58115e}
+\label{sec:orgd67a727}
 \begin{itemize}
 \item A working implementation of the project has been created.
 \end{itemize}
 
 \subsection{Report}
-\label{sec:org50fc1f2}
-\textbf{Weeks: 18-22}
+\label{sec:orgd5c9b17}
+\emph{Weeks: 18-22}
 
 \subsubsection{Goals}
-\label{sec:org8156ff7}
+\label{sec:orga282c70}
 \begin{itemize}
 \item A finished report has been written
 \item A presentation is prepared and ready to be performed.
 \end{itemize}
+
+\bibliography{bibliography} 
+\bibliographystyle{plain}
 \end{document}

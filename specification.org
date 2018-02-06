@@ -1,25 +1,25 @@
-# #+TITLE: Specification: Thesis project
-# #+AUTHOR: Axel Demborg \texttt{demborg@kth}
-# #+OPTIONS: toc:nil 1 num:nil
+#+TITLE: Specification: Thesis project
+#+AUTHOR: Axel Demborg \texttt{demborg@kth}
+#+LATEX_HEADER: \newcommand{\bibentry}[1]{\cite{#1}}
+#+OPTIONS: toc:nil 1 num:nil
 
 * Formalities
 + Preliminary title :: Efficient object segmentation on mobile phones
 + Supervisor at CSS :: Hossein Azizpour
 + Company :: Volumental
-+ Super visor at company :: Alper Aydemir
-+ Date :: <2018-02-02 fre> 
++ Supervisor at company :: Alper Aydemir
 
 * Background and objective
 This project will be carried out at Volumental a Stockholm-based computer vision company from RPL, KTH active in 3D body scanning and product recommendation based on 3D measurements in footwear.
 
-For 3D scanning of human bodies specialized hardware has traditionally been used. However with the recent developments in convolutional neural networks (CNN) where high quality object segmentation[fn:1] and pose estimation[fn:2] have been performed from RGB images it should be possible to do segmentation of human bodies using the commodity cameras in smartphones. An issue for mobile deployments of these networks however is their shear size meaning that they can't fit in the on-chip SRAM and instead have to reside in the power hungry of-chip DRAM making the application up to 100 times more power consuming[fn:3]. An other issue concerns the computational load of the models and means that the networks can't run in real-time on the relatively scarce processing power of a smartphone.
+For 3D scanning of human bodies specialized hardware has traditionally been used. However with the recent developments in convolutional neural networks (CNN) where high quality object segmentation[[bibentry:BriefHistory]] and pose estimation[[bibentry:he2017mask]] have been performed from RGB images it should be possible to do segmentation of human bodies using the commodity cameras in smartphones. An issue for mobile deployments of these networks however is their shear size meaning that they can't fit in the on-chip SRAM and instead have to reside in the power hungry of-chip DRAM making the application up to 100 times more power consuming[[bibentry:han2015learning]]. An other issue concerns the computational load of the models and means that the networks can't run in real-time on the relatively scarce processing power of a smartphone.
 
 Several approaches for compressing and speeding up neural networks have been proposed though where some of most prominent are: 
-+ Distillation :: Using a big /teacher/ network that is good at the task to help train a smaller /student/ network, yielding superior performance to training the student network on its own[fn:4].
-+ Approximating convolutions :: There have been several approaches to approximate the convolutional layers so that they require less parameters and processing time, a notable example of this is /depthwise separable convolutions/[fn:5].
-+ Pruning and quantizing weight matrices :: There has proven to be a large amount of redundancy in neural networks meaning that a big amount of weights can be pruned away and weight sharing performed without loss in accuracy[fn:6] 
++ Distillation :: Using a big /teacher/ network that is good at the task to help train a smaller /student/ network, yielding superior performance to training the student network on its own[[bibentry:bucilua2006model]].
++ Approximating convolutions :: There have been several approaches to approximate the convolutional layers so that they require less parameters and processing time, a notable example of this is /depthwise separable convolutions/[[bibentry:howard2017mobilenets]].
++ Pruning and quantizing weight matrices :: There has proven to be a large amount of redundancy in neural networks meaning that a big amount of weights can be pruned away and weight sharing performed without loss in accuracy[[bibentry:denil2013predicting]]. 
 
-The objective of the project is to evaluate if state of the art neural networks for object segmentation can be compressed to run in real-time on modern smartphones HINTwithout significant losses in accuracy. Such networks could then be used to speedup the scanning process in the companies dedicated scanners or be part of the foundation for a mobile application for at home body scanning currently in the works at the company.
+The objective of the project is to evaluate if state of the art neural networks for object segmentation can be compressed to run in real-time on modern smartphones without significant losses in accuracy. Such networks could then be used to speedup the scanning process in the companies dedicated scanners or be part of the foundation for a mobile application for at home body scanning currently in the works at the company.
 
 
 * Research question and method
@@ -35,16 +35,25 @@ The objective of the project is to evaluate if state of the art neural networks 
 
 ** Research question
    Can modern neural networks for object segmentation be compressed so that they run in real-time on modern smartphone hardware without significant reduction in performance?
+
+** Specified problem definition
+   The assignment entails compressing neural networks, both in the regards of their memory footprint and computational load so that they can fit on mobile devices. Since the aim of the project is to perform this compression with little or no reduction in performance the challenges lie in finding redundancy in storage and computation of the models and removing this.
+
+** Examination method
+   The methods that will be evaluated initially are the ones listed in the background section above. 
+
+** Expected scientific results
+   It is expected that the compressed models will achieve very similar results to the large parent models. This is due to the fact that there has been proven to exist a large amount of redundancy in neural networks that can potentially be removed without any loss in accuracy. Further, ensembles of multiple parent models could be used as teachers for the new networks allowing them to learn more powerful representations than any of the single parent models.
 * Evaluation and news value
 ** Evaluation
-   The method will preliminary be evaluated by calculating the /Intersect over Union/ (IoU) between the segmentation produced by the compressed network and comparing that to the same metric on the uncompressed network. The object of project has been fulfilled if the compressed network can run in real-time on modern smartphone hardware while at the same time achieving results on the same level as the uncompressed network or only slightly behind.
+   The method will preliminary be evaluated by calculating the /Intersect over Union/ (IoU) between the segmentation produced by the compressed network and comparing that to the same metric on the uncompressed network. The object of project has been fulfilled if the compressed network can rufeh --bg-scale $HOME/Pictures/backgrounds/koltrast.jpgn in real-time on modern smartphone hardware while at the same time achieving results on the same level as the uncompressed network or only slightly behind.
 
 ** News value
    The ability to run powerful neural networks on mobile devices is something of interest in many domains, from being able to run speech recognition and translation offline and to applications more like the one where this project is to be applied in computer vision. As such the work will be of interest to anyone working on getting neural networks to work better on mobile devices.
 
 * Pre-study
-The pre-study first focuses on getting a solid understanding for the problem of object segmentation, some notable papers here are /Fast R-CNN/[fn:7], /Mask R-CNN/[fn:8] and /SegNet[fn:9]/.
-There is then a focus on different approaches for model compression where some notable papers are /Deep Compression/[fn:6], /FitNets/[fn:4] and /MobileNets/[fn:5]. 
+The pre-study first focuses on getting a solid understanding for the problem of object segmentation, some notable papers here are /Fast R-CNN/[[bibentry:girshick2015fast]], /Mask R-CNN/[[bibentry:he2017mask]] and /SegNet/[[bibentry:badrinarayanan2015segnet]].
+There is then a focus on different approaches for model compression where some notable papers are /Deep Compression/[[bibentry:han2015deep]], /FitNets/[[bibentry:romero2014fitnets]] and /MobileNets/[[bibentry:howard2017mobilenets]]. 
 
 * Conditions
 ** Required resources
@@ -58,41 +67,33 @@ There is then a focus on different approaches for model compression where some n
 * Schedule
 
 ** Pre study
-   *Weeks: 3 and 5-7*
+   /Weeks: 3 and 5-7/
    
 *** Goals
-   + Get a thurough understanding for the field and its challanges have been acquired.
    + A solid plan for what methods will be used and how they will be applied has been formulated.
-   + A first draft for the related works section of the report has been written.
+   + The related works section of the report has been written.
+   + A presentation of the literature study is performed.
 
 ** Experiments
-   *Weeks: 8-12*
+   /Weeks: 8-12/
 
 
 *** Goals 
     + A /halfway seminar/ with a presentation about the work done thus far is given to the supervisors.
     + The methods that will be used have been selected.
 ** Implementation
-   *Weeks: 13-17*
+   /Weeks: 13-17/
    
 *** Goals
     + A working implementation of the project has been created.
 
 ** Report
-   *Weeks: 18-22*
+   /Weeks: 18-22/
 
 *** Goals
     + A finished report has been written
     + A presentation is prepared and ready to be performed.
 
-* Footnotes
-[fn:10] https://arxiv.org/pdf/1510.00149.pdf
-[fn:9] https://arxiv.org/pdf/1511.00561.pdf
-[fn:8] https://arxiv.org/pdf/1703.06870.pdf
-[fn:7] https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf
-[fn:6] https://arxiv.org/pdf/1510.00149.pdf
-[fn:5] https://arxiv.org/pdf/1704.04861.pdf
-[fn:4] https://arxiv.org/abs/1412.6550
-[fn:3] http://papers.nips.cc/paper/5784-learning-both-weights-and-connections-for-efficient-neural-network.pdf
-[fn:2] https://arxiv.org/pdf/1703.06870.pdf
-[fn:1] [[https://blog.athelas.com/a-brief-history-of-cnns-in-image-segmentation-from-r-cnn-to-mask-r-cnn-34ea83205de4][A brief history of CNNS in image segmentation]]
+
+[[bibliography:bibliography.bib]] 
+[[bibliographystyle:plain]]

@@ -27,7 +27,8 @@
       + Let the pooling layers overlap, makes the network slightly harder to overfit
     + Combating overfiting, the dataset has 1.2 million images and we have 60 million params in the model making overfiting quite likely. Hence some thought had to be put into reducing overfit.
       + Data augmentation was done to artificially enlarge the training set. Transformed images are calculated on the CPU while the previous batch is run on the GPU and thus this is practically free computationally. Two different label preserving approaches were used. 
-        + translations and horizontal reflections where random 224 by 224 patches were extracted from the 256 by 256 images, along with their reflections. The resulting samples are highly correlated but this is really easy to do and reduces overfiting significantly
+        + translations and horizontal reflections where random 224 by 224 patches were extracted from the 256 by 256 images, alongImproving the
+speed of neural networks on CPUs. with their reflections. The resulting samples are highly correlated but this is really easy to do and reduces overfiting significantly
         + Altering intensities of RGB values, this tries to capture the effect that a object is the same object independent of the intensity or color of the illumination.
       + Dropout was performed on the first two fully connected layers with prob 50% and this reduced overfiting a lot. This however doubles the iterations to convergence (approximately).
     + Training was performed using SGD with a minibatch size of 128. The momentum was set to 0.9 and a weight decay was introduced and set to 0.0005. All weights were initialized from a zero mean, 0.01 std Gaussian and some layers got weights initialized to 1 which helps the ReLU:s and the rest were initialized to 0. Learning rate was initialized to 0.01 and reduced three times during training.
@@ -179,7 +180,16 @@
     + Multiplications are the most space and power hungry operations in deep neural networks
     + low precision multiplications are sufficient not only for running trained networks but also for training
     + Dynamic fixed point use a common exponent for multiple values, good trade of between Floating point and Fixed point
+    + Also uses maxout units
+    + Shows that 16bit floating or dynamic point works good
+*** Deep learning with Limited Numerical Precision
+    http://proceedings.mlr.press/v37/gupta15.pdf
 
+    + 16 bit seems to work as well as 32 bit for training
+    + Stochastic rounding is central to get this working on deep networks
+*** Improving the speed of neural networks on CPUs
+   + mostly about stuff that can work faster if we program in C, not gonna do that though
+   + Easy to convert to low precision int /if/ the activations are probabilities (from sigmoid) and hence bounded between 0 and 1, not as obvious with say relu or maxout.
 *** Quantized neural networks: Training Neural Networks with low Precision Weights and Activations
     https://arxiv.org/pdf/1609.07061.pdf
 
@@ -254,6 +264,12 @@
     + retrain with 1/10 learning rate.
 
 ** Teacher-Student learning
+
+*** TODO Model Compression
+    http://www.niculescu-mizil.org/papers/rtpp364-bucila.rev2.pdf
+
+    + This is where training a smaller network to mimic a larger one was introduced. Train on a ensamble of networks
+
 *** Do Deep Nets Really Need to be Deep?
     http://papers.nips.cc/paper/5484-do-deep-nets-really-need-to-be-deep.pdf
 

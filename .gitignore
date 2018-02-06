@@ -13,3 +13,5 @@ code/testing/kerasSaved
 *.gz
 Report/example*
 Report/exempel*
+*.blg
+*.fdb*
