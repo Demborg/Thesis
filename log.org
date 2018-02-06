@@ -329,7 +329,16 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
    + Can determine the suitable amount of bits to use for string the weights
    + Is bayesian with all its gains and drawbacks.
    + Clustering of weights is great at compressing data but is slow when we need to rebuild the matrices during testing.
- 
+** TODO Reading list
+*** Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
+    http://proceedings.mlr.press/v37/ioffe15.pdf
+*** FLATTENED CONVOLUTIONAL NEURAL NETWORKS FOR FEEDFORWARD ACCELERATION
+    https://arxiv.org/pdf/1412.5474.pdf
+*** SqueezeNet
+    https://arxiv.org/abs/1602.07360
+*** http://www.di.ens.fr/data/publications/papers/phd_sifre.pdf
+*** Enhanced MLP performance and fault tolerance resulting from synaptic weight noise during training
+    https://pdfs.semanticscholar.org/60e6/6781bf17f8103bbc57fc5daeb6fbc5e4b910.pdf
 * Meetings 
 ** DONE Meeting 1 
    CLOSED: [2018-02-02 fre 13:54]
