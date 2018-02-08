@@ -5,14 +5,14 @@
 
 * Formalities
 + Preliminary title :: Efficient object segmentation on mobile phones
-+ Supervisor at CSS :: Hossein Azizpour
++ Supervisor at EECS :: Hossein Azizpour
 + Company :: Volumental
 + Supervisor at company :: Alper Aydemir
 
 * Background and objective
 This project will be carried out at Volumental a Stockholm-based computer vision company from RPL, KTH active in 3D body scanning and product recommendation based on 3D measurements in footwear.
 
-For 3D scanning of human bodies specialized hardware has traditionally been used. However with the recent developments in convolutional neural networks (CNN) where high quality object segmentation[[bibentry:BriefHistory]] and pose estimation[[bibentry:he2017mask]] have been performed from RGB images it should be possible to do segmentation of human bodies using the commodity cameras in smartphones. An issue for mobile deployments of these networks however is their shear size meaning that they can't fit in the on-chip SRAM and instead have to reside in the power hungry of-chip DRAM making the application up to 100 times more power consuming[[bibentry:han2015learning]]. An other issue concerns the computational load of the models and means that the networks can't run in real-time on the relatively scarce processing power of a smartphone.
+For 3D scanning of human bodies specialized hardware has traditionally been used. However with the recent developments in convolutional neural networks (CNN) where high quality object segmentation[[bibentry:BriefHistory]] and pose estimation[[bibentry:he2017mask]] have been performed from RGB images it should be possible to do online segmentation of human bodies on smartphones. An issue for mobile deployments of these networks however is their shear size meaning that they can't fit in the on-chip SRAM and instead have to reside in the power hungry off-chip DRAM making the application up to 100 times more power consuming[[bibentry:han2015learning]]. Another issue concerns the computational load of the models and means that the networks can't run in real-time on the relatively slow processing power of a smartphone.
 
 Several approaches for compressing and speeding up neural networks have been proposed though where some of most prominent are: 
 + Distillation :: Using a big /teacher/ network that is good at the task to help train a smaller /student/ network, yielding superior performance to training the student network on its own[[bibentry:bucilua2006model]].
@@ -34,7 +34,7 @@ The objective of the project is to evaluate if state of the art neural networks 
 # with the practice of running it on mobile devices.
 
 ** Research question
-   Can modern neural networks for object segmentation be compressed so that they run in real-time on modern smartphone hardware without significant reduction in performance?
+   Evaluate how different methods for model compression and optimization effect neural networks for image segmentation in terms of inference speed, memory consumption and accuracy.
 
 ** Specified problem definition
    The assignment entails compressing neural networks, both in the regards of their memory footprint and computational load so that they can fit on mobile devices. Since the aim of the project is to perform this compression with little or no reduction in performance the challenges lie in finding redundancy in storage and computation of the models and removing this.
@@ -46,14 +46,15 @@ The objective of the project is to evaluate if state of the art neural networks 
    It is expected that the compressed models will achieve very similar results to the large parent models. This is due to the fact that there has been proven to exist a large amount of redundancy in neural networks that can potentially be removed without any loss in accuracy. Further, ensembles of multiple parent models could be used as teachers for the new networks allowing them to learn more powerful representations than any of the single parent models.
 * Evaluation and news value
 ** Evaluation
-   The method will preliminary be evaluated by calculating the /Intersect over Union/ (IoU) between the segmentation produced by the compressed network and comparing that to the same metric on the uncompressed network. The object of project has been fulfilled if the compressed network can rufeh --bg-scale $HOME/Pictures/backgrounds/koltrast.jpgn in real-time on modern smartphone hardware while at the same time achieving results on the same level as the uncompressed network or only slightly behind.
+   The method will preliminary be evaluated by calculating the /Intersect over Union/ (IoU) between the segmentation produced by the compressed network and comparing that to the same metric on the uncompressed network. The object of project has been fulfilled if the compressed network can run in real-time on modern smartphone hardware while at the same time achieving results on the same level as the uncompressed network or only slightly behind.
 
 ** News value
    The ability to run powerful neural networks on mobile devices is something of interest in many domains, from being able to run speech recognition and translation offline and to applications more like the one where this project is to be applied in computer vision. As such the work will be of interest to anyone working on getting neural networks to work better on mobile devices.
 
 * Pre-study
 The pre-study first focuses on getting a solid understanding for the problem of object segmentation, some notable papers here are /Fast R-CNN/[[bibentry:girshick2015fast]], /Mask R-CNN/[[bibentry:he2017mask]] and /SegNet/[[bibentry:badrinarayanan2015segnet]].
-There is then a focus on different approaches for model compression where some notable papers are /Deep Compression/[[bibentry:han2015deep]], /FitNets/[[bibentry:romero2014fitnets]] and /MobileNets/[[bibentry:howard2017mobilenets]]. 
+There is then a focus on different approaches for model compression where some notable papers are /Deep Compression/[[bibentry:han2015deep]], /FitNets/[[bibentry:romero2014fitnets]].
+There will also attention spent on understanding the previous work done in the area of visual recognition on mobile devices, notable papers here are /MobileNets/[[bibentry:howard2017mobilenets]] and ENet[[bibentry:paszke2016enet]]. 
 
 * Conditions
 ** Required resources
@@ -63,7 +64,7 @@ There is then a focus on different approaches for model compression where some n
 ** What is to be done
    The project aims to take pretrained models for object segmentation and compress them so that they can run smoothly on modern smartphones.
 ** Collaboration with external supervisor
-   The external supervisor will be the one designing the big networks that are to be compressed and will be available for discussion and support on an ongoing basis.
+   The external supervisor will be available for discussion and support on an ongoing basis.
 * Schedule
 
 ** Pre study

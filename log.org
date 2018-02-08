@@ -197,7 +197,7 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
     + Weights and activations constrained to -1 and 1
     + Binarization either sign or a stochastic process, the deterministic version is faster and easier to work with so it is preferred over the stochastic version even though that has some nice theoretical advantages.
     + Gradients still calculated as realvalued
-    
+      
 ** Alternative Convolution
 *** Dialated Convolutions
     https://arxiv.org/pdf/1511.07122.pdf
@@ -207,6 +207,7 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
     + Random initialization works poorly, instead do some sort of identity initialization.
     + We still have to train the models for image classification in the start meaning networks with such proprieties will stay popular.
 *** MobileNets: Effincient Convolutional Neural Networks for Mobile Vision Applications :Cool:
+    https://research.googleblog.com/2017/06/mobilenets-open-source-models-for.html
     https://arxiv.org/pdf/1704.04861.pdf
     Some keras code https://github.com/keras-team/keras/blob/master/keras/applications/mobilenet.py
     + Focus on speed but also yeilds small networks
@@ -215,6 +216,41 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
     + width multiplier \(\alpha\) is used to define a new uniformly thined network, has to be retrained from scratch
     + resolution multiplier \(\rho\) usually set implicilty by scaling input images
     + Also used with destilation and works great!
+*** FLATTENED CONVOLUTIONAL NEURAL NETWORKS FOR FEEDFORWARD ACCELERATION
+    https://arxiv.org/pdf/1412.5474.pdf
+
+    + Designed for fast feed forward
+    + 2 times speedup
+    + Normally networks run on cloud not on device, requires connection etc
+    + Replace WxHxC filters with consecutive Wx1x1, 1xHx1 and 1x1xC filters
+    + Comparable or better performance than networks with 10x more params
+    + No accuracy loss for flattened models
+    + flattened filters are about 2x faster in feedforward
+*** SqueezeNet
+    https://arxiv.org/abs/1602.07360
+    + Benefits of small models
+      1) Less communication during distributed learning
+      2) Less required bandwidth for deployment
+      3) Can be deployed on phones/FPGAs etc
+    + /Fire modules/ is the building block of squeezenet
+    + Three strategies for designing CNNs
+      1) Replace 3x3 filters with 1x1 they have 9x fewer params
+      2) Reduce the number of input channels to 3x3 filters, this is done with /squeeze layers/
+      3) Wait until late in the network to downsample, give the layers bigger activation maps
+    + The fire module
+      + a squeeze layer of 1x1 filters is followed by a expand layer with a mix of 1x1 and 3x3 filters
+    + Architecture start with a normal conv then eight fire modules and finally a normal conv and global avgpool
+    + alexnet compressed 50 times with same or better results! interesting is also that Deep compression works over this! and gives models 510x smaller than alexnet with same performance
+*** Rethinking the Inception Architecture for Computer Vision (here the do 1xN and Nx1 convs etc)
+    https://arxiv.org/pdf/1512.00567.pdf
+
+    + Design principles
+      1) Avoid representational bottlenecks, dimensionality should be reduced smoothly
+      2) Easier to train in high dimensions
+      3) Spacial aggregation can be performed over low dimensional embeddings without loss in representational power
+      4) Computational budget should be evenly spread over depth and width
+    + Factorization into smaller convolutions 5x5 convolutions can be replaced with say two 3x3 layers (25 vs 18 parameters), for this analogy to be perfect we would use linear activations in the first 3x3 layer, this works worse though, good with lots of unlinearities.
+    + Factorization into asymmetric convs 3x1 followed by 1x3 is 33% cheaper than 3x3 conv
 
 ** Pruning and clustering of weights
 *** Compressing Deep Neural Convolutional Networks using Vector Quantization
@@ -262,6 +298,9 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
     + Iterative pruning finally gives optimal results.
     + Pruning threshold is taken as a quality parameter multiplied by the std of the layers weights.
     + retrain with 1/10 learning rate.
+*** EIE: Efficient Inference Engine on Compressed Deep Neural Network 
+    + Compression makes it possible to fit large networks on small devices, however this format is not suitable for running the models on conventional hardware (GPUs and CPUs). This introduces a new hardware accelerator specifically tailored for running inference directly on compressed models.
+    + Not really relevant to this but cool note 
 
 ** Teacher-Student learning
 
@@ -330,13 +369,15 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
    + Is bayesian with all its gains and drawbacks.
    + Clustering of weights is great at compressing data but is slow when we need to rebuild the matrices during testing.
 ** TODO Reading list
+   
 *** Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
     http://proceedings.mlr.press/v37/ioffe15.pdf
-*** FLATTENED CONVOLUTIONAL NEURAL NETWORKS FOR FEEDFORWARD ACCELERATION
-    https://arxiv.org/pdf/1412.5474.pdf
-*** SqueezeNet
-    https://arxiv.org/abs/1602.07360
-*** http://www.di.ens.fr/data/publications/papers/phd_sifre.pdf
+*** (Rigamonti et al., 2013) separable cnn
+*** Network in Network (Lin et al., 2013).
+    
+*** (Denton et al.,2014) SVD to models 
+*** Regid-Motin Scattering for Image Classification
+    http://www.di.ens.fr/data/publications/papers/phd_sifre.pdf
 *** Enhanced MLP performance and fault tolerance resulting from synaptic weight noise during training
     https://pdfs.semanticscholar.org/60e6/6781bf17f8103bbc57fc5daeb6fbc5e4b910.pdf
 * Meetings 
