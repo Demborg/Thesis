@@ -275,17 +275,6 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
     + Large models don't fit in the memory of mobile phones and we either have to transfer the data and do testing in the cloud (requires good internet, might share sensitive data, takes time) or train smaller models for mobile devices (bad performance, customers angry). We want to /Compress neural networks/
     + Get better performance by training on soft targets from bigger NN
 
-*** Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding :Cool:
-    https://arxiv.org/pdf/1510.00149.pdf
-
-    + DNN:s are computationally and memory intense, bad for mobile devices
-    + Compression in a three stage process
-      + Pruning :: learn only important connections
-      + Quantize weights :: Enforces weight sharing
-      + Apply Huffman coding :: Takes advantage of biased distribution of weights
-    + Pruning is performed by first training the network in a normal way then pruning away all the small-weight connections. The network is then retrained to learn the final values for the kept weights. weights are then stored as a sparse mx
-    + Weights are clustered and and the weights within each cluster are set to be the same (mean of the real weights). a final round of training is then performed to make these centroid weights find their correct values.
-
 *** Learning both Weights and Connections for Efficient Neural Networks
     http://papers.nips.cc/paper/5784-learning-both-weights-and-connections-for-efficient-neural-network.pdf
 
@@ -298,6 +287,17 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
     + Iterative pruning finally gives optimal results.
     + Pruning threshold is taken as a quality parameter multiplied by the std of the layers weights.
     + retrain with 1/10 learning rate.
+
+*** Deep Compression: Compressing Deep Neural Networks with Pruning, Trained Quantization and Huffman Coding :Cool:
+    https://arxiv.org/pdf/1510.00149.pdf
+
+    + DNN:s are computationally and memory intense, bad for mobile devices
+    + Compression in a three stage process
+      + Pruning :: learn only important connections
+      + Quantize weights :: Enforces weight sharing
+      + Apply Huffman coding :: Takes advantage of biased distribution of weights
+    + Pruning is performed by first training the network in a normal way then pruning away all the small-weight connections. The network is then retrained to learn the final values for the kept weights. weights are then stored as a sparse mx
+    + Weights are clustered and and the weights within each cluster are set to be the same (mean of the real weights). a final round of training is then performed to make these centroid weights find their correct values.
 *** EIE: Efficient Inference Engine on Compressed Deep Neural Network 
     + Compression makes it possible to fit large networks on small devices, however this format is not suitable for running the models on conventional hardware (GPUs and CPUs). This introduces a new hardware accelerator specifically tailored for running inference directly on compressed models.
     + Not really relevant to this but cool note 
@@ -359,6 +359,11 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
     + Huge gap between students with and without convolutions, they appear to be crucial. The gains from soft labels also decreese with student models more similar to the teacher.
     + Although the shallow models are not as accurate as the deep ones they are still the best trained in their respective categories.
     + Dropout gave consitantly worse results when training the students and indicates that soft lables work as a powerful regualizer
+*** Paying more attention to attention
+    https://arxiv.org/pdf/1612.03928v3.pdf
+
+    + Mimic attention maps of teacher?
+    + Can a teacher help train a student by telling it /where it looks/?
 ** Bayesian Compression for Deep Learning
    http://papers.nips.cc/paper/6921-bayesian-compression-for-deep-learning
 
@@ -380,6 +385,7 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
     http://www.di.ens.fr/data/publications/papers/phd_sifre.pdf
 *** Enhanced MLP performance and fault tolerance resulting from synaptic weight noise during training
     https://pdfs.semanticscholar.org/60e6/6781bf17f8103bbc57fc5daeb6fbc5e4b910.pdf
+*** Learning where to attend with deep architectures for image tracking
 * Meetings 
 ** DONE Meeting 1 
    CLOSED: [2018-02-02 fre 13:54]
