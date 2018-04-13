@@ -251,7 +251,10 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
       4) Computational budget should be evenly spread over depth and width
     + Factorization into smaller convolutions 5x5 convolutions can be replaced with say two 3x3 layers (25 vs 18 parameters), for this analogy to be perfect we would use linear activations in the first 3x3 layer, this works worse though, good with lots of unlinearities.
     + Factorization into asymmetric convs 3x1 followed by 1x3 is 33% cheaper than 3x3 conv
+*** LinkNet
+    https://arxiv.org/pdf/1707.03718.pdf
 
+    
 ** Pruning and clustering of weights
 *** Compressing Deep Neural Convolutional Networks using Vector Quantization
     https://arxiv.org/pdf/1412.6115.pdf
@@ -386,6 +389,28 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
 *** Enhanced MLP performance and fault tolerance resulting from synaptic weight noise during training
     https://pdfs.semanticscholar.org/60e6/6781bf17f8103bbc57fc5daeb6fbc5e4b910.pdf
 *** Learning where to attend with deep architectures for image tracking
+*** http://blog.qure.ai/notes/semantic-segmentation-deep-learning-review
+* Models
+** MyENet
+   ENet but with some skip connections and other small quirks
+   [[file:~/github/demborg-exjobb/ENet.py]]
+   
+   gets around 0.9956 categorical_accuracy, 0.0123 loss, 0.07813 val_loss and 0.978 val_accuracy. A good start anyhow
+   [[file:~/github/demborg-exjobb/ENet_test_prediction.png]]
+** LinkNet
+   As far as I understand it is implemented exactly as in the paper
+   [[file:~/github/demborg-exjobb/LinkNet.py]] 
+   
+   Gets 0.9593 accuracy, 0.03432 loss, 0.9699 val accuracy and 0.06729 val loss 
+
+   [[file:~/github/demborg-exjobb/LinkNetReLU_test_prediction.png]]
+
+   Hmm, okay, there seems to be alot of holes in these predictions, something has to be wrong...
+   Oh, whops, nvm that was with ReLU as the final activation, changed for softmax and training looks way better!
+   loss: 0.0156 - categorical_accuracy: 0.9941 - val_loss: 0.0792 - val_categorical_accuracy: 0.9795
+
+   [[file:~/github/demborg-exjobb/LinkNet_test_prediction.png]]
+  
 * Meetings 
 ** DONE Meeting 1 
    CLOSED: [2018-02-02 fre 13:54]

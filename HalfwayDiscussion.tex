@@ -1,0 +1,116 @@
+% Created 2018-04-06 fre 12:27
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Axel Demborg}
+\date{\today}
+\title{Halfway meeting}
+\hypersetup{
+ pdfauthor={Axel Demborg},
+ pdftitle={Halfway meeting},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 25.3.1 (Org mode 9.1.6)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+
+\section{High-level Task}
+\label{sec:org8aea82c}
+Semantic segmentation for Mobile Phones
+
+\section{High-level Approach}
+\label{sec:org8d24f1f}
+\begin{enumerate}
+\item Learn efficient models from scratch
+\item Make pretrained models efficient
+\end{enumerate}
+
+\section{High-level RQ}
+\label{sec:org2bd2f8d}
+\begin{enumerate}
+\item To what extent is efficiency possible?
+\item How does performance transfer from synthesized to real data?
+\item Combination of 1) and 2) (Fewer parameters --> small model and good generalizing)
+\item Something about video??
+\end{enumerate}
+
+\section{Low-level Task:}
+\label{sec:org07b3ee4}
+Semantic foot segmentation on real/synthesized data
+
+\section{Low-level approach:}
+\label{sec:org2880b77}
+\begin{itemize}
+\item Train on synthesized data
+\item Validate with either synthesized data or real data (cross validation?)
+\item Test on real or synthesized data to get scores
+\end{itemize}
+
+\section{Low-level goals}
+\label{sec:org4d7a48d}
+\begin{description}
+\item[{Transferability}] mean IoU, mean accuracy, DICE?
+\item[{Efficiency}] Network size (memory and storage), Speed (FLOPS and Inference time/fps on phone)
+\end{description}
+
+\section{Low-level RQ}
+\label{sec:org9d817ff}
+\begin{itemize}
+\item What network architectures are suitable for the task?
+\begin{itemize}
+\item ENet \url{https://arxiv.org/pdf/1606.02147.pdf}
+\item MobileNet with upsampling path \url{https://arxiv.org/pdf/1704.04861.pdf}
+\item LinkNet \url{https://arxiv.org/pdf/1707.03718.pdf}
+\begin{itemize}
+\item LinkNet with depthwice separable convolutions,inspired by MobileNet (smaller, faster)
+\end{itemize}
+\end{itemize}
+\item How should the networks be trained?
+\begin{itemize}
+\item From scratch
+\begin{itemize}
+\item Cross entropy loss
+\item IoU loss \url{http://www.cs.umanitoba.ca/\~ywang/papers/isvc16.pdf}
+\item Some sort of GANs approach??? \url{https://arxiv.org/pdf/1611.08408.pdf}
+\end{itemize}
+\item With a teacher network (EmilSeg a prebuilt monstrosity)
+\begin{itemize}
+\item Distillation \url{https://arxiv.org/pdf/1503.02531.pdf}
+\item Attention transfer \url{https://arxiv.org/pdf/1612.03928.pdf}
+\end{itemize}
+\end{itemize}
+\item What other things can be done to increase performance?
+\begin{itemize}
+\item Use temporal aspect of real data
+\begin{itemize}
+\item Add some momentum to pixels, kind of like persistence of vision in humans \url{https://en.wikipedia.org/wiki/Persistence\_of\_vision}
+\item Add LSTM at bottleneck (too slow)
+\item Feed last prediction back as additional channels (tested a bit, didn't get it to work)
+\end{itemize}
+\item Do pretraining on other data
+\begin{itemize}
+\item Train encoder on say ImageNet to learn visual features?
+\item Train for segmentation on something more general (DAVIS?) and finetune for feet?
+\end{itemize}
+\end{itemize}
+\item What else can be done to decrease model size/inference speed? (Don't realy think any of these will pan out since they work poorly together with the hardware/frameworks we have to work with)
+\begin{itemize}
+\item Quantization
+\item HashedNets \url{https://arxiv.org/pdf/1504.04788.pdf}
+\end{itemize}
+\end{itemize}
+\end{document}

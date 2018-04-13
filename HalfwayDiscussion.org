@@ -1,0 +1,54 @@
+#+TITLE: Halfway meeting
+#+AUTHOR: Axel Demborg
+#+OPTIONS: toc:nil
+
+* High-level Task
+Semantic segmentation for Mobile Phones
+
+* High-level Approach
+1) Learn efficient models from scratch
+2) Make pretrained models efficient
+
+* High-level RQ
+1) To what extent is efficiency possible?
+2) How does performance transfer from synthesized to real data?
+3) Combination of 1) and 2) (Fewer parameters --> small model and good generalizing) 
+4) Something about video??
+
+* Low-level Task:
+Semantic foot segmentation on real/synthesized data
+
+* Low-level approach:
++ Train on synthesized data 
++ Validate with either synthesized data or real data (cross validation?)
++ Test on real or synthesized data to get scores
+
+* Low-level goals
++ Transferability :: mean IoU, mean accuracy, DICE?
++ Efficiency :: Network size (memory and storage), Speed (FLOPS and Inference time/fps on phone)
+
+* Low-level RQ
++ What network architectures are suitable for the task?
+  + ENet https://arxiv.org/pdf/1606.02147.pdf
+  + MobileNet with upsampling path https://arxiv.org/pdf/1704.04861.pdf
+  + LinkNet https://arxiv.org/pdf/1707.03718.pdf
+    + LinkNet with depthwice separable convolutions,inspired by MobileNet (smaller, faster)
++ How should the networks be trained?
+  + From scratch
+    + Cross entropy loss
+    + IoU loss http://www.cs.umanitoba.ca/~ywang/papers/isvc16.pdf
+    + Some sort of GANs approach??? https://arxiv.org/pdf/1611.08408.pdf
+  + With a teacher network (EmilSeg a prebuilt monstrosity)
+    + Distillation https://arxiv.org/pdf/1503.02531.pdf
+    + Attention transfer https://arxiv.org/pdf/1612.03928.pdf
++ What other things can be done to increase performance?
+  + Use temporal aspect of real data
+    + Add some momentum to pixels, kind of like persistence of vision in humans https://en.wikipedia.org/wiki/Persistence_of_vision
+    + Add LSTM at bottleneck (too slow)
+    + Feed last prediction back as additional channels (tested a bit, didn't get it to work)
+  + Do pretraining on other data
+    + Train encoder on say ImageNet to learn visual features?
+    + Train for segmentation on something more general (DAVIS?) and finetune for feet?
++ What else can be done to decrease model size/inference speed? (Don't realy think any of these will pan out since they work poorly together with the hardware/frameworks we have to work with)
+  + Quantization
+  + HashedNets https://arxiv.org/pdf/1504.04788.pdf
