@@ -4,11 +4,16 @@
 \usepackage{csquotes} % Recommended by biblatex
 \usepackage{biblatex}
 \addbibresource{bibliography.bib} % The file containing our references, in BibTeX format
+\usepackage{graphicx}
+\usepackage{cleveref}
+\usepackage{subcaption}
 
 % My stuff
+\graphicspath{{../images/}}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \newcommand{\bibentry}[1]{\parencite{#1}}
+\usepackage{todonotes}
 
 
 \title{Real-time segmentation on smartphone}
@@ -39,6 +44,18 @@
   \end{abstract}
 \end{otherlanguage}
 
+\section*{Acknowledgments}
+% Firstly I would like to thank my supervisors, Alper Aydemir and Hossein Azizpour for
+% the help and support they have given me in compleeting this thesis. This would
+% have been much harder and less fun without you.
+
+% I would also like to thank Emil Ernfeldt for his fantastic help with creating and
+% managing the datasets used in this work as well as for building the monstrosity
+% of a network that was used as a teacher in some of the experiments.
+
+% And a huge thanks to the entire staff at Volumental whom have made it a joy to go to work
+% each day, it has been a true pleasure to share a office with all of you!
+
 
 \tableofcontents
 
@@ -48,10 +65,12 @@
 
 
 \chapter{Introduction}
+For 3D scanning of human bodies specialized hardware has traditionally been used. However with the recent developments in convolutional neural networks (CNN) where high quality object segmentation \parencite{BriefHistory} and pose estimation \parencite{he2017mask} have been performed from RGB images it should be possible to do online segmentation of human bodies on smartphones. An issue for mobile deployments of these networks however is their shear size meaning that they can't fit in the on-chip SRAM and instead have to reside in the power hungry off-chip DRAM making the application up to 100 times more power consuming \parencite{han2015learning}. Another issue concerns the computational load of the models and means that the networks can't run in real-time on the relatively slow processing power of a smartphone.
 
-
-
-\section{Research Question}
+\section{Research Questions}
+\todo{Make this into actual text}
+1) To what extent is efficiency possible?
+2) How does performance transfer from synthesized to real data?
 
 \chapter{Background}
 \section{Related work}
@@ -96,12 +115,100 @@ Other variations on the convolutional operator that help compress the networks a
 Another network specially designed for real-time segmentation on mobile devices is \emph{ENet} \bibentry{paszke2016enet}. Here dilated convolutions are used together with asymmetrical convolutions to give a large receptive field without introducing that many parameters. The network is built as an encoder-decoder network but with a much smaller decoder, the argument behind this being that decoder should simply upsample the output while fine-tuning the details which should be a simpler task than the information processing and extraction that the encoder is performing. Attention has also been payed to quickly downsampling the feature maps which saves on computation but then not downsampling so aggressively after that keeping much of the spatial information in the images. Together these improvements give a network that performs on par with \emph{SegNet} but that requires 79 times fewer parameters and is 18 times faster at inference.
 
 
+\chapter{Experiments}
+\section{Data}
+Two datasets of segmented feet were used for the experiments.
 
-\chapter{Methods}
+Firstly a dataset where images and 3D-models where extracted from the companies
+3D-scanner and composited with floor images scraped from the internet to create
+synthetic images of feet on normal floors. This is illustrated in \cref{fig:process_synthetic}.
+This dataset is called
+\textit{synthetic} and is divided into training, validation and test sets with
+43896, 12960 and 14168 images respectively. The different sets have been
+constructed to ensure that there is no overlap of floors or feet between them.
+Example images from this dataset can be seen in \cref{fig:data_synthetic}.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{on_scanner}
+        \caption{The foot on the scanner}
+        \label{fig:on_scanner}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{floor}
+        \caption{Floor texture}
+        \label{fig:texture}
+      \end{subfigure}
+      
+    %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{tilted_plan_and_shadow}
+        \caption{Texture in scanner plane with added shadows}
+        \label{fig:floor_in_plane}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{teleported_foot}
+        \caption{The final image with segmentation}
+        \label{fig:process_res}
+    \end{subfigure}
+    \caption{Steps for creating the synthetic data}\label{fig:process_synthetic}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{synthetic}
+  \caption{Examples of images and segmentations from the synthetic dataset}
+  \label{fig:data_synthetic}
+\end{figure}
+
+Secondly a dataset of 111 images taken of employees at \textit{Volumental} that
+has been segmented by hand. This dataset is called \textit{real} and is
+primarily used for testing how the methods generalize from  the synthetic data to
+real images. Example images can be seen in \cref{fig:data_real}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{real}
+  \caption{Examples of images and segmentations from the real dataset}
+  \label{fig:data_real}
+\end{figure}
+
+\subsection{Data augmentation}
+One restriction with the \textit{synthetic} dataset is that the images from the
+scanner come from only four different angles, rather fixed in regards to the
+foot\todo{explain why} and that they are all taken from approximately the same
+distance. To enable the algorithms to learn more general foot features despite
+these restrictions the original images are augmented by dividing each image into
+a \(3\times3\) grid, selecting a random point in each corner cell, and
+performing an affine transformation to make these selected points the corners of
+a new \(256\times256 \textit{px}\) image.
+
+This augmentation introduces random some zoom, rotation, shear and translation
+to the images and should hence help the algorithms learn generalizable features.
+\todo{this needs an explaining figure}
+
+\section{Models}
 
 \chapter{Results}
 
 \chapter{Discussion}
+
+\section{Further work}
+\todo{This is just some notes for now}
++ What other things can be done to increase performance?
+  + Use temporal aspect of real data
+    + Add some momentum to pixels, kind of like persistence of vision in humans 
+    + Add LSTM at bottleneck (too slow)
+    + Feed last prediction back as additional channels (tested a bit, didn't get it to work)
+  + Do pretraining on other data
+    + Train encoder on say ImageNet to learn visual features?
+    + Train for segmentation on something more general (DAVIS?) and finetune for feet?
 
 \printbibliography[heading=bibintoc] % Print the bibliography (and make it appear in the table of contents)
 
