@@ -67,7 +67,7 @@ Despite their impressive performance on a wide range of problems neural networks
 \subsection{Quantization of weights}
 Modern neural networks are usually based on 32-bit floating point representations of parameters. It has been shown however that networks are quite resilient to noise and even that some noise can improve training \bibentry{murray1994enhanced}. Since reduced precision variables can be modeled as noise this means that networks can be compressed by changing to a less accurate format without any loss in performance. This can be done either by reducing the bit accuracy after training \bibentry{vanhoucke2011improving}  or by doing the entire training in reduced accuracy \bibentry{hubara2016quantized} \bibentry{gupta2015deep}. The benefits of using a reduced format like this for representation is not only that the models take less space but also that the individual multiplications become cheaper and hence the networks run faster.
 
-\subsection*{Weight sharing}
+\subsection{Weight sharing}
 One of the most direct approaches for removing the redundancy in parametrization from neural networks is by forcing the networks to share weights between different connections. This is precisely what \emph{HashedNets} \bibentry{chen2015compressing} does by fixing the amount of weights \(K^l\) that are to be used in each layer making the weights \(\vec{w^l} \in \mathbb{R}^{K^l}\) and using hashing functions to map each element in the virtual weight matrices \(V_{ij}^l\) to one of these weights \(V_{ij} = w_{h(i,j)}\) with \(h()\) being a hashing function. With the weight matrices defined in this fashion \emph{HashedNets} can be trained like normal networks with the gradients with respect to the weights calculated from the gradients with respect to the virtual matrices as 
 \[ \frac{\partial\mathcal{L}}{\partial w_k^l} = \sum_{ij} \frac{\partial\mathcal{L}}{\partial V_{ij}^l}\frac{\partial V_{ij}^l}{\partial w_k^l} \]
 This method gave a compression of about 20 times before any notable loss in accuracy was introduced during tests on variations of the MNIST dataset which seems to agree very well with the results from \bibentry{denil2013predicting}.
@@ -99,6 +99,9 @@ Another network specially designed for real-time segmentation on mobile devices 
 
 \chapter{Methods}
 
+\chapter{Results}
+
+\chapter{Discussion}
 
 \printbibliography[heading=bibintoc] % Print the bibliography (and make it appear in the table of contents)
 
