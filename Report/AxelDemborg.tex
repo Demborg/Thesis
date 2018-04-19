@@ -2,7 +2,7 @@
 
 
 \usepackage{csquotes} % Recommended by biblatex
-\usepackage{biblatex}
+\usepackage[backend=biber]{biblatex}
 \addbibresource{bibliography.bib} % The file containing our references, in BibTeX format
 \usepackage{graphicx}
 \usepackage{cleveref}
@@ -191,9 +191,114 @@ a new \(256\times256 \textit{px}\) image.
 
 This augmentation introduces random some zoom, rotation, shear and translation
 to the images and should hence help the algorithms learn generalizable features.
-\todo{this needs an explaining figure}
+Some example of this can be seen in \cref{fig:augment}
 
-\section{Models}
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{orig1}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{orig2}
+      \end{subfigure}
+    ~
+    %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{orig3}
+      \end{subfigure}
+
+      \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{augmented1}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{augmented2}
+      \end{subfigure}
+    ~
+    %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{augmented3}
+      \end{subfigure}
+      \caption{Some random augmentations on the same image. Top row is the
+        original image with the sampled corners are indicated in blue and
+        the sample boundaries are indicated in green. Bottom row is the
+        resulting image.}\label{fig:augment}
+\end{figure}
+
+
+\section{Network architectures}
+For the experiments four different neural networks were evaluated against each
+other. Details on each of these follow below.
+
+\subsection{ENet}
+
+\subsection{LinkNet}
+
+\subsection{MobileSeg}
+
+\subsection{FastLinkNet}
+
+\section{Loss functions}
+To train the networks for semantic segmentation three different loss functions
+were tested.
+
+\subsection{Cross entropy}
+The classical loss function for classification \todo{hah, pun?} tasks is
+\textit{Cross Entropy}.
+
+\[L_{CE} = - \sum_i Y_i \log\hat{Y_i}\]
+
+Where \(Y_i\) is ground truth and \(\hat{Y_i}\) is the prediction. Since
+semantic segmentation is the task of classifying each pixel in the image this is
+a reasonable loss function.
+
+\subsection{IoU loss}
+In semantic segmentation a common performance measure is the intersect over union
+\textit{IoU} metric between the predicted segmentation and the ground truth.
+\textit{IoU} is defined as follows.
+\[IoU = \frac{I}{U} = \frac{\textit{TP}}{\textit{FP} + \textit{TP} + \textit{FN}}\]
+Where \(I\) is the intersect between the prediction and ground truth, \(U\) the union
+between them and FP, FN, and TP indicate the false positive, false negative and
+true positive respectively. These different quantities are illustrated in \cref{fig:IoU}.
+
+This metric is used since it gives small objects as much weight as bigger ones.
+This stands in comparison to using the proportion of correctly classified pixels
+where classifying a image with a lot of background a tiny foot as all background
+would give good results.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.40\textwidth]{IoU}
+  \caption{Notation for \textit{IoU}}
+  \label{fig:IoU}
+\end{figure}
+
+
+To directly optimize for \textit{IoU} \textcite{rahman2016optimizing} introduced
+a \textit{IoU Loss}.
+\[L_{IoU} = 1 - \textit{IoU}\]
+
+If we now let \(V = {1, 2, \dots, N}\) be the set of pixels in the image, \(\hat{Y}\)
+the softmax outputs from the network at each pixel and \(Y\) the ground truth
+segmentation. The intersection \(I(\hat{Y})\) and union \(U(\hat{Y})\) can be
+approximated with the following:
+
+\[I(\hat{Y}) = \sum_{v \in V} Y_v \odot \hat{Y_v}\]
+\[U(\hat{Y}) = \sum_{v \in V}\left( Y_v + \hat{Y_v} - Y_v \odot \hat{Y_v} \right) \]
+
+Where \(\odot\) represents the element-wise Hadamard product.
+
+The \textit{IoU} loss hence becomes
+
+\[L_{\textit{IoU}} = 1 - \frac{I(\hat{Y})}{U(\hat{Y})}\]
+
+
+\subsection{Distillation}
 
 \chapter{Results}
 
@@ -209,6 +314,9 @@ to the images and should hence help the algorithms learn generalizable features.
   + Do pretraining on other data
     + Train encoder on say ImageNet to learn visual features?
     + Train for segmentation on something more general (DAVIS?) and finetune for feet?
+    + Something about how the synthetic dataset is built, may be, using actual
+    3d-models or GANS? would give better training data?
+    
 
 \printbibliography[heading=bibintoc] % Print the bibliography (and make it appear in the table of contents)
 
