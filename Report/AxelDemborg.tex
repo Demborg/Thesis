@@ -8,6 +8,7 @@
 \usepackage{subcaption}
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
+\usepackage{booktabs}
 
 % My stuff
 \graphicspath{{../images/}}
@@ -156,7 +157,16 @@ object. Since segmentation is a pixel-by-pixel prediction problem \emph{Mask
   R-CNN} replaces the spatially quantizing RoIPool operation from \emph{Fast
   R-CNN} with a quantization-free layer called RoIAllign. 
 
-Some parallel work on semantic segmentation of images resulted in \emph{SegNet} \bibentry{badrinarayanan2015segnet}, a fully convolutional encoder-decoder network. Here the encoder network encodes the input image down into a lower dimensional feature space while keeping storing the indices of the max pooling operations. The low dimensional representations are then run through a decoder network which is architecturally a mirror image of the encoder network but where the max pooling operations have been replaced with upsampling layers that use the stored indices from the corresponding pooling layers to maintain the granularity of the images. The final layer in the network is a softmax and hence the outputs are the probabilities of each pixel belong to each class.
+Some parallel work on semantic segmentation of images resulted in \emph{SegNet}
+\bibentry{badrinarayanan2015segnet}, a fully convolutional encoder-decoder
+network. Here the encoder network encodes the input image down into a lower
+dimensional feature space while keeping storing the indices of the max pooling
+operations. The low dimensional representations are then run through a decoder
+network which is architecturally a mirror image of the encoder network but where
+the max pooling operations have been replaced with upsampling layers that use
+the stored indices from the corresponding pooling layers to maintain the
+granularity of the images. The final layer in the network is a softmax and hence
+the outputs are the probabilities of each pixel belong to each class.
 Continued work on segmentation utilizes blocks of so called \emph{DenseNets}
 \bibentry{huang2017densely}, CNNs where every layer is connected to every layer
 after it enabling the training of really deep network architectures by
@@ -395,6 +405,7 @@ aggressively after that keeping much of the spatial information in the images.
 Together these improvements give a network that performs on par with
 \emph{SegNet} but that requires 79 times fewer parameters and is 18 times faster
 at inference. 
+\todo{Need to talk a bit about LinkNet here}
 
 
 \chapter{Experiments}
@@ -585,13 +596,51 @@ The \textit{IoU} loss hence becomes
 \chapter{Results}
 \begin{figure}[h]
   \centering
-  \missingfigure{Compare the result images from the different models with GT and
-    EmilSeg}
-  \caption{Resulting segmentations from the different models. First row is the ground
+  \includegraphics[width=\textwidth]{real_color}
+  \caption{Resulting segmentations on the real dataset from the different models. First row is the ground
     truth, below that EmilSeg, ENet, LinkNet, MobileSeg, and FastLinkNet in that
     order.}
-  \label{fig:res_images}
+  \label{fig:seg_real}
   \end{figure}
+
+ \begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{test_color}
+  \caption{Resulting segmentations on the test set of the synthetic dataset from the different models. First row is the ground
+    truth, below that EmilSeg, ENet, LinkNet, MobileSeg, and FastLinkNet in that
+    order.}
+  \label{fig:seg_test}
+  \end{figure}
+  
+\begin{table}[]
+\centering
+\caption{Comparison of size and inference speed between the different models }
+\label{tab:res_resources}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Model       & FLOPs [B]& Inference time {[}ms{]} & Size {[}Mb{]}  \\ \midrule
+EmilSeg     &  55.37   & 4439                    & 85             \\
+ENet        &  10.38   & 1045                    & 15             \\
+LinkNet     &  1.75    & 234                     & 45             \\
+MobileSeg   &  2.68    & 555                     & 18             \\
+FastLinkNet &  0.287   & 73                      & 7.2            \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[]
+\centering
+\caption{Comparison of the test performance between the different models}
+\label{tab:res_performance}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Model       & Test accuracy & Test IoU & Real accuracy & Real IoU \\ \midrule
+EmilSeg    & 0.9912 & 0.9860 & 0.9740 & 0.9814 \\
+ENet       & 0.9774 & 0.9116 & 0.9738 & 0.9117 \\
+LinkNet    & 0.9797 & 0.9141 & 0.9724 & 0.9145 \\
+MobileSeg  & 0.9834 & 0.9146 & 0.9744 & 0.9144 \\ 
+FastLinkNet& 0.9797 & 0.9153 & 0.9707 & 0.9148 \\  \bottomrule
+\end{tabular}
+\end{table}
 
 \chapter{Discussion}
 
@@ -607,6 +656,12 @@ The \textit{IoU} loss hence becomes
     + Train for segmentation on something more general (DAVIS?) and finetune for feet?
     + Something about how the synthetic dataset is built, may be, using actual
     3d-models or GANS? would give better training data?
+    
+    Due to time constraints the teacher model \textit{EmilSeg} in distillation
+    was not subjected to extensive hyperparameter optimization and was not
+    necessarilly trained to full convergence meaning that distillation could get
+    better results if more time was spent on tweeking not only the students but
+    also the teacher.
     
 
 \printbibliography[heading=bibintoc] % Print the bibliography (and make it appear in the table of contents)
