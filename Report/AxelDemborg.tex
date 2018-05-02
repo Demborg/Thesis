@@ -58,7 +58,7 @@
 % of a network that was used as a teacher in some of the experiments.
 
 % And a huge thanks to the entire staff at Volumental whom have made it a joy to go to work
-% each day, it has been a true pleasure to share a office with all of you!
+% each day, even when my code has just been exploding. It has been a true pleasure to share a office with all of you!
 
 
 \tableofcontents
@@ -73,24 +73,24 @@ For 3D scanning of human bodies specialized hardware has traditionally been
 used. However with the recent developments in convolutional neural networks
 (CNN) where high quality object segmentation \parencite{BriefHistory} and pose
 estimation \parencite{he2017mask} have been performed from RGB images it should
-be possible to do online segmentation of human bodies on commodity smartphones. An issue
+be possible to do online segmentation of human bodies with commodity smartphone cameras. An issue
 for mobile deployments of these networks however is their shear size meaning
 that they can't fit in the on-chip SRAM and instead have to reside in the power
-hungry off-chip DRAM making the application up to 100 times more power consuming
+hungry off-chip DRAM making applications up to 100 times more power consuming
 \parencite{han2015learning}. Another issue concerns the computational load of
 the models and means that the networks can't run in real-time on the relatively
 slow processing power of a smartphone. 
 
 Further issues with these neural networks are that the require huge amounts of
 labeled data to train and that generating high quality ground truth data is
-really expensive. This is especially true for tasks like semantic segmentation
+expensive. This is especially true for tasks like semantic segmentation
 where pixel level annotations have to be made for each image and labeling a
 single image is a tedious task, not to mention the thousands required for
 training. 
 
 \section{Research Questions}
 \todo{Make this into actual text}
-To try and address the issues this thesis will focus on two research questions:
+To try and address these issues this thesis will focus on two research questions:
 \begin{enumerate}
 \item To what extent can modern neural networks be slimmed down and optimized for
   real-time execution on smartphones?
@@ -107,7 +107,7 @@ become the state of the art method for most areas of computer vision. Notably
 CNNs could be used for high resolution image classification by beating the
 previous state of the art \bibentry{sanchez2011high} on the \emph{ImageNet}
 classification challenge \bibentry{deng2009imagenet}. To do this \emph{AlexNet}
-used 60 million parameters and 650,000 neurons and training of the network was
+used 60 million parameters and 650,000 neurons. Training of the network was
 only made feasible by the use of multiple graphical processing units (GPUs)
 \bibentry{krizhevsky2012imagenet}.
 
@@ -125,7 +125,7 @@ object regions and a CNN, pre-trained on \emph{ImageNet}
 fixed length features for each region, finally classifying each region by
 running class specific \emph{support vector machines}
 \bibentry{boser1992training} on these features. Some issues with \emph{R-CNN}
-are that it requires a multistage training, training the CNN to give good
+are that it requires multistage training, training the CNN to give good
 features and training the SVMs for classification, and that it is slow, for
 training but most notably at inference where one image is processed in 47s.
 These problems are addressed with further work resulting in \emph{Fast R-CNN}
@@ -136,9 +136,11 @@ feature vector for each region. These feature vectors are then feed into a fully
 connected neural network with two sibling output layers that perform both
 classification and bounding box refinement in parallel. With these improvements
 \emph{Fast R-CNN} achieves faster inference and higher accuracy than its
-predecessors and does so with a arguably much more elegant design. Even though
+predecessors and does so with a arguably much more elegant design.
+
+Even though
 \emph{Fast R-CNN} improved speed significantly it was nowhere near real-time
-performance, further performance improvements were introduced with \emph{Faster
+performance. Further performance improvements were introduced with \emph{Faster
   R-CNN} \bibentry{ren2015faster} where \emph{selective search} for region
 proposals is replaced with Region Proposal Networks, fully convolutional neural
 networks that take as input the convolutional feature maps as described from
@@ -157,10 +159,10 @@ object. Since segmentation is a pixel-by-pixel prediction problem \emph{Mask
   R-CNN} replaces the spatially quantizing RoIPool operation from \emph{Fast
   R-CNN} with a quantization-free layer called RoIAllign. 
 
-Some parallel work on semantic segmentation of images resulted in \emph{SegNet}
+Some parallel work on semantic segmentation resulted in \emph{SegNet}
 \bibentry{badrinarayanan2015segnet}, a fully convolutional encoder-decoder
 network. Here the encoder network encodes the input image down into a lower
-dimensional feature space while keeping storing the indices of the max pooling
+dimensional feature space while storing the indices of the max pooling
 operations. The low dimensional representations are then run through a decoder
 network which is architecturally a mirror image of the encoder network but where
 the max pooling operations have been replaced with upsampling layers that use
@@ -169,7 +171,7 @@ granularity of the images. The final layer in the network is a softmax and hence
 the outputs are the probabilities of each pixel belong to each class.
 Continued work on segmentation utilizes blocks of so called \emph{DenseNets}
 \bibentry{huang2017densely}, CNNs where every layer is connected to every layer
-after it enabling the training of really deep network architectures by
+after it enabling the training of exceedingly deep network architectures by
 alleviating the vanishing gradient problem and promoting feature reuse between
 the layers. By using these \emph{DensNets} in a very deep encoder-decoder
 structure where skip connections restore image granularity during upsampling the
@@ -181,7 +183,7 @@ Despite their impressive performance on a wide range of problems neural networks
 are still prohibited from running locally on mobile devices with slow
 processors, limited power envelopes or limited memory due to their large size
 and big computational load. For example modern neural networks can't fit on the
-on-chip SRAM cache and instead they have to reside in the much more power hungry
+on-chip SRAM cache of mobile processors and instead have to reside in the much more power hungry
 off-chip DRAM memory making applications up to 100 times more power consuming
 \bibentry{han2015learning}. Regarding inference speed the most modern networks
 for object segmentation \bibentry{he2017mask} run at 5fps but that is on high
@@ -267,12 +269,12 @@ and decision trees into a single neural network \bibentry{bucilua2006model}.
 This work leverages the neural networks property of being universal
 approximators \bibentry{cybenko1989approximation}, meaning that given
 sufficiently much training data and a big enough hidden layer a neural network
-can learn to approximate any function with arbitrary precision, by not directly
+can learn to approximate any function with arbitrary precision. This is done by not directly
 training the student network on the relatively limited labeled training data
 available but instead on large amounts of pseudo random data that has been given
 labels by first being passed through the large teacher ensemble. This
 compression technique yielded student networks up to 1000 times smaller and 1000
-times faster to compute than  their teachers with a negligible drop in accuracy
+times faster to compute than their ensemble teachers with a negligible drop in accuracy
 on some test problems. 
 
 Further work on student-teacher learning experiments with why deep neural
@@ -346,7 +348,7 @@ thus teaches the student where to look. A few different methods for calculating
 these attention maps are proposed in the paper but notable is that they are all
 non parametric meaning that no extra layers of convolution have to be learned to
 make the student attention maps comparable to the ones from the teacher. This
-attention transferring approach is proves to give good results on a number of
+attention transferring approach proves to give good results on a number of
 difficult datasets including \emph{ImageNet} and is also shown to work well
 together with distillation. 
 
@@ -359,7 +361,7 @@ layers of \(N \times N\) convolutional filters with two layers with \(N \times
 1\) and \(1 \times N\) filters respectively, this reduces the amount of
 parameters that have to be stored per channel from \(N^2\) to \(2N\) and the
 amount of multiplications that have to be made scale in the same way. These
-asymmetrical convolutions have seen successful use in inception models
+so called asymmetrical convolutions have seen successful use in inception models
 \bibentry{szegedy2016rethinking}.  
 Other variations on the convolutional operator that help compress the networks
 are dilated convolutions \bibentry{yu2015multi} where an exponentially expanding
@@ -375,7 +377,7 @@ load with a factor \(8\) to \(9\) for \(3 \times 3\) convolutional kernels
 \emph{SqueezeNet} \bibentry{iandola2016squeezenet} presents a different take on
 how to get smaller models in that it rather optimizes the architecture of the
 network than any of the constituent parts, this approach gives a network with
-\emph{AlexNet} performance but with 50 times fewer parameters than normal
+\emph{AlexNet} performance but with 50 times fewer parameters than 
 \emph{AlexNet}. This is done by focusing on the usage of \(1 \times 1\)
 convolutional filters, reducing the amount of channels that go in to the larger
 filters and by holding out on downsampling so that feature maps are kept large
@@ -401,20 +403,27 @@ decoder should simply upsample the output while fine-tuning the details which
 should be a simpler task than the information processing and extraction that the
 encoder is performing. Attention has also been payed to quickly downsampling the
 feature maps which saves on computation but then not downsampling so
-aggressively after that keeping much of the spatial information in the images.
+aggressively after that, keeping much of the spatial information in the images.
 Together these improvements give a network that performs on par with
 \emph{SegNet} but that requires 79 times fewer parameters and is 18 times faster
 at inference. 
-\todo{Need to talk a bit about LinkNet here}
+%\todo{Need to talk a bit about LinkNet here}
+
+An other modern network architecture that has been specifically designed for fast and
+efficient segmentation is \textit{LinkNet}
+\parencite{chaurasia2017linknet}. Here residual blocks \parencite{residual} are used to produce a
+state of the art network which can process high resolution frames at almost 10
+fps.
 
 
 \chapter{Experiments}
 \section{Data}
 Two datasets of segmented feet were used for the experiments.
 
-Firstly a dataset where images and 3D-models where extracted from the companies
+Firstly a dataset where images and 3D-models where extracted from
+\textit{Volumental's}
 3D-scanner and composited with floor images scraped from the internet to create
-synthetic images of feet on normal floors. This is illustrated in \cref{fig:process_synthetic}.
+synthetic images of feet on normal floors. This process is illustrated in \cref{fig:process_synthetic}.
 This dataset is called
 \textit{synthetic} and is divided into training, validation and test sets with
 43896, 12960 and 14168 images respectively. The different sets have been
@@ -473,16 +482,17 @@ real images. Example images can be seen in \cref{fig:data_real}.
 \end{figure}
 
 \subsection{Data augmentation}
-One restriction with the \textit{synthetic} dataset is that the images from the
-scanner come from only four different angles, rather fixed in regards to the
-foot\todo{explain why} and that they are all taken from approximately the same
+One restriction with the \textit{synthetic} dataset is that, due to the
+placement of the cameras, the images from the
+scanner only come from four different angles, rather fixed in regards to the
+foot and that they are all taken from approximately the same
 distance. To enable the algorithms to learn more general foot features despite
 these restrictions the original images are augmented by dividing each image into
 a \(3\times3\) grid, selecting a random point in each corner cell, and
 performing an affine transformation to make these selected points the corners of
 a new \(256\times256 \textit{px}\) image.
 
-This augmentation introduces random some zoom, rotation, shear and translation
+This augmentation introduces some random zoom, rotation, shear and translation
 to the images and should hence help the algorithms learn generalizable features.
 Some example of this can be seen in \cref{fig:augment}
 
@@ -526,23 +536,42 @@ Some example of this can be seen in \cref{fig:augment}
 
 \section{Network architectures}
 For the experiments four different neural networks were evaluated against each
-other. Details on each of these follow below. \todo{Write something about each
-  of the models}
+other. Details on each of these follow below. %\todo{Write something about each of the models}
 
 \subsection{ENet}
+This is a re-implementaiton of the \todo{hang on, why is my enet 10x bigger and
+  ~3 times slower than the original?} \textit{ENet} architecture
+\parencite{paszke2016enet} where the unpooling operations from the upsampking
+blocks has been replaced with addition of the corresponding feature map from the
+downsampling path due to restrictions in \textit{Keras}
 
 \subsection{LinkNet}
+This is a straight re-implementation of the LinkNet architecture \parencite{chaurasia2017linknet}.
 
 \subsection{MobileSeg}
+This is a network for semantic segmentation that was built using the body of the
+\textit{MobileNet} architecture \parencite{howard2017mobilenets} as the encoder of the network and then adds the
+upsampling path from \textit{LinkNet} to this body and skipp connections are
+introduced where the dimensions correspond to those in \textit{LinkNet}
 
 \subsection{FastLinkNet}
+This network is designed as a hybrid between \textit{LinkNet} and
+\textit{MobileNet} where the the layout of \textit{LinkNet} has been copied but
+inspired by \textit{MobileNet} all the convolutions in the encoder blocks have
+been replaced with depthwise separable convolutions, thus reducing model size
+with approximately a factor \(4\).
+Further inspiration was taken from the resolution
+multiplier in the \textit{MobileNets} which is used to reduce the resolution of
+the incoming image data to reduce the computation needed to process it by
+downscaling the images by a factor \(2\) before segmentation and then bilineraly
+upscaling the image to the full input size at the end.
 
 \section{Loss functions}
 To train the networks for semantic segmentation three different loss functions
-were tested.
+were evaluated.
 
 \subsection{Cross entropy}\label{section:cross_entropy}
-The classical loss function for classification \todo{hah, pun?} tasks is
+The classical loss function for classification tasks is
 \textit{Cross Entropy}.
 
 \[L_{CE} = \mathcal(L)(Y, \hat{Y}) =- \sum_i Y_i \log\hat{Y_i}\]
@@ -563,7 +592,7 @@ true positive respectively. These different quantities are illustrated in \cref{
 
 This metric is used since it gives small objects as much weight as bigger ones.
 This stands in comparison to using the proportion of correctly classified pixels
-where classifying a image with a lot of background a tiny foot as all background
+where classifying a image with a lot of background and a tiny foot as all background
 would give good results.
 
 \begin{figure}[h]
@@ -599,19 +628,23 @@ When training using distillation loss \parencite{hinton2015distilling} a large
 previously trained network is used to help guide the student model during
 training. The loss function here is defined as:
 
-\[L_{distillation} = \mathcal{L}(Y, \hat{Y}) + \lambda\mathcal{L}(Y^*, Y_{teacher}^*)\]
+\[L_{distillation} = \mathcal{L}(Y, \hat{Y}) + \lambda T^2\mathcal{L}(\hat{Y}^*, \hat{Y}_{teacher}^*)\]
 
 Where \(\mathcal{L}\) is the cross entropy loss from
-\cref{section:cross_entropy} and \(Y^*\) and \(Y^*_{teacher}\) are the softened,
+\cref{section:cross_entropy} and \(\hat{Y}^*\) and \(\hat{Y}^*_{teacher}\) are the softened,
 high temperature softmax outputs, see \cref{fig:softmax} from the student and teacher networks
-respectively.
+respectively. \(T\) is the temperature with which the softmax were softened and
+it is used to compensate for the fact that the gradient with respect to the soft
+loss decreases with a factor \(\frac{1}{T^2}\) as explained in the initial
+paper \parencite{hinton2015distilling}. The high temperature softmax is defined
+as follows: 
 
-\[Y_i^* = \frac{e^{a_i/T}}{\sum_j e^{a_j/T}}\]
+\[\hat{Y}_i^* = \frac{e^{a_i/T}}{\sum_j e^{a_j/T}}\]
 
 Here \(a\) are the activations from the preceding layer and \(T\) is the
 temperature. If \(T = 1\) we get the normal softmax values and if \(T > 0\) we
 get a softer output distribution making it easier for the student to learn from
-the low probability classes of the teacher.
+the low probability classes of the teacher. 
 
 \begin{figure}[h]
     \centering
@@ -645,9 +678,23 @@ Training was run for \(50\) epochs of \(50\) steps each with a batch size of \(3
 \(ADAM\) \parencite{ADAM} was used as the optimizer and hyperparameter
 optimization was run for 100 iterations of random search in the search space
 \(0.000001 < \eta < 0.01\), \( 0 < p_{dropout} < 1\), \(f_{loss} \in \{L_{CE},
-L_{IoU}, L_{distillation}\}\). And \( 1 < T < 100\), \(0< \lambda <10T^2\) when
-distillation loss is used.
+L_{IoU}, L_{distillation}\}\). And \( 1 < T < 100\), \(0< \lambda <10\) when
+distillation loss is used. 
+
+\section{Benchmarking}
+To evaluate the degree to which the models can be run on a smartphone they were
+tested on a \textit{ZTE Axon 7} android phone using \textit{tensorflows}
+benchmarking tools. From this inference time, and number of Floating point
+operations (\textit{FLOPs}) calculated for inference was extracted. The size
+required to store the models was also measured. 
+
 \chapter{Results}
+The resulting segmentations from the best trained models of each architecture
+can be seen for the real dataset in \cref{fig:seg_real} and for the synthetic
+data set in \cref{fig:seg_test}. The mean pixel accuracy and IoU metrics
+achieved by the models on the test set of the synthetic dataset and the real
+dataset can be seen in \cref{tab:res_performance} and the results from the
+benchmarks on the models are listed in \cref{tab:res_resources}.
 \begin{figure}[h]
   \centering
   \includegraphics[width=\textwidth]{real_color}
@@ -697,6 +744,14 @@ FastLinkNet& 0.9797 & 0.9153 & 0.9707 & 0.9148 \\  \bottomrule
 \end{table}
 
 \chapter{Discussion}
+From \cref{tab:res_performance} it is interesting to note that all of the
+trained networks perform almost the same and very close to the big baseline
+model \textit{EmilSeg}. This might be due to the fact that the datasets contain
+too little complexity and hence present a rather easy problem for
+the models. Some tests from running the models on a smartphone and testing it
+out in real world applications seem to support this since the model really
+struggles to handle complex scenes, multiple feet in the image, differing image
+scales, bare feet etc. Some tests of this can be seen in \cref{chapter:real_world}.
 
 \section{Further work}
 \todo{This is just some notes for now}
@@ -722,6 +777,9 @@ FastLinkNet& 0.9797 & 0.9153 & 0.9707 & 0.9148 \\  \bottomrule
 
 \appendix
 
-\chapter{Unnecessary Appended Material}
+\chapter{Real world tests} \label{chapter:real_world}
+\todo{add a capture image button to the app and go out in the world and take
+  some cool images}
+
 
 \end{document}
