@@ -89,7 +89,7 @@ single image is a tedious task, not to mention the thousands required for
 training. 
 
 \section{Research Questions}
-\todo{Make this into actual text}
+%\todo{Make this into actual text}
 To try and address these issues this thesis will focus on two research questions:
 \begin{enumerate}
 \item To what extent can modern neural networks be slimmed down and optimized for
@@ -744,6 +744,16 @@ FastLinkNet& 0.9797 & 0.9153 & 0.9707 & 0.9148 \\  \bottomrule
 \end{table}
 
 \chapter{Discussion}
+The fastest network produced, \textit{FastLinkNet}, runs inference in \(73 ms\)
+\cref{tab:res_resources}, enabling frame rates of over \(10fps\) on a smartphone
+from \(2016\) without the use of hardware acceleration on GPU or digital signal
+processor (DSP) which are both
+expected features as the mobile neural network platforms mature.
+Moreover the resulting segmentations from \textit{FastLinkNet} look good on both
+the synthetic, \cref{fig:seg_test}, and the real dataset, \cref{fig:seg_real}, meaning that
+the models are usable in real time right now and that significant performance
+boosts could be expected in the near future.
+
 From \cref{tab:res_performance} it is interesting to note that all of the
 trained networks perform almost the same and very close to the big baseline
 model \textit{EmilSeg}. This might be due to the fact that the datasets contain
@@ -752,26 +762,41 @@ the models. Some tests from running the models on a smartphone and testing it
 out in real world applications seem to support this since the model really
 struggles to handle complex scenes, multiple feet in the image, differing image
 scales, bare feet etc. Some tests of this can be seen in \cref{chapter:real_world}.
+It is also noteworthy that the performance on the real and the synthetic
+datasets are almost identical for all the models except for \textit{EmilSeg}
+indicating that generalization between the datasets works really well.
 
 \section{Further work}
-\todo{This is just some notes for now}
-+ What other things can be done to increase performance?
-  + Use temporal aspect of real data
-    + Add some momentum to pixels, kind of like persistence of vision in humans 
-    + Add LSTM at bottleneck (too slow)
-    + Feed last prediction back as additional channels (tested a bit, didn't get it to work)
-  + Do pretraining on other data
-    + Train encoder on say ImageNet to learn visual features?
-    + Train for segmentation on something more general (DAVIS?) and finetune for feet?
-    + Something about how the synthetic dataset is built, may be, using actual
-    3d-models or GANS? would give better training data?
-    
-    Due to time constraints the teacher model \textit{EmilSeg} in distillation
-    was not subjected to extensive hyperparameter optimization and was not
-    necessarilly trained to full convergence meaning that distillation could get
-    better results if more time was spent on tweeking not only the students but
-    also the teacher.
-    
+The teacher model \textit{EmilSeg} in distillation
+was not subjected to extensive hyperparameter optimization and was not
+necessarilly trained to full convergence meaning that distillation could get
+better results if more time was spent on tweeking not only the students but
+also the teacher.
+
+Further performance could also be gained from not just using the the current
+frame for segmentation but the entire stream of information. This could for
+example be done by adding a long short-term memory (LSTM) cell to the
+bottlenecks of the segmentation networks or by feeding the predicted
+segmentation at each frame back as a fourth channel in the input for the next
+frame. These approaches however would require segmented video data for training
+or heavy augmentation of the existing images to produce plausible fake video
+from still images. An other issue with these approaches is also that they can
+add a lot of computational overhead to the models and hence slow down execution to an
+unacceptable degree.
+
+An approach to getting better and more reliable results from the networks that
+would not slow down execution would be to rethink the training process. For
+example pre training the encoder on \textit{ImageNet} or the entire network on
+an other segmentation dataset like \textit{CamVid} could improve performance. To
+get more plausible segmentations from the networks they could also be trained as
+a generative adversarial network
+(GAN) as proposed by \textcite{AdverserialSegmentation}.
+
+The quality of the synthetic dataset could also be improved, either by training a
+\textit{GAN} to produce the training images or by using the full 3D-models of
+the feet from the scanner, mapping the texture from the images back to this model
+and then placing the foot at an arbitrary angle and distance from the virtual
+camera. Giving a greater variance in the data.
 
 \printbibliography[heading=bibintoc]% Print the bibliography (and make it appear in the table of contents)
 
