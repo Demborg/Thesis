@@ -15,11 +15,11 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \newcommand{\bibentry}[1]{\parencite{#1}}
-\usepackage{todonotes}
+\usepackage[disable]{todonotes}
 
 
-\title{Real-time segmentation on smartphone}
-\alttitle{Realtids segmentering på smartphone}
+\title{Real-time segmentation of feet on smartphone}
+\alttitle{Realtids segmentering av fötter på smartphone}
 \author{Axel Demborg}
 \email{demborg@kth.se}
 \supervisor{Hossein Azizpour}
@@ -39,26 +39,49 @@
 \titlepage
 
 \begin{abstract}
+  In this work neural networks for real-time semantic segmentation of feet on
+  smartphones have been built and evaluated. The models have been trained on a
+  dataset consisting of synthetically composited images of feet on a variety of
+  floors where the feet have been extracted from 3D-scan data from
+  \textit{Volumental's}, the company where the thesis has been performed, foot
+  scanner and the floors have been scraped from online images. A secondary
+  dataset with real images of feet in natural environments has also been used
+  for testing generalization from the synthetic dataset.
+
+  The fastest neural network designed takes \(7.2Mb\) to store, runs at
+  \(10fps\) on a 2016 android smartphone without hardware acceleration while
+  still producing good segmentations on both datasets.
 
 \end{abstract}
 
 
 \begin{otherlanguage}{swedish}
   \begin{abstract}
+    I det här arbetet har neuronnät för semantisk segmentering av fötter
+    byggts och testats. Modellerna har tränats på ett dataset av syntetiska
+    bilder av fötter på varierande golv. Fötterna har hämtats från
+    3D-skanningsdata från \textit{Volumentals}, företaget där exjobbet har
+    utförts, 3d-skanner och golven har hämtats från internet. Ett andra dataset
+    med riktiga bilder på fötter har också använts för att se hur modellerna
+    generaliserar från den syntetiska datan.
+
+    Det snabbaste nätverket som har designats tar \(7.2 Mb\) att lagra och kan
+    köra i \(10fps\) på en androidmobil från 2016 och ger god segementering på
+    bägge dataseten.
   \end{abstract}
 \end{otherlanguage}
 
 \section*{Acknowledgments}
-% Firstly I would like to thank my supervisors, Alper Aydemir and Hossein Azizpour for
-% the help and support they have given me in compleeting this thesis. This would
-% have been much harder and less fun without you.
+Firstly I would like to thank my supervisors, Alper Aydemir and Hossein Azizpour for
+the help and support they have given me in compleeting this thesis. This would
+have been much harder and less fun without you.
 
-% I would also like to thank Emil Ernfeldt for his fantastic help with creating and
-% managing the datasets used in this work as well as for building the monstrosity
-% of a network that was used as a teacher in some of the experiments.
+I would also like to thank Emil Ernfeldt for his fantastic help with creating and
+managing the datasets used in this work as well as for building the monstrosity
+of a network that was used as a teacher in some of the experiments.
 
-% And a huge thanks to the entire staff at Volumental whom have made it a joy to go to work
-% each day, even when my code has just been exploding. It has been a true pleasure to share a office with all of you!
+Further I would like to extend a huge thanks to the entire staff at Volumental whom have made it a joy to go to work
+each day, even when my code has just been crashing. It has been a true pleasure to share a office with all of you!
 
 
 \tableofcontents
@@ -114,7 +137,7 @@ only made feasible by the use of multiple graphical processing units (GPUs)
 In the areas of object detection and semantic segmentation it was \emph{Regions
   with CNN features} (\emph{R-CNN}) \bibentry{girshick2014rich} that in 2014
 first showed that CNNs could be successfully be applied to these fields by
-significantly improving over the previous state of the art in object detection
+significantly improving over the previous sHej, och ursäkta dröjsmålet men jag är primärt intresserad av maskininlärningstjänster just nu så tackar för visat intresse men avböjer artigast. //Axeltate of the art in object detection
 \bibentry{ren2013histograms} and after minor modifications matching the
 performance of the state of the art in semantic segmentation
 \bibentry{carreira2012semantic} with a system not specifically built for the
