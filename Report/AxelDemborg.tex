@@ -15,7 +15,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \newcommand{\bibentry}[1]{\parencite{#1}}
-\usepackage[disable]{todonotes}
+\usepackage[]{todonotes}
 
 
 \title{Real-time segmentation of feet on smartphone}
@@ -92,8 +92,10 @@ each day, even when my code has just been crashing. It has been a true pleasure 
 
 
 \chapter{Introduction}
-For 3D scanning of human bodies specialized hardware has traditionally been
-used. However with the recent developments in convolutional neural networks
+
+For segmentation of human bodies, the problem of classifying each pixel in a
+image, specialized hardware has traditionally been used.
+However with the recent developments in convolutional neural networks
 (CNN) where high quality object segmentation \parencite{BriefHistory} and pose
 estimation \parencite{he2017mask} have been performed from RGB images it should
 be possible to do online segmentation of human bodies with commodity smartphone cameras. An issue
@@ -102,9 +104,9 @@ that they can't fit in the on-chip SRAM and instead have to reside in the power
 hungry off-chip DRAM making applications up to 100 times more power consuming
 \parencite{han2015learning}. Another issue concerns the computational load of
 the models and means that the networks can't run in real-time on the relatively
-slow processing power of a smartphone. 
+limited processing power of a smartphone. 
 
-Further issues with these neural networks are that the require huge amounts of
+Further issues with supervised methods like these are that they require huge amounts of
 labeled data to train and that generating high quality ground truth data is
 expensive. This is especially true for tasks like semantic segmentation
 where pixel level annotations have to be made for each image and labeling a
@@ -123,22 +125,30 @@ To try and address these issues this thesis will focus on two research questions
   
 \chapter{Background}
 \section{Related work}
-Convolutional Neural Networks (CNN) where first introduced in 1998
-\bibentry{lecun1998gradient} and since then larger and larger CNNs have slowly
+\todo{make sure all the fancy images you add now are actually refed}
+Convolutional Neural Networks (CNN) were first introduced in 1998
+\bibentry{lecun1998gradient} and since then deeper and deeper CNNs have slowly
 become the state of the art method for most areas of computer vision. Notably
 \emph{AlexNet} \bibentry{krizhevsky2012imagenet} in 2012 proved that that deep
-CNNs could be used for high resolution image classification by beating the
+CNNs can be used for high resolution image classification by beating the
 previous state of the art \bibentry{sanchez2011high} on the \emph{ImageNet}
 classification challenge \bibentry{deng2009imagenet}. To do this \emph{AlexNet}
 used 60 million parameters and 650,000 neurons. Training of the network was
 only made feasible by the use of multiple graphical processing units (GPUs)
 \bibentry{krizhevsky2012imagenet}.
 
-In the areas of object detection and semantic segmentation it was \emph{Regions
-  with CNN features} (\emph{R-CNN}) \bibentry{girshick2014rich} that in 2014
-first showed that CNNs could be successfully be applied to these fields by
-significantly improving over the previous sHej, och ursäkta dröjsmålet men jag är primärt intresserad av maskininlärningstjänster just nu så tackar för visat intresse men avböjer artigast. //Axeltate of the art in object detection
-\bibentry{ren2013histograms} and after minor modifications matching the
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth]{AlexNet}
+  \caption{The architecture of \textit{AlexNet}}
+  \label{fig:AlexNet}
+  \end{figure}
+
+In the areas of object detection and semantic segmentation \emph{Regions
+  with CNN features} (\emph{R-CNN}) \bibentry{girshick2014rich} 
+first showed in that CNNs can be successfully be applied to these fields by
+significantly improving over the previous state of the art in object detection
+\bibentry{ren2013histograms} After minor modifications matching the
 performance of the state of the art in semantic segmentation
 \bibentry{carreira2012semantic} with a system not specifically built for the
 task. For object detection \emph{R-CNN} works as a hybrid system with
@@ -147,19 +157,35 @@ object regions and a CNN, pre-trained on \emph{ImageNet}
 \bibentry{deng2009imagenet} and fine-tuned for region classification, generating
 fixed length features for each region, finally classifying each region by
 running class specific \emph{support vector machines}
-\bibentry{boser1992training} on these features. Some issues with \emph{R-CNN}
+\bibentry{boser1992training} on these features.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{R-CNN}
+  \caption{The architecture of \textit{R-CNN}}
+  \label{fig:R-CNN}
+  \end{figure}
+
+Some issues with \emph{R-CNN}
 are that it requires multistage training, training the CNN to give good
-features and training the SVMs for classification, and that it is slow, for
-training but most notably at inference where one image is processed in 47s.
+features and the SVMs for classification, which is slow. Not only for training
+but most notably at inference where one image is processed in 47s.
 These problems are addressed with further work resulting in \emph{Fast R-CNN}
-\bibentry{girshick2015fast} where the CNN isn't run once per proposed region but
-instead once for the entire network generating a convolutional feature map that
+\bibentry{girshick2015fast}. In this work the network isn't run once per proposed region but
+instead once for the entire image generating a convolutional feature map that
 is then pooled with a region of interest (RoI) pooling layer to produce a
 feature vector for each region. These feature vectors are then feed into a fully
 connected neural network with two sibling output layers that perform both
 classification and bounding box refinement in parallel. With these improvements
 \emph{Fast R-CNN} achieves faster inference and higher accuracy than its
 predecessors and does so with a arguably much more elegant design.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth]{FastR-CNN}
+  \caption{The architecture of \textit{Fast R-CNN}}
+  \label{fig:FastR-CNN}
+  \end{figure}
 
 Even though
 \emph{Fast R-CNN} improved speed significantly it was nowhere near real-time
@@ -172,7 +198,16 @@ proposals shares most of its computation with the classification network the
 region proposals are practically free and frame rates of 5fps are achievable.
 The region proposal networks not only speed up computation but also prove to
 give better accuracy region proposals and thus raise over all accuracy in the
-system as well \bibentry{ren2015faster}. Even further improvements to this
+system as well \bibentry{ren2015faster}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{FasterR-CNN}
+  \caption{The architecture of \textit{Faster R-CNN}}
+  \label{fig:AlexNet}
+  \end{figure}
+
+Even further improvements to this
 framework was achieved with the introduction of \emph{Mask R-CNN}
 \bibentry{he2017mask} which expands upon \emph{Faster R-CNN} by adding a third
 branch for a segmentation mask besides the branches for bounding box refinement
@@ -181,6 +216,13 @@ bounding box of items in the image but also which exact pixels belong to the
 object. Since segmentation is a pixel-by-pixel prediction problem \emph{Mask
   R-CNN} replaces the spatially quantizing RoIPool operation from \emph{Fast
   R-CNN} with a quantization-free layer called RoIAllign. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{MaskR-CNN}
+  \caption{The architecture of \textit{Mask R-CNN}}
+  \label{fig:AlexNet}
+  \end{figure}
 
 Some parallel work on semantic segmentation resulted in \emph{SegNet}
 \bibentry{badrinarayanan2015segnet}, a fully convolutional encoder-decoder
@@ -192,6 +234,14 @@ the max pooling operations have been replaced with upsampling layers that use
 the stored indices from the corresponding pooling layers to maintain the
 granularity of the images. The final layer in the network is a softmax and hence
 the outputs are the probabilities of each pixel belong to each class.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{SegNet}
+  \caption{The architecture of \textit{SegNet}}
+  \label{fig:AlexNet}
+  \end{figure}
+
 Continued work on segmentation utilizes blocks of so called \emph{DenseNets}
 \bibentry{huang2017densely}, CNNs where every layer is connected to every layer
 after it enabling the training of exceedingly deep network architectures by
@@ -201,6 +251,13 @@ structure where skip connections restore image granularity during upsampling the
 state of the art in image segmentation has been pushed even further
 \bibentry{jegou2017one} while still reducing the amount of parameters required
 for the models by a factor 10 as compared to the previous state of art. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.3\textwidth]{Tiramisu}
+  \caption{The architecture of \textit{One Hundred Layers Tiramisu}}
+  \label{fig:AlexNet}
+  \end{figure}
 
 Despite their impressive performance on a wide range of problems neural networks
 are still prohibited from running locally on mobile devices with slow
@@ -220,7 +277,7 @@ structure of the learned weights in neural networks
 \bibentry{denil2013predicting} has showed that there is significant redundancy
 in the parameterization of several deep learning models and that up to 95\% of
 weights in networks can be predicted from the remaining 5\% without any drop in
-accuracy. This indicates that models could be made much smaller while still
+accuracy. This indicates that models can be made much smaller while still
 maintaining performance and several such approaches for squeezing high
 performance networks into small memory footprints and computational loads have
 been proposed. The most prominent approaches will be presented below.  
@@ -276,7 +333,7 @@ factor 35 without any loss in accuracy. Despite these very impressive results
 however \emph{deep compression} comes with a major drawback, it can't be run
 efficiently in its compressed form and the full weight matrices have to be
 rebuilt at inference time to use the models on commodity hardware. To alleviate
-these problems hardware has been designed that could perform prediction directly
+these problems hardware has been designed that can perform prediction directly
 from the compressed models. This so called \emph{efficient inference engine}
 \bibentry{han2016eie} would enable inference 13 times faster than GPU while
 being 3400 times more energy efficient. 
@@ -359,7 +416,26 @@ slowly annealed during training. This annealing allows for the student to lean
 heavily on the teacher for support in early stages of training and learn samples
 which the even the teacher struggles with towards the end of its training. Using
 this approach the \emph{FitNets} manage to produce predictions at the same level
-or in some cases even better than models with 10 times more parameters. 
+or in some cases even better than models with 10 times more parameters.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{FitNet_A}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{FitNet_B}
+      \end{subfigure}
+    ~
+    %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{FitNet_C}
+      \end{subfigure}
+     \caption{The training procedure for \textit{FitNets}}\label{fig:FitNets}
+\end{figure}
 
 Some more recent work \bibentry{zagouruyko2017paying} builds upon the ideas from
 \emph{FitNets} with not only letting the students mimic the output of teachers
@@ -375,7 +451,15 @@ attention transferring approach proves to give good results on a number of
 difficult datasets including \emph{ImageNet} and is also shown to work well
 together with distillation. 
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{AttentionTransfer}
+  \caption{\textit{Attention transfer}}
+  \label{fig:AttentionTransfer}
+\end{figure}
+
 \subsection{Architectural optimizations}
+\todo{Figure illustrating the different convs etc}
 Another orthogonal approach for compression is to optimize the convolutional
 layers them selves making them require less parameters or less computation to
 perform their tasks but still keep as much as possible of their representational
@@ -438,6 +522,15 @@ efficient segmentation is \textit{LinkNet}
 state of the art network which can process high resolution frames at almost 10
 fps.
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{LinkNet}
+  \caption{Architecture of \textit{LinkNet}}
+  \label{fig:LinkNet}
+\end{figure}
+
+\section{This work}
+\todo{actually write this}
 
 \chapter{Experiments}
 \section{Data}
@@ -712,6 +805,7 @@ operations (\textit{FLOPs}) calculated for inference was extracted. The size
 required to store the models was also measured. 
 
 \chapter{Results}
+\todo{nått om olika loss functions}
 The resulting segmentations from the best trained models of each architecture
 can be seen for the real dataset in \cref{fig:seg_real} and for the synthetic
 data set in \cref{fig:seg_test}. The mean pixel accuracy and IoU metrics
