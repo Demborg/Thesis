@@ -15,7 +15,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \newcommand{\bibentry}[1]{\parencite{#1}}
-\usepackage[]{todonotes}
+\usepackage[disable]{todonotes}
 
 
 \title{Real-time segmentation of feet on smartphone}
@@ -94,7 +94,8 @@ each day, even when my code has just been crashing. It has been a true pleasure 
 \chapter{Introduction}
 
 For segmentation of human bodies, the problem of classifying each pixel in a
-image, specialized hardware has traditionally been used.
+image, specialized hardware has traditionally been used.\todo{Maybe some more
+  thinking required in this intro?}
 However with the recent developments in convolutional neural networks
 (CNN) where high quality object segmentation \parencite{BriefHistory} and pose
 estimation \parencite{he2017mask} have been performed from RGB images it should
@@ -125,14 +126,14 @@ To try and address these issues this thesis will focus on two research questions
   
 \chapter{Background}
 \section{Related work}
-\todo{make sure all the fancy images you add now are actually refed}
 Convolutional Neural Networks (CNN) were first introduced in 1998
 \bibentry{lecun1998gradient} and since then deeper and deeper CNNs have slowly
 become the state of the art method for most areas of computer vision. Notably
 \emph{AlexNet} \bibentry{krizhevsky2012imagenet} in 2012 proved that that deep
 CNNs can be used for high resolution image classification by beating the
 previous state of the art \bibentry{sanchez2011high} on the \emph{ImageNet}
-classification challenge \bibentry{deng2009imagenet}. To do this \emph{AlexNet}
+classification challenge \bibentry{deng2009imagenet}. To do this \emph{AlexNet},
+visualized in \cref{fig:AlexNet}, 
 used 60 million parameters and 650,000 neurons. Training of the network was
 only made feasible by the use of multiple graphical processing units (GPUs)
 \bibentry{krizhevsky2012imagenet}.
@@ -140,7 +141,9 @@ only made feasible by the use of multiple graphical processing units (GPUs)
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.7\textwidth]{AlexNet}
-  \caption{The architecture of \textit{AlexNet}}
+  \caption{The architecture of \textit{AlexNet} with its 60 million parameters
+    distributed
+    in eight layers, five convolutional and three fully connected.}
   \label{fig:AlexNet}
   \end{figure}
 
@@ -157,12 +160,14 @@ object regions and a CNN, pre-trained on \emph{ImageNet}
 \bibentry{deng2009imagenet} and fine-tuned for region classification, generating
 fixed length features for each region, finally classifying each region by
 running class specific \emph{support vector machines}
-\bibentry{boser1992training} on these features.
+\bibentry{boser1992training} on these features, this pipeline is illustrated in \cref{fig:R-CNN}.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{R-CNN}
-  \caption{The architecture of \textit{R-CNN}}
+  \caption{The object detection pipeline of \textit{R-CNN} which illustrates the
+  region proposals from selective search, the computation of CNN features from
+  these regions and the final SVM classification.}
   \label{fig:R-CNN}
   \end{figure}
 
@@ -176,14 +181,16 @@ instead once for the entire image generating a convolutional feature map that
 is then pooled with a region of interest (RoI) pooling layer to produce a
 feature vector for each region. These feature vectors are then feed into a fully
 connected neural network with two sibling output layers that perform both
-classification and bounding box refinement in parallel. With these improvements
+classification and bounding box refinement in parallel, this architecture is
+illustrated in \cref{fig:FastR-CNN}. With these improvements
 \emph{Fast R-CNN} achieves faster inference and higher accuracy than its
 predecessors and does so with a arguably much more elegant design.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.7\textwidth]{FastR-CNN}
-  \caption{The architecture of \textit{Fast R-CNN}}
+  \caption{The architecture of \textit{Fast R-CNN} illustrates how the
+    convolutional feature map is only calculated once.}
   \label{fig:FastR-CNN}
   \end{figure}
 
@@ -191,20 +198,22 @@ Even though
 \emph{Fast R-CNN} improved speed significantly it was nowhere near real-time
 performance. Further performance improvements were introduced with \emph{Faster
   R-CNN} \bibentry{ren2015faster} where \emph{selective search} for region
-proposals is replaced with Region Proposal Networks, fully convolutional neural
-networks that take as input the convolutional feature maps as described from
-\emph{Fast R-CNN} and outputs region proposals. Since this approach for region
-proposals shares most of its computation with the classification network the
-region proposals are practically free and frame rates of 5fps are achievable.
+proposals is replaced with Region Proposal Networks. These are fully convolutional neural
+networks that take as input the convolutional feature maps introduced in 
+\emph{Fast R-CNN}\parencite{girshick2015fast} and outputs region proposals. Since this approach for region
+proposals shares most of its computation with the classification network, as illustrated in \cref{fig:FasterR-CNN}, the
+region proposals are practically free and frame rates of 5fps are achievable on
+a K40 GPU.
 The region proposal networks not only speed up computation but also prove to
-give better accuracy region proposals and thus raise over all accuracy in the
+give better accuracy region proposals\todo{Why are they better?} and thus raise overall accuracy in the
 system as well \bibentry{ren2015faster}.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.5\textwidth]{FasterR-CNN}
-  \caption{The architecture of \textit{Faster R-CNN}}
-  \label{fig:AlexNet}
+  \caption{The architecture of \textit{Faster R-CNN} shows how the feature maps
+    are also used for region proposals.}
+  \label{fig:FasterR-CNN}
   \end{figure}
 
 Even further improvements to this
@@ -220,7 +229,8 @@ object. Since segmentation is a pixel-by-pixel prediction problem \emph{Mask
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.5\textwidth]{MaskR-CNN}
-  \caption{The architecture of \textit{Mask R-CNN}}
+  \caption{\textit{Mask R-CNN} adds a branch for segmentation to the body of
+    \textit{Faster R-CNN}.}
   \label{fig:AlexNet}
   \end{figure}
 
@@ -233,30 +243,41 @@ network which is architecturally a mirror image of the encoder network but where
 the max pooling operations have been replaced with upsampling layers that use
 the stored indices from the corresponding pooling layers to maintain the
 granularity of the images. The final layer in the network is a softmax and hence
-the outputs are the probabilities of each pixel belong to each class.
+the outputs are the probabilities of each pixel belong to each class. A
+illustration of this network can be seen in \cref{fig:SegNet}.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{SegNet}
-  \caption{The architecture of \textit{SegNet}}
-  \label{fig:AlexNet}
+  \caption{The architecture of \textit{SegNet} illustrating the symmetrical
+    encoder-decoder structure.}
+  \label{fig:SegNet}
   \end{figure}
 
 Continued work on segmentation utilizes blocks of so called \emph{DenseNets}
 \bibentry{huang2017densely}, CNNs where every layer is connected to every layer
-after it enabling the training of exceedingly deep network architectures by
+after it, see \cref{fig:DenseNet}, enabling the training of exceedingly deep network architectures by
 alleviating the vanishing gradient problem and promoting feature reuse between
-the layers. By using these \emph{DensNets} in a very deep encoder-decoder
-structure where skip connections restore image granularity during upsampling the
-state of the art in image segmentation has been pushed even further
-\bibentry{jegou2017one} while still reducing the amount of parameters required
+the layers.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{dense}
+  \caption{An example of a \textit{DenseNet} which illustrates how all the
+    layers are connected.}
+  \label{fig:DenseNet}
+  \end{figure}
+
+\textcite{jegou2017one} use these \emph{DenseNets} in a very deep encoder-decoder
+structure where skip connections, as seen in \cref{fig:Tiramisu}, restore image granularity during upsampling the
+state of the art in image segmentation has been pushed even further while still reducing the amount of parameters required
 for the models by a factor 10 as compared to the previous state of art. 
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.3\textwidth]{Tiramisu}
   \caption{The architecture of \textit{One Hundred Layers Tiramisu}}
-  \label{fig:AlexNet}
+  \label{fig:Tiramisu}
   \end{figure}
 
 Despite their impressive performance on a wide range of problems neural networks
@@ -265,12 +286,13 @@ processors, limited power envelopes or limited memory due to their large size
 and big computational load. For example modern neural networks can't fit on the
 on-chip SRAM cache of mobile processors and instead have to reside in the much more power hungry
 off-chip DRAM memory making applications up to 100 times more power consuming
-\bibentry{han2015learning}. Regarding inference speed the most modern networks
-for object segmentation \bibentry{he2017mask} run at 5fps but that is on high
-performance GPUs meaning that mobile performance is far from real-time. Due to
+\bibentry{han2015learning}. Regarding inference speed modern networks
+for object segmentation \bibentry{he2017mask} run at 5fps. That however is on high
+performance GPUs meaning that real-time performance on mobile devices is still
+largely intractable. Due to
 these limitations applications of neural networks for mobile use cases are
 either to forced give up on state of the art performance or to be run on
-off-site servers which requires steady network connections and incurs delays,
+off-site servers which requires steady network connections and incurs latency,
 both of which may be intolerable for real-time mobile applications, self driving
 cars and robotics \bibentry{jin2014flattened}. However work on understanding the
 structure of the learned weights in neural networks
@@ -280,7 +302,9 @@ weights in networks can be predicted from the remaining 5\% without any drop in
 accuracy. This indicates that models can be made much smaller while still
 maintaining performance and several such approaches for squeezing high
 performance networks into small memory footprints and computational loads have
-been proposed. The most prominent approaches will be presented below.  
+been proposed. The most prominent approaches will be presented in the following
+sections.  
+\todo{Explain better but also get accross the idea that the networks are to big/large/deep/heavy}
 
 \subsection{Quantization of weights}
 Modern neural networks are usually based on 32-bit floating point
@@ -328,7 +352,7 @@ is retrained to compensate for this, in the second stage k-means clustering is
 performed on the weights and again the network is retrained to make the clusters
 take the most useful values, finally Huffman coding
 \bibentry{van1976construction} is used to reduce the storage required for the
-weights. This process allows \emph{deep compression} to compress networks with a
+weights. This process is illustrated in \cref{fig:DeepCompression} and it allows \emph{deep compression} to compress networks with a
 factor 35 without any loss in accuracy. Despite these very impressive results
 however \emph{deep compression} comes with a major drawback, it can't be run
 efficiently in its compressed form and the full weight matrices have to be
@@ -336,7 +360,14 @@ rebuilt at inference time to use the models on commodity hardware. To alleviate
 these problems hardware has been designed that can perform prediction directly
 from the compressed models. This so called \emph{efficient inference engine}
 \bibentry{han2016eie} would enable inference 13 times faster than GPU while
-being 3400 times more energy efficient. 
+being 3400 times more energy efficient.  
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{DeepCompression}
+  \caption{The compression pipeline of \textit{deep compression}.}
+  \label{fig:DeepCompression}
+  \end{figure}
 
 \subsection{Student-teacher learning}
 Student-teacher learning is a type of model compression where a smaller and/or
@@ -355,19 +386,23 @@ available but instead on large amounts of pseudo random data that has been given
 labels by first being passed through the large teacher ensemble. This
 compression technique yielded student networks up to 1000 times smaller and 1000
 times faster to compute than their ensemble teachers with a negligible drop in accuracy
-on some test problems. 
+on some test problems \parencite{bucilua2006model}. 
 
-Further work on student-teacher learning experiments with why deep neural
-networks usually perform better than shallow ones, even when they have the same
-amount of parameters. This was done by training shallow student models to mimic
+%Further work on student-teacher learning experiments with why deep neural
+%networks usually perform better than shallow ones, even when they have the same
+%amount of parameters.
+Further work on student-teacher learning investigates why slow to compute, deep
+neural networks perform better than their shallower and faster siblings, even when
+the amount of parameters is the same between them.
+This was done by training shallow student models to mimic
 deep teachers \bibentry{ba2014deep}. The work introduces two major modifications
-that make training of these student models feasible, firstly the student model
+that make training of these student models feasible. Firstly, the student model
 isn't tasked with just recreating the same label as the teacher but also the
 same distribution which is achieved by regressing the student to the logits, log
 probability, values of the teacher as they were before softmax. Getting
 predictions from the student is then achieved by adding a softmax layer to the
-end of it after training. Secondly a bottleneck linear layer is added to the
-network to speed up training. With these modifications they are able to train
+end of it after training. Second, a bottleneck linear layer is added to the
+network to speed up training. With these modifications the authors were able to train
 flat neural networks for both the TMIT and CIFAR-10 datasets with performance
 closely matching that of single deep networks. Continued analysis of flat
 networks however shows that depth and convolutions are critical for getting good
@@ -399,7 +434,7 @@ its own training. These results mean that distillation manages to transfer
 knowledge about how a 6 looks from the teacher to the student by only telling it
 to what degree different 7s and 8s don't look like 6s. 
 
-Continued work lead to the creation of \emph{FitNets}
+Continued work led to the creation of \emph{FitNets}
 \bibentry{romero2014fitnets} which goes in the opposite direction to previous
 attempts at student architectures and instead proposes very deep but thin
 students. To enable learning in these deep student networks a stage-wise
@@ -416,30 +451,35 @@ slowly annealed during training. This annealing allows for the student to lean
 heavily on the teacher for support in early stages of training and learn samples
 which the even the teacher struggles with towards the end of its training. Using
 this approach the \emph{FitNets} manage to produce predictions at the same level
-or in some cases even better than models with 10 times more parameters.
+or in some cases even better than models with 10 times more parameters. The
+training procedure is illustrated in \cref{fig:FitNet}.
 
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{FitNet_A}
+        \subcaption{The student and teacher networks}
     \end{subfigure}
     ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
       %(or a blank line to force the subfigure onto a new line)
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{FitNet_B}
+        \subcaption{The initial training of the guided layers in the student.}
       \end{subfigure}
     ~
     %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
     %(or a blank line to force the subfigure onto a new line)
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{FitNet_C}
+        \subcaption{The final distillation training of the entire student.}
       \end{subfigure}
-     \caption{The training procedure for \textit{FitNets}}\label{fig:FitNets}
+      \caption{The training procedure for \textit{FitNets}}\label{fig:FitNets}
+      \label{fig:FitNet}
 \end{figure}
 
 Some more recent work \bibentry{zagouruyko2017paying} builds upon the ideas from
 \emph{FitNets} with not only letting the students mimic the output of teachers
-but also some intermediary representations. Unlike the way it is done
+but also some intermediary representations. Unlike the way it is done in
 \emph{FitNets} however the student is not tasked with reconstructing the exact
 activations of the teacher in the intermediate layers but instead the attention
 maps, regions in the image that the teacher uses to make its predictions, and
@@ -454,7 +494,8 @@ together with distillation.
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{AttentionTransfer}
-  \caption{\textit{Attention transfer}}
+  \caption{Illustration of \textit{Attention transfer} showing the tight bond
+    between teacher and student during training.}
   \label{fig:AttentionTransfer}
 \end{figure}
 
@@ -530,7 +571,16 @@ fps.
 \end{figure}
 
 \section{This work}
-\todo{actually write this}
+\todo{Add some sort of graph or table detailing the different approches here}
+In this project we will try and build a model for real-time segmentation of feet
+on a smartphone. Since a system that is deployable right now is required
+compression approaches like deep compression that require custom hardware to be
+fully utilized are out of the question. Instead focus will be placed on how
+the highly streamlined architectures like MobileNets and LinkNet can be used and
+modified to produce give the required performance. The effectiveness of
+student-teacher learning in these models will also be evaluated by training the
+networks using knowledge distillation from a big segmentation network previously
+designed at Volumental.
 
 \chapter{Experiments}
 \section{Data}
