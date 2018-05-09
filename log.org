@@ -430,3 +430,4 @@ speed of neural networks on CPUs. with their reflections. The resulting samples 
     + Do specification mention options
     + Do related work
     + Halfway seminar 
+** Meeting 3 ish, lets talk report

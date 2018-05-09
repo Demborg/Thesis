@@ -15,7 +15,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \newcommand{\bibentry}[1]{\parencite{#1}}
-\usepackage[disable]{todonotes}
+\usepackage[]{todonotes}
 
 
 \title{Real-time segmentation of feet on smartphone}
@@ -39,6 +39,7 @@
 \titlepage
 
 \begin{abstract}
+  \todo{This is far to short, we need a why, what, how and result}
   In this work neural networks for real-time semantic segmentation of feet on
   smartphones have been built and evaluated. The models have been trained on a
   dataset consisting of synthetically composited images of feet on a variety of
@@ -81,7 +82,7 @@ managing the datasets used in this work as well as for building the monstrosity
 of a network that was used as a teacher in some of the experiments.
 
 Further I would like to extend a huge thanks to the entire staff at Volumental whom have made it a joy to go to work
-each day, even when my code has just been crashing. It has been a true pleasure to share a office with all of you!
+each day, even when my code has just been crashing. It has been a true pleasure to share an office with all of you!
 
 
 \tableofcontents
@@ -92,11 +93,11 @@ each day, even when my code has just been crashing. It has been a true pleasure 
 
 
 \chapter{Introduction}
+%Semantic segmentation
 
 For segmentation of human bodies, the problem of classifying each pixel in a
-image, specialized hardware has traditionally been used.\todo{Maybe some more
-  thinking required in this intro?}
-However with the recent developments in convolutional neural networks
+image, specialized hardware has traditionally been used. \todo{Maybe some more
+  thinking required in this intro?} However with the recent developments in convolutional neural networks
 (CNN) where high quality object segmentation \parencite{BriefHistory} and pose
 estimation \parencite{he2017mask} have been performed from RGB images it should
 be possible to do online segmentation of human bodies with commodity smartphone cameras. An issue
@@ -143,10 +144,17 @@ only made feasible by the use of multiple graphical processing units (GPUs)
   \includegraphics[width=0.7\textwidth]{AlexNet}
   \caption{The architecture of \textit{AlexNet} with its 60 million parameters
     distributed
-    in eight layers, five convolutional and three fully connected.}
+    in eight layers, five convolutional and three fully connected. Figure from \textcite{krizhevsky2012imagenet}.}
   \label{fig:AlexNet}
   \end{figure}
 
+The following sections will start with a summary of the work that has been done
+on extending CNNs for semantic segmentation and related problems like
+object detection. This will be followed by a discussion about how these networks
+are not suitable for mobile applications. Finally, approaches for compressing
+and building networks that can be run on mobile devices will be presented.
+
+\subsection{Semantic segmentation}
 In the areas of object detection and semantic segmentation \emph{Regions
   with CNN features} (\emph{R-CNN}) \bibentry{girshick2014rich} 
 first showed in that CNNs can be successfully be applied to these fields by
@@ -167,7 +175,7 @@ running class specific \emph{support vector machines}
   \includegraphics[width=0.9\textwidth]{R-CNN}
   \caption{The object detection pipeline of \textit{R-CNN} which illustrates the
   region proposals from selective search, the computation of CNN features from
-  these regions and the final SVM classification.}
+  these regions and the final SVM classification. Figure from \textcite{girshick2014rich}.}
   \label{fig:R-CNN}
   \end{figure}
 
@@ -190,7 +198,7 @@ predecessors and does so with a arguably much more elegant design.
   \centering
   \includegraphics[width=0.7\textwidth]{FastR-CNN}
   \caption{The architecture of \textit{Fast R-CNN} illustrates how the
-    convolutional feature map is only calculated once.}
+    convolutional feature map is only calculated once. Figure from \textcite{girshick2015fast}.}
   \label{fig:FastR-CNN}
   \end{figure}
 
@@ -212,7 +220,7 @@ system as well \bibentry{ren2015faster}.
   \centering
   \includegraphics[width=0.5\textwidth]{FasterR-CNN}
   \caption{The architecture of \textit{Faster R-CNN} shows how the feature maps
-    are also used for region proposals.}
+    are also used for region proposals. Figure from \textcite[]{ren2015faster}.}
   \label{fig:FasterR-CNN}
   \end{figure}
 
@@ -230,27 +238,44 @@ object. Since segmentation is a pixel-by-pixel prediction problem \emph{Mask
   \centering
   \includegraphics[width=0.5\textwidth]{MaskR-CNN}
   \caption{\textit{Mask R-CNN} adds a branch for segmentation to the body of
-    \textit{Faster R-CNN}.}
+    \textit{Faster R-CNN}. Figure from \textcite[]{he2017mask}.}
   \label{fig:AlexNet}
   \end{figure}
 
-Some parallel work on semantic segmentation resulted in \emph{SegNet}
-\bibentry{badrinarayanan2015segnet}, a fully convolutional encoder-decoder
-network. Here the encoder network encodes the input image down into a lower
-dimensional feature space while storing the indices of the max pooling
-operations. The low dimensional representations are then run through a decoder
+Parallel work on semantic segmentation for medical imaging resulted in
+\emph{U-Net} \parencite[]{UNet}, a fully convolutional encoder-decoder network.
+Here the encoder projects the image into a lower dimensional feature space.
+The low dimensional representations are then run through a decoder
 network which is architecturally a mirror image of the encoder network but where
-the max pooling operations have been replaced with upsampling layers that use
-the stored indices from the corresponding pooling layers to maintain the
-granularity of the images. The final layer in the network is a softmax and hence
-the outputs are the probabilities of each pixel belong to each class. A
-illustration of this network can be seen in \cref{fig:SegNet}.
+the max pooling operations have been replaced with transpose convolutional
+layers. Further, the corresponding feature map of the downsampling path is
+concatenated to the upsampled features, thus preserving
+granularity of the images, see \cref{fig:UNet}. The final layer in the network is a softmax and hence
+the outputs are the probabilities of each pixel belonging to each class.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{U-Net}
+  \caption{The U-shaped architecture of \textit{U-Net} with skip connections for
+    the feature maps in the middle. Figure from \textcite[]{UNet}.}
+  \label{fig:UNet}
+  \end{figure}
+
+Further work with encoder-decoder structures for segmentation resulted in \emph{SegNet}
+\bibentry{badrinarayanan2015segnet}. This network is architecturally very
+similar to \textit{U-Net} with the  major differences being how image
+granularity is preserved. Instead of concatenating the feature maps like they
+looked before max-pooling in the encoding branch to the upsampled feature maps
+just the indices of which value was kept in max-pooling is stored in
+\textit{SegNet}. This means that one integer, the index of the kept value, is
+stored instead of four floats, the values themselves has to be stored for
+each cell that max-pool is run over. This reduces the memory footprint of the
+network significantly.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{SegNet}
   \caption{The architecture of \textit{SegNet} illustrating the symmetrical
-    encoder-decoder structure.}
+    encoder-decoder structure. Figure from \textcite[]{badrinarayanan2015segnet}.}
   \label{fig:SegNet}
   \end{figure}
 
@@ -264,7 +289,7 @@ the layers.
   \centering
   \includegraphics[width=0.5\textwidth]{dense}
   \caption{An example of a \textit{DenseNet} which illustrates how all the
-    layers are connected.}
+    layers are connected. Figure from \textcite[]{huang2017densely}.}
   \label{fig:DenseNet}
   \end{figure}
 
@@ -276,10 +301,12 @@ for the models by a factor 10 as compared to the previous state of art.
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.3\textwidth]{Tiramisu}
-  \caption{The architecture of \textit{One Hundred Layers Tiramisu}}
+  \caption{The architecture of \textit{One Hundred Layers Tiramisu} where
+    DenseNets are used for segmentation. Figure from \textcite[]{jegou2017one}.}
   \label{fig:Tiramisu}
   \end{figure}
 
+  \subsection{Network compression}
 Despite their impressive performance on a wide range of problems neural networks
 are still prohibited from running locally on mobile devices with slow
 processors, limited power envelopes or limited memory due to their large size
@@ -306,7 +333,7 @@ been proposed. The most prominent approaches will be presented in the following
 sections.  
 \todo{Explain better but also get accross the idea that the networks are to big/large/deep/heavy}
 
-\subsection{Quantization of weights}
+\subsubsection{Quantization of weights}
 Modern neural networks are usually based on 32-bit floating point
 representations of parameters. It has been shown however that networks are quite
 resilient to noise and even that some noise can improve training
@@ -319,7 +346,7 @@ by doing the entire training in reduced accuracy \bibentry{hubara2016quantized}
 representation is not only that the models take less space but also that the
 individual multiplications become cheaper and hence the networks run faster. 
 
-\subsection{Weight sharing}
+\subsubsection{Weight sharing}
 One of the most direct approaches for removing the redundancy in parametrization
 from neural networks is by forcing the networks to share weights between
 different connections. This is precisely what \emph{HashedNets}
@@ -365,11 +392,11 @@ being 3400 times more energy efficient.
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{DeepCompression}
-  \caption{The compression pipeline of \textit{deep compression}.}
+  \caption{The compression pipeline of \textit{deep compression}. Figure from \textcite[]{han2015deep}.}
   \label{fig:DeepCompression}
   \end{figure}
 
-\subsection{Student-teacher learning}
+\subsubsection{Student-teacher learning}
 Student-teacher learning is a type of model compression where a smaller and/or
 faster to compute \emph{student} network is trained by making it learn the
 representations learned by a larger \emph{teacher} network. This idea was first
@@ -421,6 +448,7 @@ also in agreement with the theoretical results that the representational
 efficiency of neural networks grows exponentially with the number of layers
 \bibentry{liang2016deep}. 
 
+\subsubsection{Distillation}
 Improvements to the student-teacher learning method have been proposed where the
 student is tasked with minimizing the weighted average of the cross-entropy
 between its own output and the teacher output when the last layer is softmax
@@ -434,6 +462,7 @@ its own training. These results mean that distillation manages to transfer
 knowledge about how a 6 looks from the teacher to the student by only telling it
 to what degree different 7s and 8s don't look like 6s. 
 
+\subsubsection{FitNets}
 Continued work led to the creation of \emph{FitNets}
 \bibentry{romero2014fitnets} which goes in the opposite direction to previous
 attempts at student architectures and instead proposes very deep but thin
@@ -473,10 +502,11 @@ training procedure is illustrated in \cref{fig:FitNet}.
         \includegraphics[width=\textwidth]{FitNet_C}
         \subcaption{The final distillation training of the entire student.}
       \end{subfigure}
-      \caption{The training procedure for \textit{FitNets}}\label{fig:FitNets}
+      \caption{The training procedure for \textit{FitNets}. Figures from \textcite[]{romero2014fitnets}.}\label{fig:FitNets}
       \label{fig:FitNet}
 \end{figure}
 
+\subsubsection{Attention transfer}
 Some more recent work \bibentry{zagouruyko2017paying} builds upon the ideas from
 \emph{FitNets} with not only letting the students mimic the output of teachers
 but also some intermediary representations. Unlike the way it is done in
@@ -495,14 +525,14 @@ together with distillation.
   \centering
   \includegraphics[width=0.9\textwidth]{AttentionTransfer}
   \caption{Illustration of \textit{Attention transfer} showing the tight bond
-    between teacher and student during training.}
+    between teacher and student during training. Figure from \textcite[]{zagouruyko2017paying}.}
   \label{fig:AttentionTransfer}
 \end{figure}
 
-\subsection{Architectural optimizations}
+\subsubsection{Optimized convolutions}
 \todo{Figure illustrating the different convs etc}
 Another orthogonal approach for compression is to optimize the convolutional
-layers them selves making them require less parameters or less computation to
+layers themselves making them require less parameters or less computation to
 perform their tasks but still keep as much as possible of their representational
 power. One of the simplest things that can be done here is to replace single
 layers of \(N \times N\) convolutional filters with two layers with \(N \times
@@ -522,6 +552,35 @@ load with a factor \(8\) to \(9\) for \(3 \times 3\) convolutional kernels
 \bibentry{sifre2014rigid} and has since seen been successfully used in
 \emph{Inception} models \bibentry{ioffe2015batch}.  
 
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{conv}
+        \subcaption{Normal}
+    \end{subfigure}
+    \qquad %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{assymConv}
+        \subcaption{Asymmetrical}
+      \end{subfigure}
+
+      \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{separable}
+        \subcaption{Depthwise separable}
+    \end{subfigure}
+    \qquad %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{dilated}
+        \subcaption{Dilated}
+      \end{subfigure}
+      \caption{Illustration of the weight matrices used in the different types
+        of convolutional operators.}\label{fig:Convs}
+\end{figure}
+
+\subsubsection{Streamlined architectures}
 \emph{SqueezeNet} \bibentry{iandola2016squeezenet} presents a different take on
 how to get smaller models in that it rather optimizes the architecture of the
 network than any of the constituent parts, this approach gives a network with
@@ -561,16 +620,17 @@ An other modern network architecture that has been specifically designed for fas
 efficient segmentation is \textit{LinkNet}
 \parencite{chaurasia2017linknet}. Here residual blocks \parencite{residual} are used to produce a
 state of the art network which can process high resolution frames at almost 10
-fps.
+fps. To maintain image granularity skip connections are used, these can be seen
+in \cref{fig:LinkNet}.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.45\textwidth]{LinkNet}
-  \caption{Architecture of \textit{LinkNet}}
+  \caption{Architecture of \textit{LinkNet}. Figure from \textcite{chaurasia2017linknet}.}
   \label{fig:LinkNet}
 \end{figure}
 
-\section{This work}
+\section{This project}
 \todo{Add some sort of graph or table detailing the different approches here}
 In this project we will try and build a model for real-time segmentation of feet
 on a smartphone. Since a system that is deployable right now is required
@@ -580,7 +640,11 @@ the highly streamlined architectures like MobileNets and LinkNet can be used and
 modified to produce give the required performance. The effectiveness of
 student-teacher learning in these models will also be evaluated by training the
 networks using knowledge distillation from a big segmentation network previously
-designed at Volumental.
+designed at Volumental. Here distillation is preferred over more recent
+approaches like FitNets or attention transfer since the available teacher was
+not specifically designed to a teacher and finding layers suitable for hinting or
+transferring attention maps from is hence a problem in it self and outside the
+scope of this work.
 
 \chapter{Experiments}
 \section{Data}
@@ -866,8 +930,7 @@ benchmarks on the models are listed in \cref{tab:res_resources}.
   \centering
   \includegraphics[width=\textwidth]{real_color}
   \caption{Resulting segmentations on the real dataset from the different models. First row is the ground
-    truth, below that EmilSeg, ENet, LinkNet, MobileSeg, and FastLinkNet in that
-    order.}
+    truth, below that EmilSeg, ENet, LinkNet, MobileSeg, and FastLinkNet.}
   \label{fig:seg_real}
   \end{figure}
 
@@ -875,20 +938,20 @@ benchmarks on the models are listed in \cref{tab:res_resources}.
   \centering
   \includegraphics[width=\textwidth]{test_color}
   \caption{Resulting segmentations on the test set of the synthetic dataset from the different models. First row is the ground
-    truth, below that EmilSeg, ENet, LinkNet, MobileSeg, and FastLinkNet in that
-    order.}
+    truth, below that EmilSeg, ENet, LinkNet, MobileSeg, and FastLinkNet.}
   \label{fig:seg_test}
   \end{figure}
   
 \begin{table}[]
 \centering
-\caption{Comparison of size and inference speed between the different models }
+\caption{Comparison of size, FLOPs and time required for inference of the
+  different models. Timing was done on a \textit{ZTE Axon 7} android smartphone.}
 \label{tab:res_resources}
 \begin{tabular}{@{}lllll@{}}
 \toprule
-Model       & FLOPs [B]& Inference time {[}ms{]} & Size {[}Mb{]}  \\ \midrule
+Model       &  GFLOPs  & Inference time {[}ms{]} & Size {[}Mb{]}  \\ \midrule
 EmilSeg     &  55.37   & 4439                    & 85             \\
-ENet        &  10.38   & 1045                    & 15             \\
+ENet        &  10.38   & 1045                    & 1.4            \\
 LinkNet     &  1.75    & 234                     & 45             \\
 MobileSeg   &  2.68    & 555                     & 18             \\
 FastLinkNet &  0.287   & 73                      & 7.2            \\ \bottomrule
@@ -964,6 +1027,9 @@ The quality of the synthetic dataset could also be improved, either by training 
 the feet from the scanner, mapping the texture from the images back to this model
 and then placing the foot at an arbitrary angle and distance from the virtual
 camera. Giving a greater variance in the data.
+
+\section{Impact}
+\todo{Talk about the societal impact and ethical considerations of this work}
 
 \printbibliography[heading=bibintoc]% Print the bibliography (and make it appear in the table of contents)
 
