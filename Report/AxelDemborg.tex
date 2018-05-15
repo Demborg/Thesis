@@ -15,7 +15,8 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \newcommand{\bibentry}[1]{\parencite{#1}}
-\usepackage[]{todonotes}
+\usepackage[disable]{todonotes}
+\newcommand{\subsubsubsection}{}
 
 
 \title{Real-time segmentation of feet on smartphone}
@@ -95,29 +96,73 @@ each day, even when my code has just been crashing. It has been a true pleasure 
 \chapter{Introduction}
 %Semantic segmentation
 
-For segmentation of human bodies, the problem of classifying each pixel in a
-image, specialized hardware has traditionally been used. \todo{Maybe some more
-  thinking required in this intro?} However with the recent developments in convolutional neural networks
-(CNN) where high quality object segmentation \parencite{BriefHistory} and pose
-estimation \parencite{he2017mask} have been performed from RGB images it should
-be possible to do online segmentation of human bodies with commodity smartphone cameras. An issue
-for mobile deployments of these networks however is their shear size meaning
-that they can't fit in the on-chip SRAM and instead have to reside in the power
+% For segmentation of human bodies, the problem of classifying each pixel in a
+% image, specialized hardware has traditionally been used. \todo{Maybe some more
+%   thinking required in this intro?} However with the recent developments in convolutional neural networks
+% (CNN) where high quality object segmentation \parencite{BriefHistory} and pose
+% estimation \parencite{he2017mask} have been performed from RGB images it should
+% be possible to do online segmentation of human bodies with commodity smartphone cameras. An issue
+% for mobile deployments of these networks however is their shear size meaning
+% that they can't fit in the on-chip SRAM and instead have to reside in the power
+% hungry off-chip DRAM making applications up to 100 times more power consuming
+% \parencite{han2015learning}. Another issue concerns the computational load of
+% the models and means that the networks can't run in real-time on the relatively
+% limited processing power of a smartphone. 
+
+% Further issues with supervised methods like these are that they require huge amounts of
+% labeled data to train and that generating high quality ground truth data is
+% expensive. This is especially true for tasks like semantic segmentation
+% where pixel level annotations have to be made for each image and labeling a
+% single image is a tedious task, not to mention the thousands required for
+% training. 
+
+Segmentation is the problem of partitioning an image into multiple, meaningful
+regions, allowing for easier understanding of images. Semantic segmentation
+is when the class of the region is also predicted, this problem can also be
+formulated as predicting the class of each pixel in an image. These are both
+very important problems in computer vision and are relevant for everything from
+scene understanding and autonomous driving to synthetic camera effects. Early
+approaches utilizing low-level image features to perform segmentation have
+recently been outmatched by machine learning models processing the entire image
+at once. Deep convolutional neural networks (CNN:s) have been especially
+prominent for these tasks.
+
+With these rapid developments, modern smartphones with their high quality
+cameras, quite able processors and immense availability have become a sought
+after target to run CNN:s on. Deep neural networks are however normally very
+large models and tend to require a lot of computation to evaluate. These
+requirements are problematic for mobile deployments. Firstly, the large
+models can't fit in the on-chip cache and instead have to reside in the power
 hungry off-chip DRAM making applications up to 100 times more power consuming
-\parencite{han2015learning}. Another issue concerns the computational load of
-the models and means that the networks can't run in real-time on the relatively
-limited processing power of a smartphone. 
+\parencite{han2015learning}. Secondly, the mobile processors can't keep up with
+the computational load of the models and hence take seconds to run. This gives
+performance far from real-time which is required for smooth operation in many
+cases. To address these issues methods for compressing models and designing
+streamlined models that can be run in real-time on mobile hardware have been
+investigated.
 
-Further issues with supervised methods like these are that they require huge amounts of
-labeled data to train and that generating high quality ground truth data is
-expensive. This is especially true for tasks like semantic segmentation
-where pixel level annotations have to be made for each image and labeling a
-single image is a tedious task, not to mention the thousands required for
-training. 
+In the intersection of these two lines of research, segmentation and
+streamlining of neural networks lies this thesis. The project was performed at
+the company \textit{Volumental}, a company specialized in 3D scanning of feet
+for custom shoe recommendations. The companies current product is a designated
+3D scanner but for the online shopping experience a mobile app with similar
+capabilities is required. A first step towards such an application is to create
+a model that can reliably perform segmentation of feet in real-time on a
+smartphone.
 
+A problem for supervised machine learning methods and deep neural networks in
+particular is that they require huge amounts of annotated data for training.
+Producing these labeled datasets can be very time-consuming and expensive
+especially for image segmentation where producing a single high quality
+ground truth frame is a tedious task for a human. Having access to data from
+Volumental's dedicated 3D scanner however means that high quality synthetic
+datasets can be produced and learned from, reducing the need for manual annotation.
+
+\textit{\textbf{Problem formulation:} To build a system for real-time segmentation of feet that can reliably be run on a
+  smartphone and be trained on synthetic data.}
 \section{Research Questions}
 %\todo{Make this into actual text}
-To try and address these issues this thesis will focus on two research questions:
+To address these issues this thesis will focus on two research questions:
 \begin{enumerate}
 \item To what extent can modern neural networks be slimmed down and optimized for
   real-time execution on smartphones?
@@ -213,7 +258,7 @@ proposals shares most of its computation with the classification network, as ill
 region proposals are practically free and frame rates of 5fps are achievable on
 a K40 GPU.
 The region proposal networks not only speed up computation but also prove to
-give better accuracy region proposals\todo{Why are they better?} and thus raise overall accuracy in the
+give better accuracy region proposals and thus raise overall accuracy in the
 system as well \bibentry{ren2015faster}.
 
 \begin{figure}[h]
@@ -331,7 +376,6 @@ maintaining performance and several such approaches for squeezing high
 performance networks into small memory footprints and computational loads have
 been proposed. The most prominent approaches will be presented in the following
 sections.  
-\todo{Explain better but also get accross the idea that the networks are to big/large/deep/heavy}
 
 \subsubsection{Quantization of weights}
 Modern neural networks are usually based on 32-bit floating point
@@ -448,7 +492,7 @@ also in agreement with the theoretical results that the representational
 efficiency of neural networks grows exponentially with the number of layers
 \bibentry{liang2016deep}. 
 
-\subsubsection{Distillation}
+\subsubsubsection{Distillation}
 Improvements to the student-teacher learning method have been proposed where the
 student is tasked with minimizing the weighted average of the cross-entropy
 between its own output and the teacher output when the last layer is softmax
@@ -462,7 +506,7 @@ its own training. These results mean that distillation manages to transfer
 knowledge about how a 6 looks from the teacher to the student by only telling it
 to what degree different 7s and 8s don't look like 6s. 
 
-\subsubsection{FitNets}
+\subsubsubsection{FitNets}
 Continued work led to the creation of \emph{FitNets}
 \bibentry{romero2014fitnets} which goes in the opposite direction to previous
 attempts at student architectures and instead proposes very deep but thin
@@ -506,7 +550,7 @@ training procedure is illustrated in \cref{fig:FitNet}.
       \label{fig:FitNet}
 \end{figure}
 
-\subsubsection{Attention transfer}
+\subsubsubsection{Attention transfer}
 Some more recent work \bibentry{zagouruyko2017paying} builds upon the ideas from
 \emph{FitNets} with not only letting the students mimic the output of teachers
 but also some intermediary representations. Unlike the way it is done in
@@ -530,7 +574,6 @@ together with distillation.
 \end{figure}
 
 \subsubsection{Optimized convolutions}
-\todo{Figure illustrating the different convs etc}
 Another orthogonal approach for compression is to optimize the convolutional
 layers themselves making them require less parameters or less computation to
 perform their tasks but still keep as much as possible of their representational
@@ -572,12 +615,14 @@ load with a factor \(8\) to \(9\) for \(3 \times 3\) convolutional kernels
     \end{subfigure}
     \qquad %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
       %(or a blank line to force the subfigure onto a new line)
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.4\textwidth}
         \includegraphics[width=\textwidth]{dilated}
         \subcaption{Dilated}
       \end{subfigure}
-      \caption{Illustration of the weight matrices used in the different types
-        of convolutional operators.}\label{fig:Convs}
+      \caption{Visualization of the shapes of the weight matrices to produce one
+        feature map for each of the types of convolution. All in the case of a \(N \times N\) filter
+        with \(c\) channels. The dilation factor \(d\) corresponds to how
+        sparsely the dilated convolutions are applied.}\label{fig:Convs}
 \end{figure}
 
 \subsubsection{Streamlined architectures}
@@ -630,12 +675,14 @@ in \cref{fig:LinkNet}.
   \label{fig:LinkNet}
 \end{figure}
 
-\section{This project}
+
+\chapter{Method} \label{chap:method}
+
 \todo{Add some sort of graph or table detailing the different approches here}
 In this project we will try and build a model for real-time segmentation of feet
-on a smartphone. Since a system that is deployable right now is required
-compression approaches like deep compression that require custom hardware to be
-fully utilized are out of the question. Instead focus will be placed on how
+on a smartphone. Since a system that is deployable right now is required,
+compression approaches like deep compression that need custom hardware to be
+fully utilized are out of the question. Instead, focus will be placed on how
 the highly streamlined architectures like MobileNets and LinkNet can be used and
 modified to produce give the required performance. The effectiveness of
 student-teacher learning in these models will also be evaluated by training the
@@ -644,9 +691,25 @@ designed at Volumental. Here distillation is preferred over more recent
 approaches like FitNets or attention transfer since the available teacher was
 not specifically designed to a teacher and finding layers suitable for hinting or
 transferring attention maps from is hence a problem in it self and outside the
-scope of this work.
+scope of this work.\todo{expand this and give an outline of the method section}
 
-\chapter{Experiments}
+\section{Pipeline}
+To train models for segmentation datasets with known segmentations are used. The
+images are augmented to artificially expand the available training data and the
+augmented image is feed into the the model. The resulting predicted segmentation
+is compared to the ground truth and from this a loss is calculated using which
+the parameters in the models can be updated. This pipeline is presented in
+\cref{fig:pipeline}. The datasets used in this project along with the data
+augmentation used and the different loss functions and CNN models tested will be
+presented in the following sections.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{pipeline}
+  \caption{The data pipeline for training and predicting with the model.}
+  \label{fig:pipeline}
+\end{figure}
+
 \section{Data}
 Two datasets of segmented feet were used for the experiments.
 
@@ -658,7 +721,11 @@ This dataset is called
 \textit{synthetic} and is divided into training, validation and test sets with
 43896, 12960 and 14168 images respectively. The different sets have been
 constructed to ensure that there is no overlap of floors or feet between them.
-Example images from this dataset can be seen in \cref{fig:data_synthetic}.
+Example images from this dataset can be seen in \cref{fig:data_synthetic}. Here
+the training set is directly used for training, the validation set is used for
+hyperparameter optimizations and to track overfitting during training, and
+finally the held out test set is used for evaluating the performance of the
+models after training.
 
 \begin{figure}[h]
     \centering
@@ -714,9 +781,9 @@ real images. Example images can be seen in \cref{fig:data_real}.
 \subsection{Data augmentation}
 One restriction with the \textit{synthetic} dataset is that, due to the
 placement of the cameras, the images from the
-scanner only come from four different angles, rather fixed in regards to the
-foot and that they are all taken from approximately the same
-distance. To enable the algorithms to learn more general foot features despite
+scanner only come from four different angles. Fixed with regards to the
+foot and all taken from approximately the same
+distance. To enable the models to learn more general foot features despite
 these restrictions the original images are augmented by dividing each image into
 a \(3\times3\) grid, selecting a random point in each corner cell, and
 performing an affine transformation to make these selected points the corners of
@@ -766,25 +833,35 @@ Some example of this can be seen in \cref{fig:augment}
 
 \section{Network architectures}
 For the experiments four different neural networks were evaluated against each
-other. Details on each of these follow below. %\todo{Write something about each of the models}
+other. Details on each of these follow below. \todo{Gosh, this is not good at all...}
 
-\subsection{ENet}
-This is a re-implementaiton of the \todo{hang on, why is my enet 10x bigger and
-  ~3 times slower than the original?} \textit{ENet} architecture
-\parencite{paszke2016enet} where the unpooling operations from the upsampking
+\subsection*{ENet}
+This is a re-implementaiton of the \textit{ENet} architecture
+\parencite{paszke2016enet} where the unpooling operations from the upsampling
 blocks has been replaced with addition of the corresponding feature map from the
-downsampling path due to restrictions in \textit{Keras}
+downsampling path due to restrictions in \textit{Keras}. An illustration of what
+this means can be seen in \cref{fig:upscale}.
 
-\subsection{LinkNet}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{upscale}
+  \caption{A simple illustration of the difference between using the indices
+    from max pooling (upper branch) and to add the feature map as it looked
+    before max pooling (lower branch)
+    to maintain image granularity during upsamlpling.}
+  \label{fig:upscale}
+\end{figure}
+
+\subsection*{LinkNet}
 This is a straight re-implementation of the LinkNet architecture \parencite{chaurasia2017linknet}.
 
-\subsection{MobileSeg}
+\subsection*{MobileSeg}
 This is a network for semantic segmentation that was built using the body of the
 \textit{MobileNet} architecture \parencite{howard2017mobilenets} as the encoder of the network and then adds the
-upsampling path from \textit{LinkNet} to this body and skipp connections are
+upsampling path from \textit{LinkNet} to this body and skip-connections are
 introduced where the dimensions correspond to those in \textit{LinkNet}
 
-\subsection{FastLinkNet}
+\subsection*{FastLinkNet}
 This network is designed as a hybrid between \textit{LinkNet} and
 \textit{MobileNet} where the the layout of \textit{LinkNet} has been copied but
 inspired by \textit{MobileNet} all the convolutions in the encoder blocks have
@@ -804,7 +881,7 @@ were evaluated.
 The classical loss function for classification tasks is
 \textit{Cross Entropy}.
 
-\[L_{CE} = \mathcal(L)(Y, \hat{Y}) =- \sum_i Y_i \log\hat{Y_i}\]
+\[\mathcal{L}_{CE}(Y, \hat{Y}) =- \sum_i Y_i \log\hat{Y_i}\]
 
 Where \(Y\) is ground truth and \(\hat{Y}\) is the prediction and the index
 \(i\) goes over all the pixels in the images. Since
@@ -813,8 +890,8 @@ a reasonable loss function.
 
 \subsection{IoU loss}
 In semantic segmentation a common performance measure is the intersect over union
-\textit{IoU} metric between the predicted segmentation and the ground truth.
-\textit{IoU} is defined as follows.
+\(IoU\) metric between the predicted segmentation and the ground truth.
+\(IoU\) is defined as follows.
 \[IoU = \frac{I}{U} = \frac{\textit{TP}}{\textit{FP} + \textit{TP} + \textit{FN}}\]
 Where \(I\) is the intersect between the prediction and ground truth, \(U\) the union
 between them and FP, FN, and TP indicate the false positive, false negative and
@@ -828,14 +905,14 @@ would give good results.
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.40\textwidth]{IoU}
-  \caption{Notation for \textit{IoU}}
+  \caption{Notation for \(IoU\)}
   \label{fig:IoU}
 \end{figure}
 
 
-To directly optimize for \textit{IoU} \textcite{rahman2016optimizing} introduced
-a \textit{IoU Loss}.
-\[L_{IoU} = 1 - \textit{IoU}\]
+To directly optimize for \(IoU\) \textcite{rahman2016optimizing} introduced
+a \(IoU\) loss.
+\[\mathcal{L}_{IoU} = 1 - IoU\]
 
 If we now let \(V = {1, 2, \dots, N}\) be the set of pixels in the image, \(\hat{Y}\)
 the softmax outputs from the network at each pixel and \(Y\) the ground truth
@@ -847,9 +924,9 @@ approximated with the following:
 
 Where \(\odot\) represents the element-wise Hadamard product.
 
-The \textit{IoU} loss hence becomes
+The \(IoU\) loss hence becomes
 
-\[L_{\textit{IoU}} = 1 - \frac{I(\hat{Y})}{U(\hat{Y})}\]
+\[\mathcal{L}_{IoU} = 1 - \frac{I(\hat{Y})}{U(\hat{Y})}\]
 
 
 \subsection{Distillation}
@@ -858,12 +935,14 @@ When training using distillation loss \parencite{hinton2015distilling} a large
 previously trained network is used to help guide the student model during
 training. The loss function here is defined as:
 
-\[L_{distillation} = \mathcal{L}(Y, \hat{Y}) + \lambda T^2\mathcal{L}(\hat{Y}^*, \hat{Y}_{teacher}^*)\]
+\[\mathcal{L}_{distillation} = \mathcal{L}_{CE}(Y, \hat{Y}) + \lambda T^2\mathcal{L}_{CE}(\hat{Y}^*, \hat{Y}_{teacher}^*)\]
 
-Where \(\mathcal{L}\) is the cross entropy loss from
+Where \(\mathcal{L}_{CE}\) is the cross entropy loss from
 \cref{section:cross_entropy} and \(\hat{Y}^*\) and \(\hat{Y}^*_{teacher}\) are the softened,
 high temperature softmax outputs, see \cref{fig:softmax} from the student and teacher networks
-respectively. \(T\) is the temperature with which the softmax were softened and
+respectively. \(\lambda\) is the mixing factor controlling how much influence
+should come from the hard ground truth and how much should come from the soft
+student-teacher training. \(T\) is the temperature with which the softmax were softened and
 it is used to compensate for the fact that the gradient with respect to the soft
 loss decreases with a factor \(\frac{1}{T^2}\) as explained in the initial
 paper \parencite{hinton2015distilling}. The high temperature softmax is defined
@@ -880,38 +959,112 @@ the low probability classes of the teacher.
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{softmax_in}
+        \subcaption{Log-likelihood}
     \end{subfigure}
     ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
       %(or a blank line to force the subfigure onto a new line)
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{softmax_t1}
+        \subcaption{Normal softmax}
       \end{subfigure}
     ~
     %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
     %(or a blank line to force the subfigure onto a new line)
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{softmaxT10}
+        \subcaption{Softmax, \(T=10\)}
       \end{subfigure}
      \caption{An illustaration of softmax using different temperatures, to the
        left is the input, in the middle output from \(T=1\) softmax and to the
        right \(T = 10\)}\label{fig:softmax}
 \end{figure}
 
+
+\chapter{Experiment}
+To test the suitability of the different models and loss functions presented in
+\cref{chap:method} they were trained and evaluated. The training procedure and
+the different performance metrics used will be presented in the following
+sections.
+
 \section{Training}
+% \todo{Gör detta till typ ett stycke om optimering, ett om hyper}
+% The networks were defined and trained in \textit{Keras} \parencite{keras} using the
+% \textit{tensorflow} \parencite{tensorflow} backend, enabling easy
+% experimentation and fast execution on the GPUs available. Hyperparameter
+% optimization was handled by the \textit{hyperopt} \parencite{hyperopt} package which worked neatly
+% along with the other frameworks.
+
+% Training was run for \(50\) epochs of \(50\) steps each with a batch size of \(32\).
+% \(ADAM\) \parencite{ADAM} was used as the optimizer and hyperparameter
+% optimization was run for 100 iterations of random search in the search space
+% \(0.000001 < \eta < 0.01\), \( 0 < p_{dropout} < 1\), \(f_{loss} \in \{L_{CE},
+% L_{IoU}, L_{distillation}\}\). And \( 1 < T < 100\), \(0< \lambda <10\) when
+% distillation loss is used. 
+
 The networks were defined and trained in \textit{Keras} \parencite{keras} using the
-\textit{tensorflow} \parencite{tensorflow} backend, enabling easy
-experimentation and fast execution on the GPUs available. Hyperparameter
-optimization was handled by the \textit{hyperopt} \parencite{hyperopt} package which worked neatly
-along with the other frameworks.
+\textit{tensorflow} \parencite{tensorflow} backend. This framework enabled easy
+experimentation and fast execution on the GPUs available, a \textit{GeForce GTX
+  1080 Ti} and a \textit{GeForce GTX TITAN}. For training the networks the
+\textit{ADAM} optimizer\parencite{ADAM}, an adaptive extension to stochastic
+gradient decent that has become very popular in the deep learning community, was
+used. Training was run for 50 epochs each consisting of 50 steps with a batch
+size of \(32\). The training partition of the synthetic dataset is used for
+training and the loss on the validation set is monitored and the learning rate
+reduced by a factor 10 if validation doesn't decrease for \(3\) epochs.
 
-Training was run for \(50\) epochs of \(50\) steps each with a batch size of \(32\).
-\(ADAM\) \parencite{ADAM} was used as the optimizer and hyperparameter
-optimization was run for 100 iterations of random search in the search space
-\(0.000001 < \eta < 0.01\), \( 0 < p_{dropout} < 1\), \(f_{loss} \in \{L_{CE},
-L_{IoU}, L_{distillation}\}\). And \( 1 < T < 100\), \(0< \lambda <10\) when
-distillation loss is used. 
+In this training a bunch of hyperparameters have to be chosen beforehand. To
+determine good values for some of the most important of these, namely
+learning rate \(\lambda\), the dropout probability \(p_{dropout}\), the
+loss function \(\mathcal{L}\), and the parameters of distillation loss
+temperature \(T\) and mixing factor \(\lambda\) hyperparameter optimization is
+used. This means that the entire training procedure was run \(100\) times, each
+time with the hyperparameters randomly sampled from search space in
+\cref{tab:search_space} and the performance on the validation set is monitored
+for these runs. This means that we can find the settings that give the optimal
+performance. Hyperparameter optimization was facilitated by the python package
+\textit{hyperopt} \parencite{hyperopt}.
 
-\section{Benchmarking}
+\begin{table}[]
+\centering
+\caption{The search space used in hyper parameter optimization. The temperature
+  \(T\) and the mixing factor \(\lambda\) are only relevant when the loss
+  function \(\mathcal{L} = \mathcal{L}_{distiallation}\).}
+\label{tab:search_space}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Hyper parameter     & Search space \\ \midrule
+Learning rate \(\eta\)      &      \(0.000001 < \eta < 0.01\)        \\
+Dropout \(p_{dropout}\)&  \( 0 < p_{dropout} < 1\)            \\
+Loss function \(\mathcal{L}\)    &    \(\mathcal{L} \in \{L_{CE},L_{IoU}, L_{distillation}\}\)          \\
+Temperature \(T\)        &      \( 1 < T < 100\)        \\
+Mixing factor \(\lambda\)      &     \(0< \lambda <10\)         \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\section{Evaluation}
+When evaluating the models two major things are of interest for this work.
+Firstly, how accurate the models are, how well they perform the prediction task.
+Secondly, How efficient the models are, how well they can be run on mobile
+hardware. A good balance between these two is necessary, the models are useless
+if they give perfect segmentations but takes seconds to do so for a single frame
+or can't fit on a smartphone. Likewise, models that can be reliably run at 20
+fps but that give results comparable to random are also useless. The metrics
+used to quantify how well the models perform both of these tasks will be
+presented in the following sections.
+
+\subsection{Accuracy measures}
+To compare the predicted segmentations from the models to the ground truth data
+and quantify how well they correspond a lot of different accuracy measures can
+be used. A few of these different measures are presented in the following
+sections. For the experiments these different measures have been calculated on
+both the held out test set of the synthetic dataset and the dataset of real
+images.
+
+\subsubsection{Mean accuracy}
+
+\subsubsection{IoU}
+
+\subsection{Efficiency measures}
 To evaluate the degree to which the models can be run on a smartphone they were
 tested on a \textit{ZTE Axon 7} android phone using \textit{tensorflows}
 benchmarking tools. From this inference time, and number of Floating point
@@ -1029,7 +1182,21 @@ and then placing the foot at an arbitrary angle and distance from the virtual
 camera. Giving a greater variance in the data.
 
 \section{Impact}
-\todo{Talk about the societal impact and ethical considerations of this work}
+When handling data like images of feet in this fashion the question of privacy
+is always relevant and being careful about anonymising data is important.
+Further, the aim of this work is to automate away sales clerks and instead
+giving that experience online. This overall trend of automating away work is
+bound make some people unemployed and a serious discussion about how this
+situation about how this unemployability is to be handled in society is well
+overdue. However, a online shopping experience where a good fit is acquired at
+first try is going to reduce returns and in turn shipping and the carbon
+footprint of online retail overall. 
+
+On a more technical level the same methods that help reduce the power required
+and computational resources needed for running neural networks on smartphones
+are being applied to larger systems as well. This reduces the energy consumption
+of machine learning models that are becoming more and more prominent in our
+lives and helps reduce the power requirements of the industry overall.
 
 \printbibliography[heading=bibintoc]% Print the bibliography (and make it appear in the table of contents)
 
