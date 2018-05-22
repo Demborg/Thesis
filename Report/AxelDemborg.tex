@@ -40,36 +40,74 @@
 \titlepage
 
 \begin{abstract}
-  \todo{This is far to short, we need a why, what, how and result}
-  In this work neural networks for real-time semantic segmentation of feet on
-  smartphones have been built and evaluated. The models have been trained on a
-  dataset consisting of synthetically composited images of feet on a variety of
-  floors where the feet have been extracted from 3D-scan data from
-  \textit{Volumental's}, the company where the thesis has been performed, foot
-  scanner and the floors have been scraped from online images. A secondary
-  dataset with real images of feet in natural environments has also been used
-  for testing generalization from the synthetic dataset.
+  % \todo{This is far to short, we need a why, what, how and result}
+  % In this work neural networks for real-time semantic segmentation of feet on
+  % smartphones have been built and evaluated. The models have been trained on a
+  % dataset consisting of synthetically composited images of feet on a variety of
+  % floors where the feet have been extracted from 3D-scan data from
+  % \textit{Volumental's}, the company where the thesis has been performed, foot
+  % scanner and the floors have been scraped from online images. A secondary
+  % dataset with real images of feet in natural environments has also been used
+  % for testing generalization from the synthetic dataset.
 
-  The fastest neural network designed takes \(7.2Mb\) to store, runs at
-  \(10fps\) on a 2016 android smartphone without hardware acceleration while
-  still producing good segmentations on both datasets.
+  % The fastest neural network designed takes \(7.2Mb\) to store, runs at
+  % \(10fps\) on a 2016 android smartphone without hardware acceleration while
+  % still producing good segmentations on both datasets.
+  Image segmentation, the problem of dividing a image into meaningful parts is a
+  very interesting problem in computer vision. Segmentation is relevant for
+  everything from self driving cars to 3D-modeling and synthetic camera effects.
+  Even though there currently exist models for producing high quality
+  segmentations, most of these are too resource intensive to run in real-time on
+  mobile devices, something that is more and more requested for user experience
+  in computer vision apps and safety in self driving cars.
+
+  To build models capable of real-time segmentation on smartphones this work
+  focuses on building streamlined neural networks and compression of these using
+  effective approximations of the convolutional operator and student-teacher
+  training techniques. Specifically this is
+  done for segmentation of feet from background which is a part in a larger
+  project for 3D-scanning of feet on smartphones conducted at Volumental.
+
+  The fastest neural network produced in this work manages to run at over \(10
+  fps\) on a android smartphone from 2016 without the use of hardware
+  acceleration. Despite this speed the network manages to achieve a mean
+  intersect over union (\(mIoU\)) score of over \(93\%\) on a held out test set.
 
 \end{abstract}
 
 
 \begin{otherlanguage}{swedish}
   \begin{abstract}
-    I det här arbetet har neuronnät för semantisk segmentering av fötter
-    byggts och testats. Modellerna har tränats på ett dataset av syntetiska
-    bilder av fötter på varierande golv. Fötterna har hämtats från
-    3D-skanningsdata från \textit{Volumentals}, företaget där exjobbet har
-    utförts, 3d-skanner och golven har hämtats från internet. Ett andra dataset
-    med riktiga bilder på fötter har också använts för att se hur modellerna
-    generaliserar från den syntetiska datan.
+    % I det här arbetet har neuronnät för semantisk segmentering av fötter
+    % byggts och testats. Modellerna har tränats på ett dataset av syntetiska
+    % bilder av fötter på varierande golv. Fötterna har hämtats från
+    % 3D-skanningsdata från \textit{Volumentals}, företaget där exjobbet har
+    % utförts, 3d-skanner och golven har hämtats från internet. Ett andra dataset
+    % med riktiga bilder på fötter har också använts för att se hur modellerna
+    % generaliserar från den syntetiska datan.
 
-    Det snabbaste nätverket som har designats tar \(7.2 Mb\) att lagra och kan
-    köra i \(10fps\) på en androidmobil från 2016 och ger god segementering på
-    bägge dataseten.
+    % Det snabbaste nätverket som har designats tar \(7.2 Mb\) att lagra och kan
+    % köra i \(10fps\) på en androidmobil från 2016 och ger god segementering på
+    % bägge dataseten.
+    Bildsegmentering, problemet att dela in en bild i meningsfulla bitar, är
+    mycket intressant för datorseende. Segmentering är relevant för allt från
+    självkörande bilar till 3D-modelering och syntetiska kamera effekter. Även
+    om det finns modeller som producerar goda segmenteringar är många av dessa
+    allt för resurs krävande för att kunna köras i realtid på mobilhårdvara,
+    något som blir allt mer efterfrågat för användarupplevelsen i datorseende
+    appar och säkerheten i självkörande bilar.
+
+    För att bygga modeller kapabla att göra realtids segmentering på smartphones
+    fokuserar detta arbete på att bygga strömlinjeformade neuronnät och att
+    komprimera dessa med hjälp av effektiva approximationer av
+    faltningsoperatorn och student-lärar träning. Specifikt görs detta för
+    segementering av fötter från bakgrund vilket är en del av ett störe projekt
+    för mobil 3D-scanning som på företaget Volumental.
+
+    Det snabbaste neuronnätet som byggts i arbetet klarar av att köra i \(10
+    fps\) på en Android telefon från 2016, utan att använda
+    hårdvaruacceleration. Trotts denna hastighet lyckas nätverket uppnå ett
+    \textit{mean intersect over uninon} (\(mIoU\)) på över \(93\%\) på testdata.
   \end{abstract}
 \end{otherlanguage}
 
@@ -678,7 +716,7 @@ in \cref{fig:LinkNet}.
 
 \chapter{Method} \label{chap:method}
 
-\todo{Add some sort of graph or table detailing the different approches here}
+%\todo{Add some sort of graph or table detailing the different approches here}
 In this project we will try and build a model for real-time segmentation of feet
 on a smartphone. Since a system that is deployable right now is required,
 compression approaches like deep compression that need custom hardware to be
@@ -691,7 +729,7 @@ designed at Volumental. Here distillation is preferred over more recent
 approaches like FitNets or attention transfer since the available teacher was
 not specifically designed to a teacher and finding layers suitable for hinting or
 transferring attention maps from is hence a problem in it self and outside the
-scope of this work.\todo{expand this and give an outline of the method section}
+scope of this work.%\todo{expand this and give an outline of the method section}
 
 \section{Pipeline}
 To train models for segmentation datasets with known segmentations are used. The
@@ -888,7 +926,7 @@ Where \(Y\) is ground truth and \(\hat{Y}\) is the prediction and the index
 semantic segmentation is the task of classifying each pixel in the image this is
 a reasonable loss function.
 
-\subsection{IoU loss}
+\subsection{IoU loss} \label{sec:IoU_loss}
 In semantic segmentation a common performance measure is the intersect over union
 \(IoU\) metric between the predicted segmentation and the ground truth.
 \(IoU\) is defined as follows.
@@ -905,7 +943,7 @@ would give good results.
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.40\textwidth]{IoU}
-  \caption{Notation for \(IoU\)}
+  \caption{Notation for the relations between prediction and ground truth.}
   \label{fig:IoU}
 \end{figure}
 
@@ -1052,7 +1090,7 @@ fps but that give results comparable to random are also useless. The metrics
 used to quantify how well the models perform both of these tasks will be
 presented in the following sections.
 
-\subsection{Accuracy measures}
+\subsection{Accuracy measures} \label{sec:accuracy}
 To compare the predicted segmentations from the models to the ground truth data
 and quantify how well they correspond a lot of different accuracy measures can
 be used. A few of these different measures are presented in the following
@@ -1060,32 +1098,235 @@ sections. For the experiments these different measures have been calculated on
 both the held out test set of the synthetic dataset and the dataset of real
 images.
 
-\subsubsection{Mean accuracy}
+The accuracy metrics are defined for a test set of \(M\) images, each with \(C\)
+classes. The notation of true positive \textit{TP}, true negative \textit{TN},
+false positive \textit{FP}, and false negative \textit{FN} is the same one used
+in \cref{fig:IoU}. To index the sets the upper index is used for the class and
+the lower one for the image, hence \(\textit{TP}^j_i\) is the true positive in
+the \(j\):th class of the \(i\):th image. It is noteworthy that only two
+classes are used in this project, \textit{foot} and \textit{not foot}.
+ 
+\subsubsection{Mean pixel accuracy}
+A simple metric for computing the similarity between a predicted
+segmentation and the ground truth is to just take the average accuracy over all
+the pixels in all the images. Mathematically this becomes:
+\[\textit{mA} = \frac{1}{M}\sum^M_i\sum^C_j\textit{TP}_i^j\]
 
-\subsubsection{IoU}
+\subsubsection{Mean IoU}
+As discussed in \cref{sec:IoU_loss} just looking at correctly classified pixels
+is problematic in that large classes can overpower the results and make a rather
+poor prediction look good on paper. To get around this we can look at the
+intersect over union metric
+\[IoU^j_i= \frac{\textit{TP}_i^j}{\textit{FN}_i^j + \textit{TP}_i^j + \textit{FP}_i^j}\]
+which if we average over all classes and images looks like this:
+\[\textit{m}IoU = \frac{1}{MC}\sum^M_i\sum^C_j IoU^j_i =\frac{1}{MC}\sum^M_i\sum^C_j\frac{\textit{TP}_i^j}{\textit{FN}_i^j +
+    \textit{TP}_i^j + \textit{FP}_i^j}\]
+
+\subsubsection{Mean Dice}
+A very similar metric to \(IoU\) is \textit{Dice} or as it is also known the
+\(F1\) metric. It is calculated as follows.
+\[\textit{mDice} = \frac{1}{MC}\sum^M_i\sum^C_j\frac{2\textit{TP}_i^j}{\textit{FN}_i^j +
+    2\textit{TP}_i^j + \textit{FP}_i^j}\]
+
+\subsubsection{Mean average precision}
+If we set a threshold \(x\) and say that predictions with a \(IoU \geq x\) are
+correctly classified. We can then look at the proportion of correct
+classifications for different such thresholds.
+\[
+  mAP_x = \frac{1}{MC}\sum^M_i\sum^C_j
+    \begin{cases}
+      1: IoU_i^j \geq x\\
+      0: IoU_ i^j < x
+   \end{cases}
+\]
+
 
 \subsection{Efficiency measures}
-To evaluate the degree to which the models can be run on a smartphone they were
-tested on a \textit{ZTE Axon 7} android phone using \textit{tensorflows}
-benchmarking tools. From this inference time, and number of Floating point
-operations (\textit{FLOPs}) calculated for inference was extracted. The size
-required to store the models was also measured. 
+% To evaluate the degree to which the models can be run on a smartphone they were
+% tested on a \textit{ZTE Axon 7} android phone using \textit{tensorflows}
+% benchmarking tools. From this inference time, and number of Floating point
+% operations (\textit{FLOPs}) calculated for inference was extracted. The size
+% required to store the models was also measured. 
+To quantify how efficient the models are to store and compute the following
+metrics were used.
+
+\subsubsection{Storage space}
+The size of the model, in full float 32 representation was measured in megabytes
+(MB). This is then used as a measure for how well the models could fit into the
+cache of mobile processors and for how expensive the models are to store and
+transfer.
+
+\subsubsection{FLOPs}
+The amount of floating point operations (FLOPs) required to infer a single frame
+of \(256 \times 256 px\) using the models were calculated using the builtin benchmarking tools in
+\textit{tensorflow}. A FLOP corresponds to a single multiplication, addition or
+similar between two floating point numbers. This means that the amount of FLOPs is not
+dependent on the hardware the model is run on but just on the model itself.
+However, due to optimizations, both at the framework and processor levels two
+models with the same amount of FLOPs may take different times to compute.
+
+\subsubsection{Inference time}
+To get a accurate measure of how the long the models actually took to compute on
+mobile hardware the time required to infer a single \(256 \times 256 px\) frame
+was measured on a phone. The phone used was a ZTE Axon 7 android phone and
+timing was facilitated by the benchmarking tools in \textit{tensorflow}.
 
 \chapter{Results}
-\todo{nått om olika loss functions}
-The resulting segmentations from the best trained models of each architecture
-can be seen for the real dataset in \cref{fig:seg_real} and for the synthetic
-data set in \cref{fig:seg_test}. The mean pixel accuracy and IoU metrics
-achieved by the models on the test set of the synthetic dataset and the real
-dataset can be seen in \cref{tab:res_performance} and the results from the
-benchmarks on the models are listed in \cref{tab:res_resources}.
+% \todo{nått om olika loss functions}
+% The resulting segmentations from the best trained models of each architecture
+% can be seen for the real dataset in \cref{fig:seg_real} and for the synthetic
+% data set in \cref{fig:seg_test}. The mean pixel accuracy and IoU metrics
+% achieved by the models on the test set of the synthetic dataset and the real
+% dataset can be seen in \cref{tab:res_performance} and the results from the
+% benchmarks on the models are listed in \cref{tab:res_resources}.
+The efficiency metrics evaluated on the different models can be seen in \cref{tab:res_resources}.
+The resulting hyperparameters from hyperparameter optimization can be seen in
+\cref{tab:res_hyper}. Interesting to note here is that two smaller models, ENet
+and FastLinkNet, require far less regularization trough dropout, this is
+expected since it is harder to overfit with fewer parameters.
+Plots of the training and validation loss during training of the final models
+can be seen in \cref{fig:training}. The fact that training and validation
+loss stabilize to almost the same value for all of the models indicates that
+almost no overfitting has occurred.
+
+\begin{table}[]
+\centering
+\caption{Comparison of size, FLOPs and time required for inference of the
+  different models. Timing was done on a \textit{ZTE Axon 7} android smartphone.}
+\label{tab:res_resources}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Model       &  GFLOPs  & Inference time {[}ms{]} & Size {[}MB{]}  \\ \midrule
+EmilSeg     &  55.37   & 4439                    & 85             \\
+  ENet        &  1.11    & 366                     & \textbf{1.8}            \\
+LinkNet     &  1.75    & 234                     & 45             \\
+MobileSeg   &  2.68    & 555                     & 18             \\
+FastLinkNet &  \textbf{0.287}   & \textbf{73}                      & 7.2            \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[]
+\centering
+\caption{The resulting hyperparameters from hyperparameter optimization. \(\textit{N/A}\)
+means that those hyperparameters don't exist for the selected loss function.}
+\label{tab:res_hyper}
+\begin{tabular}{@{}lllllll@{}}
+\toprule
+Model       & \(\eta\) & \(p_{dropout}\) & \(\mathcal{L}\) & \(\lambda\) & \(T\)\\ \midrule
+ENet       & 0.006164 & 0.08435 & \(\mathcal{L}_{ CE }\) & \textit{N/A} & \textit{N/A}\\
+LinkNet    & 0.00837 & 0.321 & \(\mathcal{L}_{ IoU } \) & \textit{N/A} & \textit{N/A}\\
+MobileSeg   & 0.002642 & 0.2852 & \(\mathcal{L}_{ CE }\) & \textit{N/A} & \textit{N/A}\\
+FastLinkNet  & 0.005706 & 0.04245 & \(\mathcal{L}_{ IoU }\) & \textit{N/A} & \textit{N/A}\\\bottomrule
+\end{tabular}
+\end{table}
+
 \begin{figure}[h]
-  \centering
-  \includegraphics[width=\textwidth]{real_color}
-  \caption{Resulting segmentations on the real dataset from the different models. First row is the ground
-    truth, below that EmilSeg, ENet, LinkNet, MobileSeg, and FastLinkNet.}
-  \label{fig:seg_real}
-  \end{figure}
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{train_ENet_CrossEntropy}
+        \caption{ENet}
+        \label{fig:train_ENet}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{train_LinkNet_IoU}
+        \caption{LinkNet}
+        \label{fig:train_LinkNet}
+      \end{subfigure}
+      
+    %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{train_MobileSeg_CrossEntropy}
+        \caption{MobileSeg}
+        \label{fig:train_MobileSeg}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{train_FastLinkNet3_IoU}
+        \caption{FastLinkNet}
+        \label{fig:train_FastLinkNet}
+    \end{subfigure}
+    \caption{Loss in train and validation sets during training of the final
+      models.}\label{fig:training}
+\end{figure}
+
+The accuracy metrics introduced in \cref{sec:accuracy} were calculated for both
+the held out test set from the synthetic dataset and the real dataset, results
+from this can be seen in \cref{tab:res_performance_test} and
+\cref{tab:res_performance_real}. Plots of the mean average precision metric
+(\(mAP_x\)) evaluated at a range of different threshold values \(x\) can also be
+seen in \cref{fig:AP} 
+
+\begin{table}[]
+\centering
+\caption{The different accuracy metrics evaluated on the models using the held
+  out test set of the synthetic data.}
+\label{tab:res_performance_test}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Model       & \textit{mA} & \(\textit{m}IoU\) & \textit{mDice}  \\ \midrule
+  EmilSeg    & \textbf{0.9925} & \textbf{0.9842} & \textbf{0.9914}\\
+ENet       & 0.9877 & 0.9738 & 0.9858 \\
+LinkNet    & 0.9847 & 0.9677 & 0.9821 \\
+MobileSeg   & 0.9883 & 0.9751 & 0.9866 \\
+FastLinkNet  & 0.9689 & 0.9357 & 0.9641 \\\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[]
+\centering
+\caption{The different accuracy metrics evaluated on the models using the real dataset.}
+\label{tab:res_performance_real}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Model       & \textit{mA} & \(\textit{m}IoU\) & \textit{mDice}  \\ \midrule
+EmilSeg    & 0.9742 & 0.9486 & 0.9722\\
+ENet       & 0.9609 & 0.9250 & 0.9587 \\
+LinkNet    & 0.9764 & 0.9535 & 0.9750 \\
+  MobileSeg   & \textbf{0.9778} & \textbf{0.9552} & \textbf{0.9764} \\
+FastLinkNet  & 0.9670 & 0.9348 & 0.9652 \\\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{ENet_test_AP}
+        \caption{ENet}
+        \label{fig:AP_ENet}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{LinkNet_test_AP}
+        \caption{LinkNet}
+        \label{fig:AP_LinkNet}
+      \end{subfigure}
+      
+    %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{MobileSeg_test_AP}
+        \caption{MobileSeg}
+        \label{fig:AP_MobileSeg}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{FastLinkNet3_test_AP}
+        \caption{FastLinkNet}
+        \label{fig:AP_FastLinkNet}
+    \end{subfigure}
+    \caption{The mean average precision \(mAP_x\) evaluated at a range of
+      threshold values \(x\) for each of the trained models.}\label{fig:AP}
+\end{figure}
+
+Images of the resulting segmentations for all the models on the synthetic and the real datasets can
+be seen in \cref{fig:seg_test} and \cref{fig:seg_real} respectively.
 
  \begin{figure}[h]
   \centering
@@ -1094,37 +1335,40 @@ benchmarks on the models are listed in \cref{tab:res_resources}.
     truth, below that EmilSeg, ENet, LinkNet, MobileSeg, and FastLinkNet.}
   \label{fig:seg_test}
   \end{figure}
-  
-\begin{table}[]
-\centering
-\caption{Comparison of size, FLOPs and time required for inference of the
-  different models. Timing was done on a \textit{ZTE Axon 7} android smartphone.}
-\label{tab:res_resources}
-\begin{tabular}{@{}lllll@{}}
-\toprule
-Model       &  GFLOPs  & Inference time {[}ms{]} & Size {[}Mb{]}  \\ \midrule
-EmilSeg     &  55.37   & 4439                    & 85             \\
-ENet        &  10.38   & 1045                    & 1.4            \\
-LinkNet     &  1.75    & 234                     & 45             \\
-MobileSeg   &  2.68    & 555                     & 18             \\
-FastLinkNet &  0.287   & 73                      & 7.2            \\ \bottomrule
-\end{tabular}
-\end{table}
 
-\begin{table}[]
-\centering
-\caption{Comparison of the test performance between the different models}
-\label{tab:res_performance}
-\begin{tabular}{@{}llllll@{}}
-\toprule
-Model       & Test accuracy & Test IoU & Real accuracy & Real IoU \\ \midrule
-EmilSeg    & 0.9912 & 0.9860 & 0.9740 & 0.9814 \\
-ENet       & 0.9774 & 0.9116 & 0.9738 & 0.9117 \\
-LinkNet    & 0.9797 & 0.9141 & 0.9724 & 0.9145 \\
-MobileSeg  & 0.9834 & 0.9146 & 0.9744 & 0.9144 \\ 
-FastLinkNet& 0.9797 & 0.9153 & 0.9707 & 0.9148 \\  \bottomrule
-\end{tabular}
-\end{table}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{real_color}
+  \caption{Resulting segmentations on the real dataset from the different models. First row is the ground
+    truth, below that EmilSeg, ENet, LinkNet, MobileSeg, and FastLinkNet.}
+  \label{fig:seg_real}
+  \end{figure}
+
+To illustrate the trade off between inference speed and accuracy that lies in
+the choice of model the accuracy is plotted vs inference speed for the different
+models in \cref{fig:speed_vs_iou}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{Speed_vs_IoU}
+  \caption{Mean \(IoU\) vs inference speed for the different models. Note that
+    the time axis is logarithmic.}
+  \label{fig:speed_vs_iou}
+\end{figure}
+
+To compare the different loss functions used for training, histograms over the achieved
+validation accuracies during hyperparameter optimization of FastLinkNet is
+displayed in \cref{fig:loss_fn}. There is one his histogram per loss function.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{Loss_fn_hist_FastLinkNet3}
+  \caption{Histograms over the mean accuracy on the validation set for all the
+    hyper optimization rounds on FastLinkNet. To give a sense for the
+    performance of the different loss functions there is one histogram per loss
+    function.}
+  \label{fig:loss_fn}
+\end{figure}
 
 \chapter{Discussion}
 The fastest network produced, \textit{FastLinkNet}, runs inference in \(73 ms\)
@@ -1137,7 +1381,7 @@ the synthetic, \cref{fig:seg_test}, and the real dataset, \cref{fig:seg_real}, m
 the models are usable in real time right now and that significant performance
 boosts could be expected in the near future.
 
-From \cref{tab:res_performance} it is interesting to note that all of the
+From \cref{tab:res_performance_test} and \cref{tab:res_performance_real} it is interesting to note that all of the
 trained networks perform almost the same and very close to the big baseline
 model \textit{EmilSeg}. This might be due to the fact that the datasets contain
 too little complexity and hence present a rather easy problem for
