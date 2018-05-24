@@ -7,13 +7,13 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage[hidelinks]{hyperref}
-\usepackage{cleveref}
 \usepackage{booktabs}
 
 % My stuff
 \graphicspath{{../images/}}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{cleveref}
 \newcommand{\bibentry}[1]{\parencite{#1}}
 \usepackage[disable]{todonotes}
 \newcommand{\subsubsubsection}{}
@@ -1351,7 +1351,7 @@ models in \cref{fig:speed_vs_iou}.
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.6\textwidth]{Speed_vs_IoU}
-  \caption{Mean \(IoU\) vs inference speed for the different models. Note that
+  \caption{Mean \(IoU\) on test set vs inference speed for the different models. Note that
     the time axis is logarithmic.}
   \label{fig:speed_vs_iou}
 \end{figure}
@@ -1371,27 +1371,81 @@ displayed in \cref{fig:loss_fn}. There is one his histogram per loss function.
 \end{figure}
 
 \chapter{Discussion}
-The fastest network produced, \textit{FastLinkNet}, runs inference in \(73 ms\)
-\cref{tab:res_resources}, enabling frame rates of over \(10fps\) on a smartphone
-from \(2016\) without the use of hardware acceleration on GPU or digital signal
-processor (DSP) which are both
-expected features as the mobile neural network platforms mature.
-Moreover the resulting segmentations from \textit{FastLinkNet} look good on both
-the synthetic, \cref{fig:seg_test}, and the real dataset, \cref{fig:seg_real}, meaning that
-the models are usable in real time right now and that significant performance
-boosts could be expected in the near future.
+% The fastest network produced, \textit{FastLinkNet}, runs inference in \(73 ms\)
+% \cref{tab:res_resources}, enabling frame rates of over \(10fps\) on a smartphone
+% from \(2016\) without the use of hardware acceleration on GPU or digital signal
+% processor (DSP) which are both
+% expected features as the mobile neural network platforms mature.
+% Moreover the resulting segmentations from \textit{FastLinkNet} look good on both
+% the synthetic, \cref{fig:seg_test}, and the real dataset, \cref{fig:seg_real}, meaning that
+% the models are usable in real time right now and that significant performance
+% boosts could be expected in the near future.
+If we look at \cref{fig:speed_vs_iou} it is apparent that quicker inference comes
+at the cost of reduced prediction quality on the test set. However this loss of
+\(5 \%\) (\cref{tab:res_performance_test}) is rather small
+compared to the speed gain of over a factor \(60\) (\cref{tab:res_resources}) when comparing EmilSeg to
+FastLinkNet. These results indicate that most of the performance in large neural
+networks like EmilSeg can successfully be represented in way smaller and quicker
+networks.
 
-From \cref{tab:res_performance_test} and \cref{tab:res_performance_real} it is interesting to note that all of the
-trained networks perform almost the same and very close to the big baseline
-model \textit{EmilSeg}. This might be due to the fact that the datasets contain
-too little complexity and hence present a rather easy problem for
-the models. Some tests from running the models on a smartphone and testing it
-out in real world applications seem to support this since the model really
-struggles to handle complex scenes, multiple feet in the image, differing image
-scales, bare feet etc. Some tests of this can be seen in \cref{chapter:real_world}.
-It is also noteworthy that the performance on the real and the synthetic
-datasets are almost identical for all the models except for \textit{EmilSeg}
-indicating that generalization between the datasets works really well.
+A closer look at the fastest network, FastLinkNet, gives that it with its \(73
+ms\) inference time can run at over \(10 fps\) even with some overhead for
+loading images and other processing. This is even more noteworthy if we consider
+that these benchmarks were run on a smartphone from 2016 and that current mobile
+machine learning frameworks can't leverage the graphical processing units (GPUs)
+and digital signal processors (DSPs) in the devices. Getting these specialized
+processors working are expected features as the mobile machine learning
+frameworks mature which means that further performance boosts may come soon. As
+it stands now \(10 fps\) can almost be considered real-time for many
+applications and the networks meager size of \(7.2 MB\) makes it easy to package
+into apps and to cache.
+
+A comparison between the performance on the test set of the synthetic data,
+\cref{tab:res_performance_test}, and the data set of real images,
+\cref{tab:res_performance_real}, shows that even though there is a
+degradation in performance when testing on real images it is quite small. This
+small difference means that generalization from the synthetic to the real data
+works well. It is interesting to note however that the difference between the
+models shrinks significantly when we look at the real data. This might imply
+that some of the edge the bigger models have over the smaller ones is
+overfitting to the synthetic data.
+
+In \cref{fig:loss_fn} a comparison between the different loss functions used in
+the project is made by looking at the performance on the validation set of all
+the versions of FastLinkNet trained during hyperparameter optimization and
+sorting them by loss function. It can be seen that cross entropy and \(IoU\)
+loss seems to perform rather similarly with \(IoU\) being slightly ahead.
+Surprisingly though distillation performs the worst which might be due to the
+teacher model not being powerful enough or the search space,
+\cref{tab:search_space}, being bigger for this loss. Both of these possible
+explanations highlight an interesting drawback with student-teacher training
+however, there is a lot of added complexity and that makes for more places where
+it can go wrong.
+
+An other thing to note are the remarkably high scores, both on the test set
+and the real dataset as seen in \cref{tab:res_performance_test} and
+\cref{tab:res_performance_real} and backed up by the qualitatively very good
+segmentations in \cref{fig:seg_real} and \cref{fig:seg_test}. This performance
+might not transfer all that well to real world applications however since the
+images in the dataset are all taken from similar angles and distances, in good
+lighting on uncluttered floors, and always contain a single foot. These
+restrictions in the dataset may make it difficult for the models to cope with
+more complicated real world scenarios.
+
+
+
+% From \cref{tab:res_performance_test} and \cref{tab:res_performance_real} it is interesting to note that all of the
+% trained networks perform almost the same and very close to the big baseline
+% model \textit{EmilSeg}. This might be due to the fact that the datasets contain
+% too little complexity and hence present a rather easy problem for
+% the models. Some tests from running the models on a smartphone and testing it
+% out in real world applications seem to support this since the model really
+% struggles to handle complex scenes, multiple feet in the image, differing image
+% scales, bare feet etc. Some tests of this can be seen in \cref{chapter:real_world}.
+% It is also noteworthy that the performance on the real and the synthetic
+% datasets are almost identical for all the models except for \textit{EmilSeg}
+% indicating that generalization between the datasets works really well.
+
 
 \section{Further work}
 The teacher model \textit{EmilSeg} in distillation
@@ -1444,11 +1498,11 @@ lives and helps reduce the power requirements of the industry overall.
 
 \printbibliography[heading=bibintoc]% Print the bibliography (and make it appear in the table of contents)
 
-\appendix
+% \appendix
 
-\chapter{Real world tests} \label{chapter:real_world}
-\todo{add a capture image button to the app and go out in the world and take
-  some cool images}
+% \chapter{Real world tests} \label{chapter:real_world}
+% \todo{add a capture image button to the app and go out in the world and take
+%   some cool images}
 
 
 \end{document}
