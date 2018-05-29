@@ -712,8 +712,8 @@ in \cref{fig:LinkNet}.
 
 \chapter{Method} \label{chap:method}
 
-%\todo{Add some sort of graph or table detailing the different approches here}
-In this project we will try and build a model for real-time segmentation of feet
+%\todo{Add some sort of graph or table detailing the different approaches here}
+In this project, we will try and build a model for real-time segmentation of feet
 on a smartphone. Since a system that is deployable right now is required,
 compression approaches like deep compression that need custom hardware to be
 fully utilized are out of the question. Instead, focus will be placed on how
@@ -724,14 +724,14 @@ networks using knowledge distillation from a big segmentation network previously
 designed at Volumental. Here distillation is preferred over more recent
 approaches like FitNets or attention transfer since the available teacher was
 not specifically designed to a teacher and finding layers suitable for hinting or
-transferring attention maps from is hence a problem in it self and outside the
+transferring attention maps from is hence a problem in itself and outside the
 scope of this work.%\todo{expand this and give an outline of the method section}
 
 \section{Pipeline}
 To train models for segmentation datasets with known segmentations are used. The
 images are augmented to artificially expand the available training data and the
-augmented image is feed into the the model. The resulting predicted segmentation
-is compared to the ground truth and from this a loss is calculated using which
+augmented image is feed into the model. The resulting predicted segmentation
+is compared to the ground truth and from this, a loss is calculated using which
 the parameters in the models can be updated. This pipeline is presented in
 \cref{fig:pipeline}. The datasets used in this project along with the data
 augmentation used and the different loss functions and CNN models tested will be
@@ -758,7 +758,7 @@ constructed to ensure that there is no overlap of floors or feet between them.
 Example images from this dataset can be seen in \cref{fig:data_synthetic}. Here
 the training set is directly used for training, the validation set is used for
 hyperparameter optimizations and to track overfitting during training, and
-finally the held out test set is used for evaluating the performance of the
+finally, the held out test set is used for evaluating the performance of the
 models after training.
 
 \begin{figure}[h]
@@ -800,9 +800,9 @@ models after training.
   \label{fig:data_synthetic}
 \end{figure}
 
-Secondly a dataset of 111 images taken of employees at \textit{Volumental} that
+Secondly, a dataset of 111 images taken of employees at \textit{Volumental} that
 has been segmented by hand. This dataset is called \textit{real} and is
-primarily used for testing how the methods generalize from  the synthetic data to
+primarily used for testing how the methods generalize from the synthetic data to
 real images. Example images can be seen in \cref{fig:data_real}.
 
 \begin{figure}[h]
@@ -823,7 +823,7 @@ a \(3\times3\) grid, selecting a random point in each corner cell, and
 performing an affine transformation to make these selected points the corners of
 a new \(256\times256 \textit{px}\) image.
 
-This augmentation introduces some random zoom, rotation, shear and translation
+This augmentation introduces some random zoom, rotation, shear, and translation
 to the images and should hence help the algorithms learn generalizable features.
 Some example of this can be seen in \cref{fig:augment}
 
@@ -859,20 +859,19 @@ Some example of this can be seen in \cref{fig:augment}
         \includegraphics[width=\textwidth]{augmented3}
       \end{subfigure}
       \caption{Some random augmentations on the same image. Top row is the
-        original image with the sampled corners are indicated in blue and
-        the sample boundaries are indicated in green. Bottom row is the
+        original image with the sampled corners are indicated in blue and the sample boundaries are indicated in green. Bottom row is the
         resulting image.}\label{fig:augment}
 \end{figure}
 
 
 \section{Network architectures}
-For the experiments four different neural networks were evaluated against each
+For the experiments, four different neural networks were evaluated against each
 other. Details on each of these follow below. \todo{Gosh, this is not good at all...}
 
 \subsection*{ENet}
-This is a re-implementaiton of the \textit{ENet} architecture
+This is a re-implementation of the \textit{ENet} architecture
 \parencite{paszke2016enet} where the unpooling operations from the upsampling
-blocks has been replaced with addition of the corresponding feature map from the
+blocks have been replaced with addition of the corresponding feature map from the
 downsampling path due to restrictions in \textit{Keras}. An illustration of what
 this means can be seen in \cref{fig:upscale}.
 
@@ -904,7 +903,7 @@ with approximately a factor \(4\).
 Further inspiration was taken from the resolution
 multiplier in the \textit{MobileNets} which is used to reduce the resolution of
 the incoming image data to reduce the computation needed to process it by
-downscaling the images by a factor \(2\) before segmentation and then bilineraly
+downscaling the images by a factor \(2\) before segmentation and then bilinearly
 upscaling the image to the full input size at the end.
 
 \section{Loss functions}
@@ -933,7 +932,7 @@ true positive respectively. These different quantities are illustrated in \cref{
 
 This metric is used since it gives small objects as much weight as bigger ones.
 This stands in comparison to using the proportion of correctly classified pixels
-where classifying a image with a lot of background and a tiny foot as all background
+where classifying an image with a lot of background and a tiny foot as all background
 would give good results.
 
 \begin{figure}[h]
@@ -971,7 +970,7 @@ training. The loss function here is defined as:
 
 \[\mathcal{L}_{distillation} = \mathcal{L}_{CE}(Y, \hat{Y}) + \lambda T^2\mathcal{L}_{CE}(\hat{Y}^*, \hat{Y}_{teacher}^*)\]
 
-Where \(\mathcal{L}_{CE}\) is the cross entropy loss from
+Where \(\mathcal{L}_{CE}\) is the cross-entropy loss from
 \cref{section:cross_entropy} and \(\hat{Y}^*\) and \(\hat{Y}^*_{teacher}\) are the softened,
 high temperature softmax outputs, see \cref{fig:softmax} from the student and teacher networks
 respectively. \(\lambda\) is the mixing factor controlling how much influence
@@ -979,7 +978,7 @@ should come from the hard ground truth and how much should come from the soft
 student-teacher training. \(T\) is the temperature with which the softmax were softened and
 it is used to compensate for the fact that the gradient with respect to the soft
 loss decreases with a factor \(\frac{1}{T^2}\) as explained in the initial
-paper \parencite{hinton2015distilling}. The high temperature softmax is defined
+paper \parencite{hinton2015distilling}. The high-temperature softmax is defined
 as follows: 
 
 \[\hat{Y}_i^* = \frac{e^{a_i/T}}{\sum_j e^{a_j/T}}\]
@@ -1012,6 +1011,7 @@ the low probability classes of the teacher.
        left is the input, in the middle output from \(T=1\) softmax and to the
        right \(T = 10\)}\label{fig:softmax}
 \end{figure}
+
 
 
 \chapter{Experiment}
