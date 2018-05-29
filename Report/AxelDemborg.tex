@@ -1417,15 +1417,15 @@ explanations highlight an interesting drawback with student-teacher training
 however, there is a lot of added complexity and that makes for more places where
 it can go wrong.
 
-An other thing to note are the remarkably high scores, both on the test set
+Another thing to note are the remarkably high scores, both on the test set
 and the real dataset as seen in \cref{tab:res_performance_test} and
 \cref{tab:res_performance_real} and backed up by the qualitatively very good
 segmentations in \cref{fig:seg_real} and \cref{fig:seg_test}. This performance
-might not transfer all that well to real world applications however since the
+might not transfer all that well to real-world applications however since the
 images in the dataset are all taken from similar angles and distances, in good
 lighting on uncluttered floors, and always contain a single foot. These
 restrictions in the dataset may make it difficult for the models to cope with
-more complicated real world scenarios.
+more complicated real-world scenarios.
 
 
 
@@ -1434,7 +1434,7 @@ more complicated real world scenarios.
 % model \textit{EmilSeg}. This might be due to the fact that the datasets contain
 % too little complexity and hence present a rather easy problem for
 % the models. Some tests from running the models on a smartphone and testing it
-% out in real world applications seem to support this since the model really
+% out in real-world applications seem to support this since the model really
 % struggles to handle complex scenes, multiple feet in the image, differing image
 % scales, bare feet etc. Some tests of this can be seen in \cref{chapter:real_world}.
 % It is also noteworthy that the performance on the real and the synthetic
@@ -1445,25 +1445,25 @@ more complicated real world scenarios.
 \section{Further work}
 The teacher model \textit{EmilSeg} in distillation
 was not subjected to extensive hyperparameter optimization and was not
-necessarilly trained to full convergence meaning that distillation could get
-better results if more time was spent on tweeking not only the students but
+necessarily trained to full convergence meaning that distillation could get
+better results if more time was spent on tweaking not only the students but
 also the teacher.
 
-Further performance could also be gained from not just using the the current
-frame for segmentation but the entire stream of information. This could for
-example be done by adding a long short-term memory (LSTM) cell to the
+Further performance could also be gained from not just using the current
+frame for segmentation but the entire stream of information. This could, for
+example, be done by adding a long short-term memory (LSTM) cell to the
 bottlenecks of the segmentation networks or by feeding the predicted
 segmentation at each frame back as a fourth channel in the input for the next
-frame. These approaches however would require segmented video data for training
+frame. These approaches, however, would require segmented video data for training
 or heavy augmentation of the existing images to produce plausible fake video
-from still images. An other issue with these approaches is also that they can
+from still images. Another issue with these approaches is also that they can
 add a lot of computational overhead to the models and hence slow down execution to an
 unacceptable degree.
 
 An approach to getting better and more reliable results from the networks that
 would not slow down execution would be to rethink the training process. For
-example pre training the encoder on \textit{ImageNet} or the entire network on
-an other segmentation dataset like \textit{CamVid} could improve performance. To
+example pre-training the encoder on \textit{ImageNet} or the entire network on
+another segmentation dataset like \textit{CamVid} could improve performance. To
 get more plausible segmentations from the networks they could also be trained as
 a generative adversarial network
 (GAN) as proposed by \textcite{AdverserialSegmentation}.
@@ -1476,16 +1476,16 @@ camera. Giving a greater variance in the data.
 
 \section{Impact}
 When handling data like images of feet in this fashion the question of privacy
-is always relevant and being careful about anonymising data is important.
+is always relevant and being careful about anonymizing data is important.
 Further, the aim of this work is to automate away sales clerks and instead
-giving that experience online. This overall trend of automating away work is
-bound make some people unemployed and a serious discussion about how this
+give that experience online. This overall trend of automating away work is
+bound to make some people unemployed and a serious discussion about how this
 situation about how this unemployability is to be handled in society is well
-overdue. However, a online shopping experience where a good fit is acquired at
+overdue. However, an online shopping experience where a good fit is acquired at
 first try is going to reduce returns and in turn shipping and the carbon
 footprint of online retail overall. 
 
-On a more technical level the same methods that help reduce the power required
+On a more technical level, the same methods that help reduce the power required
 and computational resources needed for running neural networks on smartphones
 are being applied to larger systems as well. This reduces the energy consumption
 of machine learning models that are becoming more and more prominent in our
