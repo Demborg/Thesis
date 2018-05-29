@@ -1040,13 +1040,13 @@ The networks were defined and trained in \textit{Keras} \parencite{keras} using 
 experimentation and fast execution on the GPUs available, a \textit{GeForce GTX
   1080 Ti} and a \textit{GeForce GTX TITAN}. For training the networks the
 \textit{ADAM} optimizer\parencite{ADAM}, an adaptive extension to stochastic
-gradient decent that has become very popular in the deep learning community, was
+gradient descent that has become very popular in the deep learning community, was
 used. Training was run for 50 epochs each consisting of 50 steps with a batch
 size of \(32\). The training partition of the synthetic dataset is used for
 training and the loss on the validation set is monitored and the learning rate
 reduced by a factor 10 if validation doesn't decrease for \(3\) epochs.
 
-In this training a bunch of hyperparameters have to be chosen beforehand. To
+In this training, a bunch of hyperparameters have to be chosen beforehand. To
 determine good values for some of the most important of these, namely
 learning rate \(\lambda\), the dropout probability \(p_{dropout}\), the
 loss function \(\mathcal{L}\), and the parameters of distillation loss
@@ -1060,7 +1060,7 @@ performance. Hyperparameter optimization was facilitated by the python package
 
 \begin{table}[]
 \centering
-\caption{The search space used in hyper parameter optimization. The temperature
+\caption{The search space used in hyperparameter optimization. The temperature
   \(T\) and the mixing factor \(\lambda\) are only relevant when the loss
   function \(\mathcal{L} = \mathcal{L}_{distiallation}\).}
 \label{tab:search_space}
@@ -1090,7 +1090,7 @@ presented in the following sections.
 To compare the predicted segmentations from the models to the ground truth data
 and quantify how well they correspond a lot of different accuracy measures can
 be used. A few of these different measures are presented in the following
-sections. For the experiments these different measures have been calculated on
+sections. For the experiments, these different measures have been calculated on
 both the held out test set of the synthetic dataset and the dataset of real
 images.
 
@@ -1140,7 +1140,7 @@ classifications for different such thresholds.
 \subsection{Efficiency measures}
 % To evaluate the degree to which the models can be run on a smartphone they were
 % tested on a \textit{ZTE Axon 7} android phone using \textit{tensorflows}
-% benchmarking tools. From this inference time, and number of Floating point
+% benchmarking tools. From this inference time, and the number of Floating point
 % operations (\textit{FLOPs}) calculated for inference was extracted. The size
 % required to store the models was also measured. 
 To quantify how efficient the models are to store and compute the following
@@ -1148,13 +1148,12 @@ metrics were used.
 
 \subsubsection{Storage space}
 The size of the model, in full float 32 representation was measured in megabytes
-(MB). This is then used as a measure for how well the models could fit into the
-cache of mobile processors and for how expensive the models are to store and
+(MB). This is then used as a measure of how well the models could fit into the cache of mobile processors and for how expensive the models are to store and
 transfer.
 
 \subsubsection{FLOPs}
-The amount of floating point operations (FLOPs) required to infer a single frame
-of \(256 \times 256 px\) using the models were calculated using the builtin benchmarking tools in
+The amount of floating point operations (FLOPs) required for inferring a single frame
+of \(256 \times 256 px\) using the models were calculated using the built-in benchmarking tools in
 \textit{tensorflow}. A FLOP corresponds to a single multiplication, addition or
 similar between two floating point numbers. This means that the amount of FLOPs is not
 dependent on the hardware the model is run on but just on the model itself.
@@ -1162,7 +1161,7 @@ However, due to optimizations, both at the framework and processor levels two
 models with the same amount of FLOPs may take different times to compute.
 
 \subsubsection{Inference time}
-To get a accurate measure of how the long the models actually took to compute on
+To get an accurate measure of how the long the models actually took to compute on
 mobile hardware the time required to infer a single \(256 \times 256 px\) frame
 was measured on a phone. The phone used was a ZTE Axon 7 android phone and
 timing was facilitated by the benchmarking tools in \textit{tensorflow}.
