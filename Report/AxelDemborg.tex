@@ -65,12 +65,12 @@
   focuses on building streamlined neural networks and compression of these using
   effective approximations of the convolutional operator and student-teacher
   training techniques. Specifically, this is
-  done for segmentation of feet from the background which is a part in a larger
+  done for segmentation of feet from the background which is a part of a larger
   project for 3D-scanning of feet on smartphones conducted at Volumental.
 
   The fastest neural network produced in this work manages to run at over \(10
-  fps\) on a android smartphone from 2016 without the use of hardware
-  acceleration. Despite this speed the network manages to achieve a mean
+  fps\) on an Android smartphone from 2016 without the use of hardware
+  acceleration. Despite this speed, the network manages to achieve a mean
   intersect over union (\(mIoU\)) score of over \(93\%\) on a held out test set.
 
 \end{abstract}
@@ -155,7 +155,7 @@ each day, even when my code has just been crashing. It has been a true pleasure 
 % training. 
 
 Segmentation is the problem of partitioning an image into multiple, meaningful
-regions, allowing for easier understanding of images. Semantic segmentation
+regions, allowing for an easier understanding of images. Semantic segmentation
 is when the class of the region is also predicted, this problem can also be
 formulated as predicting the class of each pixel in an image. These are both
 very important problems in computer vision and are relevant for everything from
@@ -165,26 +165,24 @@ recently been outmatched by machine learning models processing the entire image
 at once. Deep convolutional neural networks (CNN:s) have been especially
 prominent for these tasks.
 
-With these rapid developments, modern smartphones with their high quality
-cameras, quite able processors and immense availability have become a sought
-after target to run CNN:s on. Deep neural networks are however normally very
+With these rapid developments, modern smartphones with their high-quality
+cameras, quite able processors and immense availability have become a sought-after target to run CNN:s on. Deep neural networks are however normally very
 large models and tend to require a lot of computation to evaluate. These
 requirements are problematic for mobile deployments. Firstly, the large
-models can't fit in the on-chip cache and instead have to reside in the power
-hungry off-chip DRAM making applications up to 100 times more power consuming
+models can't fit in the on-chip cache and instead have to reside in the power-hungry off-chip DRAM making applications up to 100 times more power consuming
 \parencite{han2015learning}. Secondly, the mobile processors can't keep up with
 the computational load of the models and hence take seconds to run. This gives
 performance far from real-time which is required for smooth operation in many
 cases. To address these issues methods for compressing models and designing
-streamlined models that can be run in real-time on mobile hardware have been
+streamlined models that can be run in real-time on mobile hardware has been
 investigated.
 
 In the intersection of these two lines of research, segmentation and
 streamlining of neural networks lies this thesis. The project was performed at
 the company \textit{Volumental}, a company specialized in 3D scanning of feet
 for custom shoe recommendations. The companies current product is a designated
-3D scanner but for the online shopping experience a mobile app with similar
-capabilities is required. A first step towards such an application is to create
+3D scanner but for the online shopping experience, a mobile app with similar
+capabilities is required. The first step towards such an application is to create
 a model that can reliably perform segmentation of feet in real-time on a
 smartphone.
 
@@ -193,7 +191,7 @@ particular is that they require huge amounts of annotated data for training.
 Producing these labeled datasets can be very time-consuming and expensive
 especially for image segmentation where producing a single high quality
 ground truth frame is a tedious task for a human. Having access to data from
-Volumental's dedicated 3D scanner however means that high quality synthetic
+Volumental's dedicated 3D scanner, however, means that high quality synthetic
 datasets can be produced and learned from, reducing the need for manual annotation.
 
 \textit{\textbf{Problem formulation:} To build a system for real-time segmentation of feet that can reliably be run on a
@@ -207,19 +205,19 @@ To address these issues this thesis will focus on two research questions:
 \item How well does performance from networks trained on synthetic datasets
   transfer to real world data? 
 \end{enumerate}
-  
+
 \chapter{Background}
 \section{Related work}
 Convolutional Neural Networks (CNN) were first introduced in 1998
 \bibentry{lecun1998gradient} and since then deeper and deeper CNNs have slowly
 become the state of the art method for most areas of computer vision. Notably
 \emph{AlexNet} \bibentry{krizhevsky2012imagenet} in 2012 proved that that deep
-CNNs can be used for high resolution image classification by beating the
+CNNs can be used for high-resolution image classification by beating the
 previous state of the art \bibentry{sanchez2011high} on the \emph{ImageNet}
 classification challenge \bibentry{deng2009imagenet}. To do this \emph{AlexNet},
 visualized in \cref{fig:AlexNet}, 
 used 60 million parameters and 650,000 neurons. Training of the network was
-only made feasible by the use of multiple graphical processing units (GPUs)
+only made feasible by the use of multiple Graphics Processing Units (GPUs)
 \bibentry{krizhevsky2012imagenet}.
 
 \begin{figure}[h]
@@ -267,15 +265,15 @@ are that it requires multistage training, training the CNN to give good
 features and the SVMs for classification, which is slow. Not only for training
 but most notably at inference where one image is processed in 47s.
 These problems are addressed with further work resulting in \emph{Fast R-CNN}
-\bibentry{girshick2015fast}. In this work the network isn't run once per proposed region but
+\bibentry{girshick2015fast}. In this work, the network isn't run once per proposed region but
 instead once for the entire image generating a convolutional feature map that
 is then pooled with a region of interest (RoI) pooling layer to produce a
-feature vector for each region. These feature vectors are then feed into a fully
+feature vector for each region. These feature vectors are then fed into a fully
 connected neural network with two sibling output layers that perform both
 classification and bounding box refinement in parallel, this architecture is
 illustrated in \cref{fig:FastR-CNN}. With these improvements
 \emph{Fast R-CNN} achieves faster inference and higher accuracy than its
-predecessors and does so with a arguably much more elegant design.
+predecessors and does so with an arguably much more elegant design.
 
 \begin{figure}[h]
   \centering
@@ -307,8 +305,7 @@ system as well \bibentry{ren2015faster}.
   \label{fig:FasterR-CNN}
   \end{figure}
 
-Even further improvements to this
-framework was achieved with the introduction of \emph{Mask R-CNN}
+Even further improvements to this framework were achieved with the introduction of \emph{Mask R-CNN}
 \bibentry{he2017mask} which expands upon \emph{Faster R-CNN} by adding a third
 branch for a segmentation mask besides the branches for bounding box refinement
 and classification making the system able to predict not only the general
@@ -345,12 +342,12 @@ the outputs are the probabilities of each pixel belonging to each class.
 
 Further work with encoder-decoder structures for segmentation resulted in \emph{SegNet}
 \bibentry{badrinarayanan2015segnet}. This network is architecturally very
-similar to \textit{U-Net} with the  major differences being how image
+similar to \textit{U-Net} with the major differences being how image
 granularity is preserved. Instead of concatenating the feature maps like they
 looked before max-pooling in the encoding branch to the upsampled feature maps
 just the indices of which value was kept in max-pooling is stored in
 \textit{SegNet}. This means that one integer, the index of the kept value, is
-stored instead of four floats, the values themselves has to be stored for
+stored instead of four floats, the values themselves have to be stored for
 each cell that max-pool is run over. This reduces the memory footprint of the
 network significantly.
 
@@ -362,7 +359,7 @@ network significantly.
   \label{fig:SegNet}
   \end{figure}
 
-Continued work on segmentation utilizes blocks of so called \emph{DenseNets}
+Continued work on segmentation utilizes blocks of so-called \emph{DenseNets}
 \bibentry{huang2017densely}, CNNs where every layer is connected to every layer
 after it, see \cref{fig:DenseNet}, enabling the training of exceedingly deep network architectures by
 alleviating the vanishing gradient problem and promoting feature reuse between
@@ -378,8 +375,8 @@ the layers.
 
 \textcite{jegou2017one} use these \emph{DenseNets} in a very deep encoder-decoder
 structure where skip connections, as seen in \cref{fig:Tiramisu}, restore image granularity during upsampling the
-state of the art in image segmentation has been pushed even further while still reducing the amount of parameters required
-for the models by a factor 10 as compared to the previous state of art. 
+state of the art in image segmentation has been pushed even further while still reducing the number of parameters required
+for the models by a factor 10 as compared to the previous state of the art. 
 
 \begin{figure}[h]
   \centering
@@ -393,17 +390,17 @@ for the models by a factor 10 as compared to the previous state of art.
 Despite their impressive performance on a wide range of problems neural networks
 are still prohibited from running locally on mobile devices with slow
 processors, limited power envelopes or limited memory due to their large size
-and big computational load. For example modern neural networks can't fit on the
+and big computational load. For example, modern neural networks can't fit on the
 on-chip SRAM cache of mobile processors and instead have to reside in the much more power hungry
 off-chip DRAM memory making applications up to 100 times more power consuming
 \bibentry{han2015learning}. Regarding inference speed modern networks
-for object segmentation \bibentry{he2017mask} run at 5fps. That however is on high
+for object segmentation \bibentry{he2017mask} run at 5fps. That, however, is on high
 performance GPUs meaning that real-time performance on mobile devices is still
 largely intractable. Due to
 these limitations applications of neural networks for mobile use cases are
 either to forced give up on state of the art performance or to be run on
 off-site servers which requires steady network connections and incurs latency,
-both of which may be intolerable for real-time mobile applications, self driving
+both of which may be intolerable for real-time mobile applications, self-driving
 cars and robotics \bibentry{jin2014flattened}. However work on understanding the
 structure of the learned weights in neural networks
 \bibentry{denil2013predicting} has showed that there is significant redundancy
@@ -455,7 +452,7 @@ connections and iterative retraining of the pruned networks
 9 - 13 without any loss in performance while getting sparser weight matrices
 that could potentially speed up calculations. These two lines of research,
 clustering and pruning, where merged into a single framework called \emph{deep
-  compression} \bibentry{han2015deep} where a three stage approach is taken to
+  compression} \bibentry{han2015deep} where a three-stage approach is taken to
 model compression. First low-weight connections are pruned away and the network
 is retrained to compensate for this, in the second stage k-means clustering is
 performed on the weights and again the network is retrained to make the clusters
@@ -467,7 +464,7 @@ however \emph{deep compression} comes with a major drawback, it can't be run
 efficiently in its compressed form and the full weight matrices have to be
 rebuilt at inference time to use the models on commodity hardware. To alleviate
 these problems hardware has been designed that can perform prediction directly
-from the compressed models. This so called \emph{efficient inference engine}
+from the compressed models. This so-called \emph{efficient inference engine}
 \bibentry{han2016eie} would enable inference 13 times faster than GPU while
 being 3400 times more energy efficient.  
 
@@ -484,14 +481,14 @@ faster to compute \emph{student} network is trained by making it learn the
 representations learned by a larger \emph{teacher} network. This idea was first
 introduced for compressing ensemble models produced by \emph{Ensemble Selection}
 \bibentry{caruana2004ensemble} which consist of hundreds of models of many
-different kinds, support vector machines, neural networks, memory based models,
+different kinds, support vector machines, neural networks, memory-based models,
 and decision trees into a single neural network \bibentry{bucilua2006model}.
-This work leverages the neural networks property of being universal
+This work leverages the neural network's property of being universal
 approximators \bibentry{cybenko1989approximation}, meaning that given
 sufficiently much training data and a big enough hidden layer a neural network
 can learn to approximate any function with arbitrary precision. This is done by not directly
 training the student network on the relatively limited labeled training data
-available but instead on large amounts of pseudo random data that has been given
+available but instead on large amounts of pseudo-random data that has been given
 labels by first being passed through the large teacher ensemble. This
 compression technique yielded student networks up to 1000 times smaller and 1000
 times faster to compute than their ensemble teachers with a negligible drop in accuracy
@@ -511,10 +508,10 @@ same distribution which is achieved by regressing the student to the logits, log
 probability, values of the teacher as they were before softmax. Getting
 predictions from the student is then achieved by adding a softmax layer to the
 end of it after training. Second, a bottleneck linear layer is added to the
-network to speed up training. With these modifications the authors were able to train
+network to speed up training. With these modifications, the authors were able to train
 flat neural networks for both the TMIT and CIFAR-10 datasets with performance
 closely matching that of single deep networks. Continued analysis of flat
-networks however shows that depth and convolutions are critical for getting good
+networks, however, shows that depth and convolutions are critical for getting good
 performance on image classification datasets \bibentry{urban2016deep}.
 Empirically this claim is supported by training state of the art, deep,
 convolutional models for classification on the CIFAR-10 dataset and then
@@ -523,7 +520,7 @@ students. The student models were then compared to deep convolutional benchmarks
 that were not trained in a student-teacher fashion. To make sure that the
 networks were all performing to the best of their abilities and thus making the
 comparison fair Bayesian hyperparameter optimization
-\bibentry{snoek2012practical} was used. Through this thorough analysis it was
+\bibentry{snoek2012practical} was used. Through this thorough analysis, it was
 shown that shallow networks are unable to mimic the performance of deep networks
 if the number of parameters is held constant between them, these findings are
 also in agreement with the theoretical results that the representational
@@ -549,7 +546,7 @@ Continued work led to the creation of \emph{FitNets}
 \bibentry{romero2014fitnets} which goes in the opposite direction to previous
 attempts at student architectures and instead proposes very deep but thin
 students. To enable learning in these deep student networks a stage-wise
-training procedure is used. In the first stage intermediate layers in the
+training procedure is used. In the first stage, intermediate layers in the
 teacher and student networks are selected, these are called \emph{hint} and
 \emph{guided} layers respectively. The guided layer in the student is then
 tasked to mimic the hint layer in the teacher through a convolutional regressor
@@ -597,7 +594,7 @@ activations of the teacher in the intermediate layers but instead the attention
 maps, regions in the image that the teacher uses to make its predictions, and
 thus teaches the student where to look. A few different methods for calculating
 these attention maps are proposed in the paper but notable is that they are all
-non parametric meaning that no extra layers of convolution have to be learned to
+non-parametric meaning that no extra layers of convolution have to be learned to
 make the student attention maps comparable to the ones from the teacher. This
 attention transferring approach proves to give good results on a number of
 difficult datasets including \emph{ImageNet} and is also shown to work well
@@ -613,14 +610,14 @@ together with distillation.
 
 \subsubsection{Optimized convolutions}
 Another orthogonal approach for compression is to optimize the convolutional
-layers themselves making them require less parameters or less computation to
+layers themselves making them require fewer parameters or less computation to
 perform their tasks but still keep as much as possible of their representational
 power. One of the simplest things that can be done here is to replace single
 layers of \(N \times N\) convolutional filters with two layers with \(N \times
 1\) and \(1 \times N\) filters respectively, this reduces the amount of
 parameters that have to be stored per channel from \(N^2\) to \(2N\) and the
 amount of multiplications that have to be made scale in the same way. These
-so called asymmetrical convolutions have seen successful use in inception models
+so-called asymmetrical convolutions have seen successful use in inception models
 \bibentry{szegedy2016rethinking}.  
 Other variations on the convolutional operator that help compress the networks
 are dilated convolutions \bibentry{yu2015multi} where an exponentially expanding
@@ -658,8 +655,7 @@ load with a factor \(8\) to \(9\) for \(3 \times 3\) convolutional kernels
         \subcaption{Dilated}
       \end{subfigure}
       \caption{Visualization of the shapes of the weight matrices to produce one
-        feature map for each of the types of convolution. All in the case of a \(N \times N\) filter
-        with \(c\) channels. The dilation factor \(d\) corresponds to how
+        feature map for each of the types of convolution. All in the case of a \(N \times N\) filter with \(c\) channels. The dilation factor \(d\) corresponds to how
         sparsely the dilated convolutions are applied.}\label{fig:Convs}
 \end{figure}
 
@@ -669,7 +665,7 @@ how to get smaller models in that it rather optimizes the architecture of the
 network than any of the constituent parts, this approach gives a network with
 \emph{AlexNet} performance but with 50 times fewer parameters than 
 \emph{AlexNet}. This is done by focusing on the usage of \(1 \times 1\)
-convolutional filters, reducing the amount of channels that go in to the larger
+convolutional filters, reducing the number of channels that go into the larger
 filters and by holding out on downsampling so that feature maps are kept large
 through the network. It was also proven that these results were orthogonal from
 compression by running the SqueezeNet through the \emph{deep compression}
@@ -678,10 +674,10 @@ out accuracy loss.
 
 \emph{MobileNets} \bibentry{howard2017mobilenets} combine these two approaches,
 utilizing both \emph{depthwise separable convolutions} and a heavily optimized
-architecture to build networks specially suited for mobile vision applications.
+architecture to build networks especially suited for mobile vision applications.
 In doing so \emph{MobileNets} also introduce two hyper-parameters,
 \emph{width-multiplier} and \emph{resolution-multiplier} that help design models
-with a optimal trade off between latency and precision given the limitations of
+with an optimal tradeoff between latency and precision given the limitations of
 the available hardware. 
 
 Another network specially designed for real-time segmentation on mobile devices
@@ -691,7 +687,7 @@ introducing that many parameters. The network is built as an encoder-decoder
 network but with a much smaller decoder, the argument behind this being that
 decoder should simply upsample the output while fine-tuning the details which
 should be a simpler task than the information processing and extraction that the
-encoder is performing. Attention has also been payed to quickly downsampling the
+encoder is performing. Attention has also been paid to quickly downsampling the
 feature maps which saves on computation but then not downsampling so
 aggressively after that, keeping much of the spatial information in the images.
 Together these improvements give a network that performs on par with
@@ -699,10 +695,10 @@ Together these improvements give a network that performs on par with
 at inference. 
 %\todo{Need to talk a bit about LinkNet here}
 
-An other modern network architecture that has been specifically designed for fast and
+Another modern network architecture that has been specifically designed for fast and
 efficient segmentation is \textit{LinkNet}
 \parencite{chaurasia2017linknet}. Here residual blocks \parencite{residual} are used to produce a
-state of the art network which can process high resolution frames at almost 10
+state of the art network which can process high-resolution frames at almost 10
 fps. To maintain image granularity skip connections are used, these can be seen
 in \cref{fig:LinkNet}.
 
