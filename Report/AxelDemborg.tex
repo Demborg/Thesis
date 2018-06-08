@@ -16,7 +16,7 @@
 \usepackage{cleveref}
 \newcommand{\bibentry}[1]{\parencite{#1}}
 \usepackage[disable]{todonotes}
-\newcommand{\subsubsubsection}{}
+\newcommand{\subsubsubsection}[1]{\vspace{5px}\noindent\textbf{#1:}}
 
 
 \title{Real-time segmentation of feet on smartphone}
@@ -201,10 +201,14 @@ datasets can be produced and learned from, reducing the need for manual annotati
 
 \noindent In order to build this system we will focus on the following two research questions:
 \begin{enumerate}
-\item To what extent can modern neural networks be slimmed down and optimized for
-  real-time execution on smartphones?
-\item How well does performance from networks trained on synthetic datasets
-  transfer to real world data? 
+\item To what extent can modern neural networks be compressed and optimized for
+  real-time execution on smartphones, with respect to inference time and
+  network size?
+% \item How well does performance from networks trained on synthetic datasets
+%   transfer to real world data?
+\item Can the performance of such networks generalize to real-world images if
+  they are trained on synthetic datasets where ground truth data is cheaper to
+  obtain?
 \end{enumerate}
 
 \chapter{Background}
@@ -429,11 +433,13 @@ individual multiplications become cheaper and hence the networks run faster.
 One of the most direct approaches for removing the redundancy in parametrization
 from neural networks is by forcing the networks to share weights between
 different connections. This is precisely what \emph{HashedNets}
-\bibentry{chen2015compressing} does by fixing the amount of weights \(K^l\) that
-are to be used in each layer making the weights \(\vec{w^l} \in
+\bibentry{chen2015compressing} does by fixing the amount of weights
+\(K^l\) that
+are to be used in each layer \(l\) making the weights \(\vec{w^l} \in
 \mathbb{R}^{K^l}\) and using hashing functions to map each element in the
 virtual weight matrices \(V_{ij}^l\) to one of these weights \(V_{ij} =
-w_{h(i,j)}\) with \(h()\) being a hashing function. With the weight matrices
+w_{h(i,j)}\) with \(h()\) being a hashing function and \(i\) and \(j\) being the
+indices along the spatial dimensions of the weight matrices. With the weight matrices
 defined in this fashion \emph{HashedNets} can be trained like normal networks
 with the gradients with respect to the weights calculated from the gradients
 with respect to the virtual matrices as  
@@ -530,12 +536,12 @@ efficiency of neural networks grows exponentially with the number of layers
 \subsubsubsection{Distillation}
 Improvements to the student-teacher learning method have been proposed where the
 student is tasked with minimizing the weighted average of the cross-entropy
-between its own output and the teacher output when the last layer is softmax
-with increased temperature, yielding softer labels, and the cross-entropy
+between its own softed output and the softed teacher output, and the cross-entropy
 between the student output and the correct labels when they are available. This
 framework is called \emph{Distillation} \bibentry{hinton2015distilling} and
 proves to work very well for transferring of information from teacher to
-student. The framework is demonstrated by training a student model with only
+student, output softing is performed by raising the temperature in softmax.
+The framework is demonstrated by training a student model with only
 13.2\% test error on the MNIST dataset despite only having seen 7s and 8s during
 its own training. These results mean that distillation manages to transfer
 knowledge about how a 6 looks from the teacher to the student by only telling it
@@ -591,8 +597,8 @@ Some more recent work \bibentry{zagouruyko2017paying} builds upon the ideas from
 but also some intermediary representations. Unlike the way it is done in
 \emph{FitNets} however the student is not tasked with reconstructing the exact
 activations of the teacher in the intermediate layers but instead the attention
-maps, regions in the image that the teacher uses to make its predictions, and
-thus teaches the student where to look. A few different methods for calculating
+maps, regions in the image that the teacher uses to make its predictions.
+Thus the student is taught where to look. A few different methods for calculating
 these attention maps are proposed in the paper but notable is that they are all
 non-parametric meaning that no extra layers of convolution have to be learned to
 make the student attention maps comparable to the ones from the teacher. This
@@ -723,8 +729,8 @@ student-teacher learning in these models will also be evaluated by training the
 networks using knowledge distillation from a big segmentation network previously
 designed at Volumental. Here distillation is preferred over more recent
 approaches like FitNets or attention transfer since the available teacher was
-not specifically designed to a teacher and finding layers suitable for hinting or
-transferring attention maps from is hence a problem in itself and outside the
+not specifically designed to be a teacher. This means that finding layers suitable for hinting or
+transferring attention maps from is a problem in itself and outside the
 scope of this work.%\todo{expand this and give an outline of the method section}
 
 \section{Pipeline}
@@ -747,7 +753,7 @@ presented in the following sections.
 \section{Data}
 Two datasets of segmented feet were used for the experiments.
 
-Firstly a dataset where images and 3D-models where extracted from
+The first dataset is built from images and 3D-models extracted from
 \textit{Volumental's}
 3D-scanner and composited with floor images scraped from the internet to create
 synthetic images of feet on normal floors. This process is illustrated in \cref{fig:process_synthetic}.
@@ -815,7 +821,7 @@ real images. Example images can be seen in \cref{fig:data_real}.
 \subsection{Data augmentation}
 One restriction with the \textit{synthetic} dataset is that, due to the
 placement of the cameras, the images from the
-scanner only come from four different angles. Fixed with regards to the
+scanner only come from four different angles, fixed with regards to the
 foot and all taken from approximately the same
 distance. To enable the models to learn more general foot features despite
 these restrictions the original images are augmented by dividing each image into
@@ -889,13 +895,13 @@ this means can be seen in \cref{fig:upscale}.
 This is a straight re-implementation of the LinkNet architecture \parencite{chaurasia2017linknet}.
 
 \subsection*{MobileSeg}
-This is a network for semantic segmentation that was built using the body of the
+This is a novel network for semantic segmentation that was built using the body of the
 \textit{MobileNet} architecture \parencite{howard2017mobilenets} as the encoder of the network and then adds the
 upsampling path from \textit{LinkNet} to this body and skip-connections are
 introduced where the dimensions correspond to those in \textit{LinkNet}
 
 \subsection*{FastLinkNet}
-This network is designed as a hybrid between \textit{LinkNet} and
+This novel network is designed as a hybrid between \textit{LinkNet} and
 \textit{MobileNet} where the the layout of \textit{LinkNet} has been copied but
 inspired by \textit{MobileNet} all the convolutions in the encoder blocks have
 been replaced with depthwise separable convolutions, thus reducing model size
@@ -992,7 +998,7 @@ the low probability classes of the teacher.
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{softmax_in}
-        \subcaption{Log-likelihood}
+        \subcaption{Logits}
     \end{subfigure}
     ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
       %(or a blank line to force the subfigure onto a new line)
