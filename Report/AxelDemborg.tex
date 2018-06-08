@@ -53,16 +53,19 @@
   % The fastest neural network designed takes \(7.2Mb\) to store, runs at
   % \(10fps\) on a 2016 android smartphone without hardware acceleration while
   % still producing good segmentations on both datasets.
-  Image segmentation, the problem of dividing an image into meaningful parts is a
-  very interesting problem in computer vision. Segmentation is relevant for
+  Image segmentation, the problem of dividing an image into meaningful parts and
+  semantic segmentation, dividing images into multiple known classes are 
+  very interesting problems in computer vision. Segmentation is relevant for
   everything from self-driving cars to 3D-modeling and synthetic camera effects.
+  The current state of the art in these problems is achieved with computationally
+  intensive deep convolutional neural networks.
   Even though there currently exist models for producing high-quality
   segmentations, most of these are too resource intensive to run in real-time on
   mobile devices, something that is more and more requested for user experience
   in computer vision apps and safety in self-driving cars.
-
-  To build models capable of real-time segmentation on smartphones this work
-  focuses on building streamlined neural networks and compression of these using
+  
+  To build models capable of real-time segmentation on smartphones this thesis
+  builds upon previous work on constructing streamlined neural networks and compression of these using
   effective approximations of the convolutional operator and student-teacher
   training techniques. Specifically, this is
   done for segmentation of feet from the background which is a part of a larger
@@ -89,8 +92,10 @@
     % Det snabbaste nätverket som har designats tar \(7.2 Mb\) att lagra och kan
     % köra i \(10fps\) på en androidmobil från 2016 och ger god segementering på
     % bägge dataseten.
-    Bildsegmentering, problemet att dela in en bild i meningsfulla bitar, är
-    mycket intressant för datorseende. Segmentering är relevant för allt från
+    Bildsegmentering, problemet att dela in en bild i meningsfulla bitar och
+    semantisk segmentering, problemet att dela upp en bild i flera kända klasser
+    är
+    mycket intressanta inom datorseende. Segmentering är relevant för allt från
     självkörande bilar till 3D-modelering och syntetiska kamera effekter. Även
     om det finns modeller som producerar goda segmenteringar är många av dessa
     allt för resurs krävande för att kunna köras i realtid på mobilhårdvara,
@@ -98,7 +103,7 @@
     appar och säkerheten i självkörande bilar.
 
     För att bygga modeller kapabla att göra realtids segmentering på smartphones
-    fokuserar detta arbete på att bygga strömlinjeformade neuronnät och att
+    bygger detta projekt vidare på tidigare arbete på att bygga strömlinjeformade neuronnät och att
     komprimera dessa med hjälp av effektiva approximationer av
     faltningsoperatorn och student-lärar träning. Specifikt görs detta för
     segementering av fötter från bakgrund vilket är en del av ett störe projekt
