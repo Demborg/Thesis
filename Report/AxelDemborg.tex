@@ -98,7 +98,7 @@
     appar och säkerheten i självkörande bilar.
 
     För att bygga modeller kapabla att göra realtids segmentering på smartphones
-    fokuserar detta arbete på att bygga ströpressentationmlinjeformade neuronnät och att
+    fokuserar detta arbete på att bygga strömlinjeformade neuronnät och att
     komprimera dessa med hjälp av effektiva approximationer av
     faltningsoperatorn och student-lärar träning. Specifikt görs detta för
     segementering av fötter från bakgrund vilket är en del av ett störe projekt
@@ -196,9 +196,10 @@ datasets can be produced and learned from, reducing the need for manual annotati
 
 \textit{\textbf{Problem formulation:} To build a system for real-time segmentation of feet that can reliably be run on a
   smartphone and be trained on synthetic data.}
-\section{Research Questions}
+% \section{Research Questions}
 %\todo{Make this into actual text}
-To address these issues this thesis will focus on two research questions:
+
+\noindent In order to build this system we will focus on the following two research questions:
 \begin{enumerate}
 \item To what extent can modern neural networks be slimmed down and optimized for
   real-time execution on smartphones?
@@ -209,9 +210,9 @@ To address these issues this thesis will focus on two research questions:
 \chapter{Background}
 \section{Related work}
 Convolutional Neural Networks (CNN) were first introduced in 1998
-\bibentry{lecun1998gradient} and since then deeper and deeper CNNs have slowly
-become the state of the art method for most areas of computer vision. Notably
-\emph{AlexNet} \bibentry{krizhevsky2012imagenet} in 2012 proved that that deep
+\bibentry{lecun1998gradient} and since then deeper and deeper CNNs have gradually
+become the state of the art method for most areas of computer vision. Notably,
+\emph{AlexNet} \bibentry{krizhevsky2012imagenet} in 2012 proved that deep
 CNNs can be used for high-resolution image classification by beating the
 previous state of the art \bibentry{sanchez2011high} on the \emph{ImageNet}
 classification challenge \bibentry{deng2009imagenet}. To do this \emph{AlexNet},
@@ -238,7 +239,7 @@ and building networks that can be run on mobile devices will be presented.
 \subsection{Semantic segmentation}
 In the areas of object detection and semantic segmentation \emph{Regions
   with CNN features} (\emph{R-CNN}) \bibentry{girshick2014rich} 
-first showed in that CNNs can be successfully be applied to these fields by
+first showed that CNNs can be successfully applied to these fields by
 significantly improving over the previous state of the art in object detection
 \bibentry{ren2013histograms} After minor modifications matching the
 performance of the state of the art in semantic segmentation
@@ -283,8 +284,7 @@ predecessors and does so with an arguably much more elegant design.
   \label{fig:FastR-CNN}
   \end{figure}
 
-Even though
-\emph{Fast R-CNN} improved speed significantly it was nowhere near real-time
+Even though \emph{Fast R-CNN} improved speed significantly it was nowhere near real-time
 performance. Further performance improvements were introduced with \emph{Faster
   R-CNN} \bibentry{ren2015faster} where \emph{selective search} for region
 proposals is replaced with Region Proposal Networks. These are fully convolutional neural
@@ -294,7 +294,7 @@ proposals shares most of its computation with the classification network, as ill
 region proposals are practically free and frame rates of 5fps are achievable on
 a K40 GPU.
 The region proposal networks not only speed up computation but also prove to
-give better accuracy region proposals and thus raise overall accuracy in the
+give more accurate region proposals and thus raise overall accuracy in the
 system as well \bibentry{ren2015faster}.
 
 \begin{figure}[h]
@@ -322,7 +322,7 @@ object. Since segmentation is a pixel-by-pixel prediction problem \emph{Mask
   \label{fig:AlexNet}
   \end{figure}
 
-Parallel work on semantic segmentation for medical imaging resulted in
+Parallel work on semantic segmentation for medical imaging \mbox{resulted} in
 \emph{U-Net} \parencite[]{UNet}, a fully convolutional encoder-decoder network.
 Here the encoder projects the image into a lower dimensional feature space.
 The low dimensional representations are then run through a decoder
@@ -398,7 +398,7 @@ for object segmentation \bibentry{he2017mask} run at 5fps. That, however, is on 
 performance GPUs meaning that real-time performance on mobile devices is still
 largely intractable. Due to
 these limitations applications of neural networks for mobile use cases are
-either to forced give up on state of the art performance or to be run on
+either forced to give up on state of the art performance or to be run on
 off-site servers which requires steady network connections and incurs latency,
 both of which may be intolerable for real-time mobile applications, self-driving
 cars and robotics \bibentry{jin2014flattened}. However work on understanding the
@@ -439,7 +439,7 @@ with the gradients with respect to the weights calculated from the gradients
 with respect to the virtual matrices as  
 \[ \frac{\partial\mathcal{L}}{\partial w_k^l} = \sum_{ij} \frac{\partial\mathcal{L}}{\partial V_{ij}^l}\frac{\partial V_{ij}^l}{\partial w_k^l} \]
 This method gave a compression of about 20 times before any notable loss in
-accuracy was introduced during tests on variations of the MNIST dataset which
+accuracy was introduced during tests on variations of the MNIST dataset \parencite{larochelle2007empirical} which
 seems to agree very well with the results from \bibentry{denil2013predicting}. 
 
 Other notable work focuses on the use of k-means clustering to cluster the
@@ -485,7 +485,7 @@ different kinds, support vector machines, neural networks, memory-based models,
 and decision trees into a single neural network \bibentry{bucilua2006model}.
 This work leverages the neural network's property of being universal
 approximators \bibentry{cybenko1989approximation}, meaning that given
-sufficiently much training data and a big enough hidden layer a neural network
+sufficient training data and a big enough hidden layer a neural network
 can learn to approximate any function with arbitrary precision. This is done by not directly
 training the student network on the relatively limited labeled training data
 available but instead on large amounts of pseudo-random data that has been given
@@ -497,7 +497,7 @@ on some test problems \parencite{bucilua2006model}.
 %Further work on student-teacher learning experiments with why deep neural
 %networks usually perform better than shallow ones, even when they have the same
 %amount of parameters.
-Further work on student-teacher learning investigates why slow to compute, deep
+Further work on student-teacher learning investigates why slow-to-compute, deep
 neural networks perform better than their shallower and faster siblings, even when
 the amount of parameters is the same between them.
 This was done by training shallow student models to mimic
@@ -509,7 +509,7 @@ probability, values of the teacher as they were before softmax. Getting
 predictions from the student is then achieved by adding a softmax layer to the
 end of it after training. Second, a bottleneck linear layer is added to the
 network to speed up training. With these modifications, the authors were able to train
-flat neural networks for both the TMIT and CIFAR-10 datasets with performance
+flat neural networks for both the TIMIT \parencite[]{TIMIT} and CIFAR-10 \parencite[]{CIFAR} datasets with performance
 closely matching that of single deep networks. Continued analysis of flat
 networks, however, shows that depth and convolutions are critical for getting good
 performance on image classification datasets \bibentry{urban2016deep}.
@@ -557,7 +557,7 @@ teacher. The second stage of training is then distillation as described above
 but with the small addition that the weight of the loss against the teacher is
 slowly annealed during training. This annealing allows for the student to lean
 heavily on the teacher for support in early stages of training and learn samples
-which the even the teacher struggles with towards the end of its training. Using
+which even the teacher struggles with towards the end of its training. Using
 this approach the \emph{FitNets} manage to produce predictions at the same level
 or in some cases even better than models with 10 times more parameters. The
 training procedure is illustrated in \cref{fig:FitNet}.
@@ -616,7 +616,7 @@ power. One of the simplest things that can be done here is to replace single
 layers of \(N \times N\) convolutional filters with two layers with \(N \times
 1\) and \(1 \times N\) filters respectively, this reduces the amount of
 parameters that have to be stored per channel from \(N^2\) to \(2N\) and the
-amount of multiplications that have to be made scale in the same way. These
+amount of multiplications that have to be performed scale in the same way. These
 so-called asymmetrical convolutions have seen successful use in inception models
 \bibentry{szegedy2016rethinking}.  
 Other variations on the convolutional operator that help compress the networks
@@ -627,7 +627,7 @@ have also been some promising results from \emph{depthwise separable
 followed by a pointwise \(1 \times 1\) convolution reducing the computational
 load with a factor \(8\) to \(9\) for \(3 \times 3\) convolutional kernels
 \bibentry{howard2017mobilenets}. This scheme was introduced in
-\bibentry{sifre2014rigid} and has since seen been successfully used in
+\bibentry{sifre2014rigid} and has since been successfully used in
 \emph{Inception} models \bibentry{ioffe2015batch}.  
 
 
@@ -681,9 +681,9 @@ with an optimal tradeoff between latency and precision given the limitations of
 the available hardware. 
 
 Another network specially designed for real-time segmentation on mobile devices
-is \emph{ENet} \bibentry{paszke2016enet}. Here dilated convolutions are used
+is \emph{ENet} \bibentry{paszke2016enet}. Here, dilated convolutions are used
 together with asymmetrical convolutions to give a large receptive field without
-introducing that many parameters. The network is built as an encoder-decoder
+introducing too many parameters. The network is built as an encoder-decoder
 network but with a much smaller decoder, the argument behind this being that
 decoder should simply upsample the output while fine-tuning the details which
 should be a simpler task than the information processing and extraction that the
@@ -714,11 +714,11 @@ in \cref{fig:LinkNet}.
 
 %\todo{Add some sort of graph or table detailing the different approaches here}
 In this project, we will try and build a model for real-time segmentation of feet
-on a smartphone. Since a system that is deployable right now is required,
+on a smartphone. Since an immediately deployable system is required,
 compression approaches like deep compression that need custom hardware to be
 fully utilized are out of the question. Instead, focus will be placed on how
 the highly streamlined architectures like MobileNets and LinkNet can be used and
-modified to produce give the required performance. The effectiveness of
+modified to give the required performance. The effectiveness of
 student-teacher learning in these models will also be evaluated by training the
 networks using knowledge distillation from a big segmentation network previously
 designed at Volumental. Here distillation is preferred over more recent
@@ -730,7 +730,7 @@ scope of this work.%\todo{expand this and give an outline of the method section}
 \section{Pipeline}
 To train models for segmentation datasets with known segmentations are used. The
 images are augmented to artificially expand the available training data and the
-augmented image is feed into the model. The resulting predicted segmentation
+augmented image is fed into the model. The resulting predicted segmentation
 is compared to the ground truth and from this, a loss is calculated using which
 the parameters in the models can be updated. This pipeline is presented in
 \cref{fig:pipeline}. The datasets used in this project along with the data
@@ -755,7 +755,7 @@ This dataset is called
 \textit{synthetic} and is divided into training, validation and test sets with
 43896, 12960 and 14168 images respectively. The different sets have been
 constructed to ensure that there is no overlap of floors or feet between them.
-Example images from this dataset can be seen in \cref{fig:data_synthetic}. Here
+Example images from this dataset can be seen in \cref{fig:data_synthetic}. Here,
 the training set is directly used for training, the validation set is used for
 hyperparameter optimizations and to track overfitting during training, and
 finally, the held out test set is used for evaluating the performance of the
@@ -1046,11 +1046,11 @@ size of \(32\). The training partition of the synthetic dataset is used for
 training and the loss on the validation set is monitored and the learning rate
 reduced by a factor 10 if validation doesn't decrease for \(3\) epochs.
 
-In this training, a bunch of hyperparameters have to be chosen beforehand. To
+In this training, a couple of hyperparameters have to be chosen beforehand. To
 determine good values for some of the most important of these, namely
 learning rate \(\lambda\), the dropout probability \(p_{dropout}\), the
-loss function \(\mathcal{L}\), and the parameters of distillation loss
-temperature \(T\) and mixing factor \(\lambda\) hyperparameter optimization is
+loss function \(\mathcal{L}\), the parameters of distillation loss
+temperature \(T\) and mixing factor \(\lambda\), hyperparameter optimization is
 used. This means that the entire training procedure was run \(100\) times, each
 time with the hyperparameters randomly sampled from search space in
 \cref{tab:search_space} and the performance on the validation set is monitored
@@ -1076,7 +1076,7 @@ Mixing factor \(\lambda\)      &     \(0< \lambda <10\)         \\ \bottomrule
 \end{table}
 
 \section{Evaluation}
-When evaluating the models two major things are of interest for this work.
+When evaluating the models two major aspects are of interest for this work.
 Firstly, how accurate the models are, how well they perform the prediction task.
 Secondly, How efficient the models are, how well they can be run on mobile
 hardware. A good balance between these two is necessary, the models are useless
@@ -1088,7 +1088,7 @@ presented in the following sections.
 
 \subsection{Accuracy measures} \label{sec:accuracy}
 To compare the predicted segmentations from the models to the ground truth data
-and quantify how well they correspond a lot of different accuracy measures can
+and quantify how well they correspond, a lot of different accuracy measures can
 be used. A few of these different measures are presented in the following
 sections. For the experiments, these different measures have been calculated on
 both the held out test set of the synthetic dataset and the dataset of real
@@ -1143,7 +1143,7 @@ classifications for different such thresholds.
 % benchmarking tools. From this inference time, and the number of Floating point
 % operations (\textit{FLOPs}) calculated for inference was extracted. The size
 % required to store the models was also measured. 
-To quantify how efficient the models are to store and compute the following
+To quantify how efficient the models are to store and compute, the following
 metrics were used.
 
 \subsubsection{Storage space}
@@ -1159,6 +1159,12 @@ similar between two floating point numbers. This means that the amount of FLOPs 
 dependent on the hardware the model is run on but just on the model itself.
 However, due to optimizations, both at the framework and processor levels two
 models with the same amount of FLOPs may take different times to compute.
+
+Moreover since the networks process data sequentially as it flows trough
+the layers the degree to which computations can be parallelized varies between
+architectures. Since the speed benefits of using GPUs rely on the problems being
+parallelized this gives an extra descrepancy between FLOPs and actual inference
+time
 
 \subsubsection{Inference time}
 To get an accurate measure of how the long the models actually took to compute on
@@ -1474,7 +1480,7 @@ the feet from the scanner, mapping the texture from the images back to this mode
 and then placing the foot at an arbitrary angle and distance from the virtual
 camera. Giving a greater variance in the data.
 
-\section{Impact}
+\section{Societal impact and ethical considerations}
 When handling data like images of feet in this fashion the question of privacy
 is always relevant and being careful about anonymizing data is important.
 Further, the aim of this work is to automate away sales clerks and instead
