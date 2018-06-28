@@ -15,12 +15,13 @@
 \usepackage{amssymb}
 \usepackage{cleveref}
 \newcommand{\bibentry}[1]{\parencite{#1}}
+\usepackage{pdfpages}
 \usepackage[disable]{todonotes}
 \newcommand{\subsubsubsection}[1]{\vspace{5px}\noindent\textbf{#1:}}
 
 
 \title{Real-time segmentation of feet on smartphone}
-\alttitle{Realtids segmentering av fötter på smartphone}
+\alttitle{Realtidssegmentering av fötter på smartphone}
 \author{Axel Demborg}
 \email{demborg@kth.se}
 \supervisor{Hossein Azizpour}
@@ -35,6 +36,7 @@
 \listoftodos
 
 % Frontmatter includes the titlepage, abstracts and table-of-contents
+\includepdf[pages=-]{cover.pdf}
 \frontmatter
 
 \titlepage
@@ -185,7 +187,7 @@ investigated.
 In the intersection of these two lines of research, segmentation and
 streamlining of neural networks lies this thesis. The project was performed at
 the company \textit{Volumental}, a company specialized in 3D scanning of feet
-for custom shoe recommendations. The companies current product is a designated
+for custom shoe recommendations. The company's current product is a designated
 3D scanner but for the online shopping experience, a mobile app with similar
 capabilities is required. The first step towards such an application is to create
 a model that can reliably perform segmentation of feet in real-time on a
@@ -1018,7 +1020,7 @@ the low probability classes of the teacher.
         \includegraphics[width=\textwidth]{softmaxT10}
         \subcaption{Softmax, \(T=10\)}
       \end{subfigure}
-     \caption{An illustaration of softmax using different temperatures, to the
+     \caption{An illustration of softmax using different temperatures, to the
        left is the input, in the middle output from \(T=1\) softmax and to the
        right \(T = 10\)}\label{fig:softmax}
 \end{figure}
@@ -1089,7 +1091,7 @@ Mixing factor \(\lambda\)      &     \(0< \lambda <10\)         \\ \bottomrule
 \section{Evaluation}
 When evaluating the models two major aspects are of interest for this work.
 Firstly, how accurate the models are, how well they perform the prediction task.
-Secondly, How efficient the models are, how well they can be run on mobile
+Secondly, how efficient the models are, how well they can be run on mobile
 hardware. A good balance between these two is necessary, the models are useless
 if they give perfect segmentations but takes seconds to do so for a single frame
 or can't fit on a smartphone. Likewise, models that can be reliably run at 20
@@ -1174,8 +1176,8 @@ models with the same amount of FLOPs may take different times to compute.
 Moreover since the networks process data sequentially as it flows trough
 the layers the degree to which computations can be parallelized varies between
 architectures. Since the speed benefits of using GPUs rely on the problems being
-parallelized this gives an extra descrepancy between FLOPs and actual inference
-time
+parallelized this gives an extra discrepancy between FLOPs and actual inference
+time.
 
 \subsubsection{Inference time}
 To get an accurate measure of how the long the models actually took to compute on
