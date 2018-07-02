@@ -36,7 +36,8 @@
 \listoftodos
 
 % Frontmatter includes the titlepage, abstracts and table-of-contents
-\includepdf[pages=-]{cover.pdf}
+\includepdf[]{cover.pdf}
+\cleardoublepage
 \frontmatter
 
 \titlepage
@@ -98,13 +99,13 @@
     semantisk segmentering, problemet att dela upp en bild i flera kända klasser
     är
     mycket intressanta inom datorseende. Segmentering är relevant för allt från
-    självkörande bilar till 3D-modelering och syntetiska kamera effekter. Även
+    självkörande bilar till 3D-modellering och syntetiska kamera effekter. Även
     om det finns modeller som producerar goda segmenteringar är många av dessa
     allt för resurs krävande för att kunna köras i realtid på mobilhårdvara,
     något som blir allt mer efterfrågat för användarupplevelsen i datorseende
     appar och säkerheten i självkörande bilar.
 
-    För att bygga modeller kapabla att göra realtids segmentering på smartphones
+    För att bygga modeller kapabla att göra realtidssegmentering på smartphones
     bygger detta projekt vidare på tidigare arbete på att bygga strömlinjeformade neuronnät och att
     komprimera dessa med hjälp av effektiva approximationer av
     faltningsoperatorn och student-lärar träning. Specifikt görs detta för
@@ -1517,6 +1518,8 @@ lives and helps reduce the power requirements of the industry overall.
 % \chapter{Real world tests} \label{chapter:real_world}
 % \todo{add a capture image button to the app and go out in the world and take
 %   some cool images}
+
+\includepdf[pages=2]{cover.pdf}
 
 
 \end{document}
