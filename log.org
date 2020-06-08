@@ -1,6 +1,8 @@
 #+TITLE: Thesis log Efficient object segmentation on mobile phones
 #+AUTHOR: Axel Demborg
 
+* Final report
+[[file:https://github.com/Demborg/Thesis/blob/master/Report/AxelDemborg.pdf][Report pdf]]
 
 
 * Thesis proposal
